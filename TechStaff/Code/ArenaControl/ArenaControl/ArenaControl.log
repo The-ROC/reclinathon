@@ -1,0 +1,21 @@
+﻿Build started 9/18/2009 11:39:21 AM.
+     1>Project "C:\Users\anlagatt\Documents\PrivateMesh\VisualStudioProjects\ArenaControl\ArenaControl\ArenaControl.vcxproj" on node 1 (build target(s)).
+       Skipping target "IsProjectFileNewer" because all output files are up-to-date with respect to the input files.
+     1>_PrepareForBuild:
+         Touching "Release\lastbuild.timestamp".
+       ClCompile:
+         Skipping task because its outputs are up-to-date.
+         ArenaControl.cpp
+         Skipping task because its outputs are up-to-date.
+       Link:
+            Creating library C:\Users\anlagatt\Documents\PrivateMesh\VisualStudioProjects\ArenaControl\Release\ArenaControl.lib and object C:\Users\anlagatt\Documents\PrivateMesh\VisualStudioProjects\ArenaControl\Release\ArenaControl.exp
+         Generating code
+         Finished generating code
+         ArenaControl.vcxproj -> C:\Users\anlagatt\Documents\PrivateMesh\VisualStudioProjects\ArenaControl\Release\ArenaControl.dll
+       _AfterBuild:
+         Touching "Release\LastSuccessfulBuild.timestamp".
+     1>Done Building Project "C:\Users\anlagatt\Documents\PrivateMesh\VisualStudioProjects\ArenaControl\ArenaControl\ArenaControl.vcxproj" (build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:04.27

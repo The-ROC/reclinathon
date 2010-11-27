@@ -1,0 +1,24 @@
+_________________________________________________________
+Events: (each event can be postive (gain points) or negative (lose points) for an actor
+_________________________________________________________
+    Fight Scene (win or lose)
+    Awesome Death / Near Death(killing or dying)
+    Awesome One-Liner (negative could be a failed attempt, not in a comedy)
+    Love Scene / Sappy Line (getting it on vs romance)
+    Involved in Explosion (e.g. caused it, jumped out of it)
+    Chase scene
+
+_________________________________________________________
+Measures: (get or lose points for each occurence)
+(These are purely objective, determined by counting)
+_________________________________________________________
+    Swearing at least X times
+    Schmidt Laugh
+
+_________________________________________________________
+Movie-Properites (get or lose points based on a movie-wide property)
+(These points can be determined before or after the movie)
+_________________________________________________________
+    Insanity (actor played an insane character)
+    Gayness (actor played a gay character)
+    clap/snap/boo (any actor in the movie gets or loses points)

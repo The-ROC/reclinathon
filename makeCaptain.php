@@ -1,0 +1,5 @@
+<?php
+
+setcookie("CaptainCookie", "true");
+
+?>

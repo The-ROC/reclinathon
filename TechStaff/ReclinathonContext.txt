@@ -1,0 +1,74 @@
+struct
+RECLINATHON_CONTEXT
+{
+	INT			Timestamp		// Seconds since Unix Epoch to the creation of this context record
+	INT			EstimatedDuration	// Estimate of seconds until the next context record is created
+	RECLINEE  		Captain				
+	RECLINING_STATE 	RecliningState	
+	RECLINING_SUBSTATE 	RecliningStateModifier
+	MOVIE  			Movie			// Movie currently playing (for Reclining state) or up next (for Downtime)
+	RECLINEE_LIST		ReclineeList		// Everyone who is reclining during the ENTIRE context record
+	OPTIONAL_CONTEXT	OptionalInfo		// State information that need not be present for all context records
+}
+
+struct
+RECLINEE
+{
+	STRING			Name
+	RECLINING_LEVEL		Level
+	INT			Commitment		// 1 - 10
+	INT			RecliningTime		// Sum of the durations of all context records in which the reclinee is in the ReclineeList
+	STRING			Bio			// Reclinee's self-description
+}
+
+enum
+RECLINING_STATE
+{
+	Reclining					// A movie is being shown
+	Downtime					// A movie is not being shown
+}
+
+enum
+RECLINING_SUBSTATE
+{
+	Meal						// The Arena Kitchen is active
+	Emergency					// A movie is paused or stopped prematurely
+	ExtraInnings					// More than 26.2 hours have elapsed
+	Sleeper						// Over half of the Reclinees are sleeping
+}
+
+struct
+MOVIE
+{
+	STRING			Name
+	INT			RunTime			// In minutes
+	INT			Genre			// Bitmask of all applicable genres for the movie
+	STRING			TrailerLink		// URL
+	STRING			ImdbLink		// URL
+}
+
+struct
+RECLINEE_LIST
+{
+	RECLINEE		Reclinee
+	RECLINEE_LIST		NextReclinee
+	RECLINEE_LIST		PreviousReclinee
+}
+
+struct
+OPTIONAL_CONTEXT
+{
+	String			MealDescription
+	RECLINEE		Chef		
+	String			Comment			// Any information not covered elsewhere
+}
+
+enum
+RECLINING_LEVEL
+{
+	RecliningMachine
+	Advanced
+	Intermediate
+	Novice
+	Beginner
+}

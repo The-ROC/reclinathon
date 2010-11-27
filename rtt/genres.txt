@@ -1,0 +1,11 @@
+genres:
+
+0x00000001 = Comedy
+0x00000002 = Action
+0x00000004 = Drama
+0x00000008 = Animated
+0x00000010 = Sci-Fi
+0x00000020 = Fantasy
+0x00000040 = Weird
+0x00000080 = Horror
+0x00000100 = Thriller

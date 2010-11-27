@@ -1,0 +1,19 @@
+﻿Build started 9/18/2009 11:52:40 AM.
+     1>Project "C:\Users\anlagatt\Documents\PrivateMesh\VisualStudioProjects\InternetArenaControl\InternetArenaControl\InternetArenaControl.vcxproj" on node 1 (build target(s)).
+       Skipping target "IsProjectFileNewer" because all output files are up-to-date with respect to the input files.
+     1>_PrepareForBuild:
+         Touching "Release\lastbuild.timestamp".
+       ClCompile:
+         Skipping task because its outputs are up-to-date.
+         InternetArenaControl.cpp
+       Link:
+         Generating code
+         Finished generating code
+         InternetArenaControl.vcxproj -> C:\Users\anlagatt\Documents\PrivateMesh\VisualStudioProjects\InternetArenaControl\Release\InternetArenaControl.exe
+       _AfterBuild:
+         Touching "Release\LastSuccessfulBuild.timestamp".
+     1>Done Building Project "C:\Users\anlagatt\Documents\PrivateMesh\VisualStudioProjects\InternetArenaControl\InternetArenaControl\InternetArenaControl.vcxproj" (build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:03.53
