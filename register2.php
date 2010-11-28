@@ -7,7 +7,7 @@ include "templateHead.html";
 <FONT COLOR = "white"><BR><BR>
 
 <?php
-
+// Comment Comment
 if($FirstName == '' || $LastName == '' || $Email == '' || $Status == '') {
   echo "<H1>You have not entered all of the required information.  Go back and try again.";
   exit();
