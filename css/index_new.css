@@ -5,6 +5,20 @@ body.noborder
   border:0px;
 
   background-color:#111111;
+
+  color:#aaaaaa;
+}
+
+div.nav
+{
+  width: 100%;
+}
+
+div.divider
+{
+  width: 100%;
+  height: 3px;
+  background-image:url('../images/nav_underline.png');
 }
 
 div.main
@@ -12,4 +26,27 @@ div.main
   width: 100%;
   height: 599px;
   background-image:url('../images/gradient.png');
+}
+
+a:link
+{
+  text-decoration: none;
+  color: #aaaaaa;
+}
+
+a:visited
+{
+  text-decoration: none;
+  color: #aaaaaa;
+}
+
+a:active
+{
+  text-decoration: none;
+  color: #aaaaaa;
+}
+
+a:hover
+{
+  color: #dddddd;
 }

@@ -60,6 +60,7 @@
   $rightAligned = array(array("name"=>"login", "url"=>"login.php"));
   
   echo showLinks($leftAligned, $rightAligned);
+  ?>
 </div>
 
 <div class="divider"></div>

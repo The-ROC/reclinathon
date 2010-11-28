@@ -75,7 +75,7 @@ preloadImage("images/teaser_cta_over.png", 96, 34);
 
 <body class="noborder">
 
-<?php include("header.html"); ?>
+<?php include("header.php"); ?>
 
 <div class="main">
 <br />
