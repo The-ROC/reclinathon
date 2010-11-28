@@ -28,6 +28,11 @@ class MOVIE extends RTT_COMMON
     protected $Freshness;	// INT
     protected $Image;		// STRING
     protected $MoviePath;       // STRING
+    protected $Director;	// STRING
+    protected $Year;		// INT
+    protected $Metascore;	// INT
+    protected $NumActors;	// INT
+    protected $Actors;		// STRING list
    
     function __construct() 
     {
@@ -39,6 +44,10 @@ class MOVIE extends RTT_COMMON
         $this->Freshness = 0;
         $this->Image = 'unknown';
         $this->MoviePath = '';
+        $this->Director = 'N/A';
+        $this->Year = 0;
+        $this->Metascore = 0;
+        $this->NumActors = 0;
     }
 
     public function Load($MovieID)
@@ -63,6 +72,9 @@ class MOVIE extends RTT_COMMON
         $this->IMDBLink = $row["IMDBLink"];
         $this->Freshness = $row["Freshness"];
         $this->Image = $row["Image"];
+        $this->Year = $row["Year"];
+        $this->Metascore = $row["Metascore"];
+        $this->Director = $row["Director"];
 
         $this->NumGenres = 0;
         $query = "SELECT g.GenreID as GenreID, g.Name as Name, g.Canonical as Canonical FROM GENRE g JOIN MOVIE_GENRE mg ON g.GenreID = mg.GenreID WHERE mg.MovieID = " . $MovieID;
@@ -76,6 +88,20 @@ class MOVIE extends RTT_COMMON
         {
             $this->Genres[$this->NumGenres] = new GENRE($row["GenreID"], $row["Name"], $row["Canonical"]);
             $this->NumGenres++;
+        }
+
+        $this->NumActors = 0;
+        $query = "SELECT * FROM ACTORS WHERE MovieID = '" . $MovieID . "'";
+        $result = $this->Query($query);
+        if (!$result)
+        {
+            return FALSE;
+        }
+
+        while ($row = mysql_fetch_assoc($result))
+        {
+            $this->Actors[$this->NumActors] = $row["Name"];
+            $this->NumActors++;
         }
 
         return TRUE;
@@ -114,6 +140,91 @@ class MOVIE extends RTT_COMMON
         return TRUE;
     }
 
+    public function LoadFromArray($movie)
+    {
+        if ($movie["Title"] != "")
+        {
+            $this->Title = $movie["Title"];
+        }
+
+
+        if ($movie["RunTime"] != "")
+        {
+            $this->RunTime = $movie["RunTime"];
+        }
+
+        $this->NumGenres = 0;
+        $GenreCount = count($movie["Genres"]);
+
+        for ($i = 0; $i < $GenreCount; $i++)
+        {
+            $query = "SELECT * FROM GENRE WHERE Name = '" . $movie["Genres"][$i] . "'";
+            $result = $this->query($query);
+            if (mysql_num_rows($result) == 0)
+            {
+                $query = "INSERT INTO GENRE (`Name`, `Canonical`) VALUES ('" . $movie["Genres"][$i] . "', '1')";
+                $result = $this->query($query);
+                if ($result)
+                {
+                    $query = "SELECT * FROM GENRE WHERE Name = '" . $movie["Genres"][$i] . "'";
+                    $result = $this->query($query);
+                }
+            }
+
+            $row = mysql_fetch_assoc($result);
+            $this->Genres[$this->NumGenres] = new GENRE($row["GenreID"], $row["Name"], $row["Canonical"]);
+            $this->NumGenres++;
+        }        
+
+        if ($movie["TrailerLink"] != "")
+        {
+            $this->TrailerLink = str_replace("*", "&", $movie["TrailerLink"]);
+        }
+
+        if ($movie["IMDBLink"] != "")
+        {
+            $this->IMDBLink = $movie["IMDBLink"];
+        }
+
+        if ($movie["Freshness"] != "")
+        {
+            $this->Freshness = $movie["Freshness"];
+        }
+
+        if ($movie["PosterLink"] != "")
+        {
+            $this->Image = $movie["PosterLink"];
+        }
+
+        if ($movie["Director"] != "")
+        {
+            $this->Director = $movie["Director"];
+        }
+
+        if ($movie["Year"] != "")
+        {
+            $this->Year = $movie["Year"];
+        }
+
+        if ($movie["MetaScore"] != "")
+        {
+            $this->Metascore = $movie["MetaScore"];
+        }
+
+        $ActorCount = count($movie["Actors"]);
+
+        for ($i = 0; $i < $ActorCount; $i++)
+        {
+            if ($movie["Actors"][$i] != "")
+            {
+                $this->Actors[$this->NumActors] = $movie["Actors"][$i];
+                $this->NumActors++;
+            }
+        }
+
+        return TRUE;
+    }
+
     public function GetRunTime()
     {
         return $this->RunTime;
@@ -146,6 +257,17 @@ class MOVIE extends RTT_COMMON
             }
         }
         return $genres;
+    }
+
+    public function DisplayCast()
+    {
+        $cast = "";
+        for ($i = 0; $i < $this->NumActors; $i++)
+        {
+            $cast = $cast . "<BR>";
+            $cast = $cast . $this->Actors[$i];
+        }
+        return $cast;
     }
 
     public function GetGenres()
@@ -236,12 +358,26 @@ class MOVIE extends RTT_COMMON
         echo "<TR cellspacing='0'><TH>";
         //echo "<A HREF = 'insert.php?class=MOVIE&ObjectID=" . $this->MovieID . "'>";
         echo $this->Title;
+
+        if ($this->Year != 0)
+        {
+            echo " (" . $this->Year . ")";
+        }
+
         //echo "</A>";
-        echo "</TH><TH CLASS='right'>" . $this->Freshness . "% fresh <INPUT TYPE='checkbox' NAME='vote" . $this->MovieID . "' ID='vote" . $this->MovieID . "' VALUE='movie" . $this->MovieID . "' onclick='ToggleDisplay(this)'><INPUT TYPE='button' VALUE='GOLD' onclick='SetGolden(" . $this->MovieID . ", \"" . $this->Title . "\")'></TH></TR>";
+        echo "</TH><TH CLASS='right'>" . $this->Freshness . "%";
+
+        if ($this->Metascore != 0 && $this->Metascore != "")
+        {
+            echo "(" . $this->Metascore . ")";
+        }
+
+        echo "<INPUT TYPE='checkbox' NAME='vote" . $this->MovieID . "' ID='vote" . $this->MovieID . "' VALUE='movie" . $this->MovieID . "' onclick='ToggleDisplay(this)'><INPUT TYPE='button' VALUE='GOLD' onclick='SetGolden(" . $this->MovieID . ", \"" . $this->Title . "\")'></TH></TR>";
         echo "<TR ID='movie" . $this->MovieID . "'><TD>";
         echo $this->DisplayImage();
         echo "</TD><TD>";
         echo "<B><U><FONT SIZE='+2'>Genre(s):</FONT></U></B>" . $this->DisplayGenres() . "<BR><BR><B><U><FONT SIZE='+2'>Runtime:</FONT></U></B><BR>" . $this->RunTime . " min";
+        echo "<BR><BR><B><U><FONT SIZE='+2'>Cast and Crew:</FONT></U></B><BR>Director: " . $this->Director . "<BR>" . $this->DisplayCast();
         echo "<BR><BR><BR><A HREF='" . $this->IMDBLink . "' target='_blank'>IMDB</A><BR><A HREF = '" . $this->TrailerLink . "' target='_blank'>Trailer</A></TD></TR>";
         echo "</TABLE>";
     }
@@ -368,15 +504,18 @@ class MOVIE extends RTT_COMMON
 
     public function Insert()
     {
-        $query = "INSERT INTO MOVIE (Title, RunTime, TrailerLink, IMDBLink, Freshness, Image) VALUES (";
+        $query = "INSERT INTO MOVIE (Title, RunTime, TrailerLink, IMDBLink, Freshness, Image, Metascore, Director, Year) VALUES (";
         $query = $query . "'" . $this->Title . "', ";
         $query = $query . "'" . $this->RunTime . "', ";
         $query = $query . "'" . $this->TrailerLink . "', ";
         $query = $query . "'" . $this->IMDBLink . "', ";
         $query = $query . "'" . $this->Freshness . "', ";
-        $query = $query . "'" . $this->Image . "')";
+        $query = $query . "'" . $this->Image . "', ";
+        $query = $query . "'" . $this->Metascore . "', ";
+        $query = $query . "'" . $this->Director . "', ";
+        $query = $query . "'" . $this->Year . "')";
 
-        echo $query . "<BR>";
+        //echo $query . "<BR>";
         $result = $this->Query($query);
         if (!$result)
         {
@@ -410,9 +549,12 @@ class MOVIE extends RTT_COMMON
         $query = $query . ", TrailerLink = '" . $this->TrailerLink . "'";
         $query = $query . ", IMDBLink = '" . $this->IMDBLink . "'";
         $query = $query . ", Freshness = '" . $this->Freshness . "'";
-        $query = $query . ", Image = '" . $this->Image . "' WHERE MovieID = '" . $this->MovieID . "'";
+        $query = $query . ", Image = '" . $this->Image . "'";
+        $query = $query . ", Metascore = '" . $this->Metascore . "'";
+        $query = $query . ", Director = '" . $this->Director . "'";
+        $query = $query . ", Year = '" . $this->Year . "' WHERE MovieID = '" . $this->MovieID . "'";
 
-        echo $query . "<BR>";
+        //echo $query . "<BR>";
         $result = $this->Query($query);
         if (!$result)
         {
@@ -435,7 +577,7 @@ class MOVIE extends RTT_COMMON
                 if ($this->Genres[$i]->GenreID == $row["GenreID"])
                 {
                     $query2 = "INSERT INTO MOVIE_GENRE (MovieID, GenreID) VALUES ('" . $this->MovieID . "', '" . $this->Genres[$i]->GenreID . "')";
-                    echo $query2 . "<BR>";
+                    //echo $query2 . "<BR>";
                     $result2 = $this->Query($query2);
                     if (!$result2)
                     {
@@ -444,7 +586,25 @@ class MOVIE extends RTT_COMMON
                     break;
                 }
             }
-        } 
+        }
+
+        $query = "DELETE FROM ACTORS WHERE MovieID = '" . $this->MovieID . "'";
+        $result = $this->Query($query);
+        if(!$result)
+        {
+            return FALSE;
+        }
+
+        for ($i = 0; $i < $this->NumActors; $i++)
+        {
+            $query2 = "INSERT INTO ACTORS (Name, MovieID) VALUES ('" . $this->Actors[$i] . "', '" . $this->MovieID . "')";
+            //echo $query2 . "<BR>";
+            $result2 = $this->Query($query2);
+            if (!$result2)
+            {
+                return FALSE;
+            }
+        }
         
         return TRUE;
     }
