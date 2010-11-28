@@ -237,7 +237,7 @@ class MOVIE extends RTT_COMMON
 
     public function DisplayImage()
     {
-	return "<IMG BORDER='3' WIDTH='200' SRC = '" . $this->Image . "' alt = '$this->Title' >";
+	return "<IMG BORDER='3' WIDTH='200' SRC = '" . str_replace("'", "%27", $this->Image) . "' alt = '$this->Title' >";
     }
 
     public function DisplayGenres()
