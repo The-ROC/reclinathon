@@ -6,6 +6,7 @@
 
 <body class="noborder">
 <?php
+// Comment
 $currentPage = "login";
 include "header.php";
 ?>
