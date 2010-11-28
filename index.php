@@ -1,27 +1,102 @@
+<head>
+<title>Reclinathon Home</title>
+<link rel="stylesheet" type="text/css" href="css/index_new.css" />
+<script type="text/javascript"> <!--
+
+var enabled = false;
+
+function turnOnSign() {
+  var sign = document.getElementById("sign");
+  sign.src = "images/sign_on.png";
+}
+
+function turnOffSign() {
+  var sign = document.getElementById("sign");
+  sign.src = "images/sign_off.png";
+}
+
+function showCta() {
+  var cta = document.getElementById("cta");
+  cta.style.display = "block";
+}
+
+function hideCta() {
+  var cta = document.getElementById("cta");
+  cta.style.display = "none";
+}
+
+function init() {
+  turnOffSign();
+  hideCta();
+}
+
+function enable() {
+  turnOnSign();
+  showCta();
+  enabled = true;
+}
+
+function disable() {
+  turnOffSign();
+  enabled = false;
+}
+
+function toggle() {
+  if(enabled) {
+    disable();
+  } else {
+    enable();
+  }
+}
+
+function hint(element) {
+  element.style.cursor = "pointer";
+}
+
+function unhint(element) {
+  element.style.cursor = "default";
+}
+
+function preloadImage(url, width, height) {
+  image = new Image(width, height);
+  image.src = url;
+}
+
+preloadImage("images/arena_photo.png", 604, 345);
+preloadImage("images/election_day.png", 199, 124);
+preloadImage("images/sign_off.png", 761, 105);
+preloadImage("images/sign_on.png", 761, 105);
+preloadImage("images/teaser_quote.png", 668, 29);
+preloadImage("images/teaser_cta.png", 96, 26);
+preloadImage("images/teaser_cta_over.png", 96, 34);
+
+--></script>
+</head>
+
+<body class="noborder">
+
 <?php
-include "templateHead.html";
+$currentPage = "home"; 
+include("header.php"); 
 ?>
 
+<div class="main">
+<br />
+<center>
+<div width="80px" onClick="toggle()" onMouseOver="hint(this);" onMouseOut="unhint(this);">
+  <img id="sign" src="images/sign_off.png" /><br />
+  <img src="images/arena_photo.png" /><br /><br />
+  <img id="quote"  src="images/teaser_quote.png" /><br /><br />
+</div>
+  <img id="cta" onMouseOver="this.style.cursor='pointer'; this.src='images/teaser_cta_over.png';" onMouseOut="this.style.cursor='default'; this.src='images/teaser_cta.png';" onClick="window.location='register.php'" src="images/teaser_cta.png" /><br />
+</center>
+</div>
 
-<FONT COLOR = "white"><H1>
-&nbsp;&nbsp;&nbsp;<BR>Welcome to Reclinathon. <BR> </H1>
-<BR><H3>
-Reclinathon is not just an event.  Reclinathon is the pinnacle of dudliness--a great festival that brings together dudes of the world for one purpose and 
-one purpose only--ultimate movie bliss. <BR><BR>
+<script type="text/javascript"> <!--
 
-Each season thousands of dudes* gather together to participate in this glorious sporting event, each highly trained and discilpined, fully prepared
-for the task that awaits them all.  This task is simple in theory, but it takes a special breed of human to accomplish its magnitude.  Each reclinee is 
-expected to recline, watch movies, eat food, and most importantly, remain in the dudely spirit for 26.2 straight hours of fierce competition.
-<BR><BR>
-Are you up to the challenge?
-<BR><BR>
- The Reclinathon Association of America welcomes you to the world of reclinathon and invites you to join us in this legendary event.
-<BR><BR>
-Are you dude enough to accept the challenge?<BR><BR><BR></H3>
-<CENTER><IMG SRC = "lazdude.jpg"></CENTER><BR>
-<FONT SIZE = "-5">*thousands of dudes may actually mean slightly under 12 dudes 
+init();
 
+--></script>
 
-<?php
-include "templateTail.html";
-?>
+</body>
+</html>

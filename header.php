@@ -36,11 +36,12 @@
   }
 
   function showLink($name, $url) {
+    global $currentPage;
     $result = "";
-    if($currentPage == $name) {
-      $result = "<font color=#888888>" . $name . "</font>";
+    if(strcmp($currentPage, $name) == 0) {
+      $result .= "<font color=#888888>" . $name . "</font>";
     } else {
-      $result = "<a href='" . $url . "'>" . $name . "</a>";
+      $result .= "<a href='" . $url . "'>" . $name . "</a>";
     }
     return $result;
   }
@@ -53,7 +54,7 @@
 <body class="noborder">
 <div class="nav">
   <?php 
-  $leftAligned = array(array("name"=>"home", "url"=>"index_new.php"),
+  $leftAligned = array(array("name"=>"home", "url"=>"index.php"),
 		       array("name"=>"about", "url"=>"about.php"),
 		       array("name"=>"register", "url"=>"register.php"),
 		       array("name"=>"tracking", "url"=>"rtt/index.php"));
