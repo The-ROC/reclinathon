@@ -8,6 +8,7 @@
 <?php
 // Comment
 // Comment 2
+// Comment 3
 session_start();
 $currentPage = "register";
 include "header.php";
