@@ -43,6 +43,7 @@ $TimeRemaining = $rcx->GetTimeRemaining();
 
 <HTML>
 <HEAD>
+<title>Reclinathon Tracking Technology</title>
 <link rel="stylesheet" type="text/css" href="rtt.css" />
 
 <script language="JavaScript">
@@ -200,7 +201,6 @@ function DownRepeat() {
 <BODY bgcolor='white' onload='Down();SetAnswerTimer()' CLASS='noborder'>
 
 <?php
-
 //----------------
 // NEW TITLE DIV
 // ADDED BY CA
@@ -251,3 +251,6 @@ echo "</TR>";
 echo "</TABLE></CENTER>";
 
 ?>
+
+</body>
+</html>

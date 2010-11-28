@@ -1,11 +1,22 @@
+<html>
+<head>
+<title>Register for Reclinathon</title>
+<link rel="stylesheet" type="text/css" href="css/index_new.css" />
+</head>
+
+<body class="noborder">
 <?php
 session_start();
-include "templateHead.html";
+$currentPage = "register";
+include "header.php";
 ?>
 
-
-<FONT COLOR = "white"><H1>
-&nbsp;&nbsp;&nbsp;<BR>Are you Ready to Recline? <BR> </H1><BR>
+<div class="main">
+<center>
+<div class="content" align="left">
+<br />
+<H1>Are you Ready to Recline?</H1>
+<br /><br />
 <H3>Use this form to register for the current reclinathon.  You will also be given a qualification exam to determine your reclining level.</H3><BR><BR>  
 
 <CENTER><FORM ACTION="register2.php" METHOD="post">
@@ -25,10 +36,9 @@ include "templateHead.html";
 </SELECT></TD></TR>
 </TABLE><BR><BR>
 <INPUT TYPE="submit" VALUE="Continue">
+</div>
+</center>
+</div>
 
-
-
-
-<?php
-include "templateTail.html";
-?>
+</body>
+</html>

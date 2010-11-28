@@ -1,10 +1,20 @@
+<html>
+<head>
+<title>About Reclinathon</title>
+<link rel="stylesheet" type="text/css" href="css/index_new.css" />
+</head>
+
+<body class="noborder">
 <?php
-include "templateHead.html";
+$currentPage = "about";
+include "header.php";
 ?>
 
-
-<FONT COLOR = "white"><H1>
-&nbsp;&nbsp;&nbsp;<BR>Welcome to Reclinathon. <BR> </H1>
+<div class="main">
+<center>
+<div class="content" align="left">
+<br />
+<h1>Welcome to Reclinathon.</h1>
 <BR><H3>
 Reclinathon is not just an event.  Reclinathon is the pinnacle of dudliness--a great festival that brings together dudes of the world for one purpose and 
 one purpose only--ultimate movie bliss. <BR><BR>
@@ -20,8 +30,10 @@ Are you up to the challenge?
 Are you dude enough to accept the challenge?<BR><BR><BR></H3>
 <CENTER><IMG SRC = "lazdude.jpg"></CENTER><BR>
 <FONT SIZE = "-5">*thousands of dudes may actually mean slightly under 12 dudes 
+</div>
+</center>
+</div>
+</center>
 
-
-<?php
-include "templateTail.html";
-?>
+</body>
+</html>

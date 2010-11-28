@@ -1,13 +1,23 @@
+<html>
+<head>
+<title>Reclinathon Login</title>
+<link rel="stylesheet" type="text/css" href="index_new.css" />
+</head>
+
+<body class="noborder">
 <?php
-include "templateHead.html";
+$currentPage = "login";
+include "header.php";
 ?>
 
+<div class="main">
+<center>
+<div class="content" align="left">
+<br />
+<h1>Enter your Command Center.</h1>
+</div>
+</center>
+</div>
 
-<FONT COLOR = "white"><H1>
-&nbsp;&nbsp;&nbsp;<BR>Enter your Command Center. <BR> </H1>
-
-
-
-<?php
-include "templateTail.html";
-?>
+</body>
+</html>

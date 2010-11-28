@@ -57,7 +57,7 @@
   $leftAligned = array(array("name"=>"home", "url"=>"index.php"),
 		       array("name"=>"about", "url"=>"about.php"),
 		       array("name"=>"register", "url"=>"register.php"),
-		       array("name"=>"tracking", "url"=>"rtt/index.php"));
+		       array("name"=>"tracking", "url"=>"tracking_wrapper.php"));
   $rightAligned = array(array("name"=>"login", "url"=>"login.php"));
   
   echo showLinks($leftAligned, $rightAligned);
@@ -65,6 +65,5 @@
 </div>
 
 <div class="divider"></div>
-
 </body>
 </html>
