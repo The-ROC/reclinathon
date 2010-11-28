@@ -6,6 +6,7 @@
 
 <body class="noborder">
 <?php
+// Comment
 session_start();
 $currentPage = "register";
 include "header.php";
