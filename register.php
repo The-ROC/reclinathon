@@ -15,7 +15,7 @@ include "header.php";
 <center>
 <div class="content" align="left">
 <br />
-<H1>Are you Ready to Recline?</H1>
+<h1 class="heding">Are you Ready to Recline?</h1>
 <br /><br />
 <H3>Use this form to register for the current reclinathon.  You will also be given a qualification exam to determine your reclining level.</H3><BR><BR>  
 
