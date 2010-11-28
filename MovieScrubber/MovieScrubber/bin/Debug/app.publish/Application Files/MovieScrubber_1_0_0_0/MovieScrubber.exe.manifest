@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<asmv1:assembly xsi:schemaLocation="urn:schemas-microsoft-com:asm.v1 assembly.adaptive.xsd" manifestVersion="1.0" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3" xmlns:dsig="http://www.w3.org/2000/09/xmldsig#" xmlns:co.v2="urn:schemas-microsoft-com:clickonce.v2" xmlns="urn:schemas-microsoft-com:asm.v2" xmlns:asmv1="urn:schemas-microsoft-com:asm.v1" xmlns:asmv2="urn:schemas-microsoft-com:asm.v2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:co.v1="urn:schemas-microsoft-com:clickonce.v1">
+  <asmv1:assemblyIdentity name="MovieScrubber.exe" version="1.0.0.0" publicKeyToken="c61ba0c545773144" language="neutral" processorArchitecture="msil" type="win32" />
+  <description asmv2:iconFile="Application.ico" xmlns="urn:schemas-microsoft-com:asm.v1" />
+  <application />
+  <entryPoint>
+    <assemblyIdentity name="MovieScrubber" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
+    <commandLine file="MovieScrubber.exe" parameters="" />
+  </entryPoint>
+  <trustInfo>
+    <security>
+      <applicationRequestMinimum>
+        <PermissionSet Unrestricted="true" ID="Custom" SameSite="site" />
+        <defaultAssemblyRequest permissionSetReference="Custom" />
+      </applicationRequestMinimum>
+      <requestedPrivileges xmlns="urn:schemas-microsoft-com:asm.v3">
+        <!--
+          UAC Manifest Options
+          If you want to change the Windows User Account Control level replace the 
+          requestedExecutionLevel node with one of the following.
+
+        <requestedExecutionLevel  level="asInvoker" uiAccess="false" />
+        <requestedExecutionLevel  level="requireAdministrator" uiAccess="false" />
+        <requestedExecutionLevel  level="highestAvailable" uiAccess="false" />
+
+         If you want to utilize File and Registry Virtualization for backward 
+         compatibility then delete the requestedExecutionLevel node.
+    -->
+        <requestedExecutionLevel level="asInvoker" uiAccess="false" />
+      </requestedPrivileges>
+    </security>
+  </trustInfo>
+  <dependency>
+    <dependentOS>
+      <osVersionInfo>
+        <os majorVersion="5" minorVersion="1" buildNumber="2600" servicePackMajor="0" />
+      </osVersionInfo>
+    </dependentOS>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="preRequisite" allowDelayedBinding="true">
+      <assemblyIdentity name="Microsoft.Windows.CommonLanguageRuntime" version="4.0.30319.0" />
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="HtmlAgilityPack.dll" size="135168">
+      <assemblyIdentity name="HtmlAgilityPack" version="1.4.0.0" publicKeyToken="BD319B19EAF3B43A" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+        <dsig:DigestValue>5cI2851bnSW2UMuncH35FJ0/TRY=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="MovieScrubber.exe" size="153088">
+      <assemblyIdentity name="MovieScrubber" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+        <dsig:DigestValue>x26YqWLKvUR47jPVHw6Hv55k1HY=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <file name="Application.ico" size="68768">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>Sc4UkxLtOCPZOPjIEiUVyXk/S5g=</dsig:DigestValue>
+    </hash>
+  </file>
+<publisherIdentity name="CN=Time_Lord\David" issuerKeyHash="3f176330561de381503ad84dbcdbef0d98a86a69" /><Signature Id="StrongNameSignature" xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1" /><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" /><Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" /><DigestValue>EMAfGAScULyUEUuPNZdUaXLqeYk=</DigestValue></Reference></SignedInfo><SignatureValue>UJ59glNMNsMVPjrTxfGJ67D38KWhznx1Ny+vwC57lDXYBPJEfbCI2d7QvNXLKk6zXKjqZqWYev886dqwS66PYyI6bR/gP4cpLC1CVoByb+JLMa0rxeILpyYH0w7zjR9705Pqe8YlyO3UP2ZpF8RWDs/JXWSxDQMQZifTe9Btzfc=</SignatureValue><KeyInfo Id="StrongNameKeyInfo"><KeyValue><RSAKeyValue><Modulus>0+TOPeMCT3oTzYAdZDc8p7c5bX3cQNGpch5buN6I+W1lP8cy1WbSHi5rF16zZzI5iRXE18vaC0JGmhoZbmTK4PMXZfMHfseQldh3IOSV6w9SHYgh/RvfgHfa86aa10SjrYWqe09xZhd1sPgnP/HzyhTlW+PLIdwoWl37qaeaSPk=</Modulus><Exponent>AQAB</Exponent></RSAKeyValue></KeyValue><msrel:RelData xmlns:msrel="http://schemas.microsoft.com/windows/rel/2005/reldata"><r:license xmlns:r="urn:mpeg:mpeg21:2003:01-REL-R-NS" xmlns:as="http://schemas.microsoft.com/windows/pki/2005/Authenticode"><r:grant><as:ManifestInformation Hash="8979ea72695497358f4b1194bc509c04181fc010" Description="" Url=""><as:assemblyIdentity name="MovieScrubber.exe" version="1.0.0.0" publicKeyToken="c61ba0c545773144" language="neutral" processorArchitecture="msil" type="win32" /></as:ManifestInformation><as:SignedBy /><as:AuthenticodePublisher><as:X509SubjectName>CN=Time_Lord\David</as:X509SubjectName></as:AuthenticodePublisher></r:grant><r:issuer><Signature Id="AuthenticodeSignature" xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1" /><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" /><Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" /><DigestValue>dv+qac1IubwfWjm7SC7wN7e4sYE=</DigestValue></Reference></SignedInfo><SignatureValue>fEmCN4/ohtgIjk7d4jP0ZWhAl8tQjAflFMStbHuuDaUbulbrA5Snx/tb3lczyof3BXA/i8VaH2HusLhQ7T1p7D39LIVqEjnKX5MgpfZRvhsE1emL3mFLlvIkO9blXyZC5yFVsqUPvDddwXI1EguVTHRMOXyn0ZlDb9SQ/ZxK06M=</SignatureValue><KeyInfo><KeyValue><RSAKeyValue><Modulus>0+TOPeMCT3oTzYAdZDc8p7c5bX3cQNGpch5buN6I+W1lP8cy1WbSHi5rF16zZzI5iRXE18vaC0JGmhoZbmTK4PMXZfMHfseQldh3IOSV6w9SHYgh/RvfgHfa86aa10SjrYWqe09xZhd1sPgnP/HzyhTlW+PLIdwoWl37qaeaSPk=</Modulus><Exponent>AQAB</Exponent></RSAKeyValue></KeyValue><X509Data><X509Certificate>MIIB1TCCAT6gAwIBAgIQKbOup4AxRKpOIvG4Dy2BrTANBgkqhkiG9w0BAQUFADApMScwJQYDVQQDHh4AVABpAG0AZQBfAEwAbwByAGQAXABEAGEAdgBpAGQwHhcNMTAxMTI4MDA1MDA1WhcNMTExMTI4MDY1MDA1WjApMScwJQYDVQQDHh4AVABpAG0AZQBfAEwAbwByAGQAXABEAGEAdgBpAGQwgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBANPkzj3jAk96E82AHWQ3PKe3OW193EDRqXIeW7jeiPltZT/HMtVm0h4uaxdes2cyOYkVxNfL2gtCRpoaGW5kyuDzF2XzB37HkJXYdyDklesPUh2IIf0b34B32vOmmtdEo62FqntPcWYXdbD4Jz/x88oU5VvjyyHcKFpd+6mnmkj5AgMBAAEwDQYJKoZIhvcNAQEFBQADgYEAlFS9zcikkwWF9+GuyjLQbIMm5wlpn+yWWJfJi+M4t+yUXvKkwPoSEWUkWMHLdJoI5ptjVpRlUbkytymPpJrdqLnUF5biN40XbNLuu4kd4GS1qeGO+Hdsnz0jNps9gsBPmvMYyZ//H2SaCFuxG+4hOmQYYj1+V+J+AnLO97wJr4A=</X509Certificate></X509Data></KeyInfo></Signature></r:issuer></r:license></msrel:RelData></KeyInfo></Signature></asmv1:assembly>

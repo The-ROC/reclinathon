@@ -1,0 +1,7 @@
+﻿<MovieScrubber:DataItemsCollection xmlns:MovieScrubber="clr-namespace:MovieScrubber">
+	<MovieScrubber:DataItems Name="Hat" Selected="True"/>
+	<MovieScrubber:DataItems Name="Action" Selected="False"/>
+	<MovieScrubber:DataItems Name="Schmidt" Selected="True"/>
+	<MovieScrubber:DataItems Name="Fantasy" Selected="False"/>
+	<MovieScrubber:DataItems Name="Sleeper" Selected="True"/>
+</MovieScrubber:DataItemsCollection>

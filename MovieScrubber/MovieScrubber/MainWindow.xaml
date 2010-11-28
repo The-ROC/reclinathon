@@ -1,0 +1,72 @@
+﻿<Window
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
+	x:Class="MovieScrubber.MainWindow"
+	x:Name="Window"
+	Title="MainWindow"
+	UseLayoutRounding="True"
+	Width="800" Height="600">
+
+	<Grid x:Name="LayoutRoot" d:DataContext="{d:DesignData /SampleData/DataItemsCollectionSampleData.xaml}">
+		<Grid x:Name="DataGrid" Margin="0,51,0,-1" HorizontalAlignment="Right" Width="784">
+			<TextBox x:Name="TitleBox" HorizontalAlignment="Left" Height="29" Margin="13,16,0,0" TextWrapping="Wrap" Text="Title" VerticalAlignment="Top" Width="270"/>
+			<TextBox x:Name="YearBox" HorizontalAlignment="Left" Height="29" Margin="13,52,0,0" TextWrapping="Wrap" Text="Year" VerticalAlignment="Top" Width="270"/>
+			<TextBox x:Name="DirectorBox" HorizontalAlignment="Left" Height="29" Margin="13,89,0,0" TextWrapping="Wrap" Text="Director" VerticalAlignment="Top" Width="270"/>
+			<TextBox x:Name="RunBox" HorizontalAlignment="Left" Height="29" Margin="13,125,0,0" TextWrapping="Wrap" Text="Runtime" VerticalAlignment="Top" Width="270"/>
+			<TextBox x:Name="FreshBox" HorizontalAlignment="Right" Height="29" Margin="0,14,333,0" TextWrapping="Wrap" Text="---" VerticalAlignment="Top" Width="58"/>
+			<TextBox x:Name="MetaBox" HorizontalAlignment="Right" Height="29" Margin="0,89,333,0" TextWrapping="Wrap" Text="---" VerticalAlignment="Top" Width="58"/>
+			<TextBlock x:Name="FreshBlock" Height="29" Margin="307,16,0,0" TextWrapping="Wrap" Text="Freshness:" VerticalAlignment="Top" HorizontalAlignment="Left" Width="75"/>
+			<TextBlock x:Name="MetaBlock" Height="29" Margin="307,95,0,0" TextWrapping="Wrap" Text="MetaScore:" VerticalAlignment="Top" HorizontalAlignment="Left" Width="75"/>
+			<TextBlock x:Name="FreshTitle" Height="24" Margin="307,57,209,0" TextWrapping="Wrap" Text="RT Movie Title" VerticalAlignment="Top" Background="#FFF3F3F3"/>
+			<TextBlock x:Name="MetaTitle" Height="24" Margin="307,130,209,0" TextWrapping="Wrap" Text="MC Movie Title" VerticalAlignment="Top" Background="#FFF3F3F3"/>
+			<Image x:Name="Poster" HorizontalAlignment="Right" Margin="0,15,15,234" Width="190" Source="movie_reel.jpg" Stretch="Fill"/>
+			<TextBox x:Name="ImageLink" HorizontalAlignment="Right" Height="48" Margin="0,0,15,166" TextWrapping="Wrap" Text="Image Link" VerticalAlignment="Bottom" Width="318" MouseDoubleClick="UpdateBrowser"/>
+			<TextBox x:Name="IMDBLink" HorizontalAlignment="Right" Height="32" Margin="0,0,15,118" TextWrapping="Wrap" Text="IMDB Link" VerticalAlignment="Bottom" Width="318" MouseDoubleClick="UpdateBrowser"/>
+			<TextBox x:Name="TrailerLink" HorizontalAlignment="Right" Height="48" Margin="0,0,15,54" TextWrapping="Wrap" Text="Trailer Link" VerticalAlignment="Bottom" Width="318" MouseDoubleClick="UpdateBrowser"/>
+			<Button Content="Update" HorizontalAlignment="Right" Margin="0,234,208,234" Width="46" Click="UpdateImage"/>
+			<DataGrid x:Name="GenreGrid" HorizontalAlignment="Left" Margin="13,191,0,17" Width="180" AutoGenerateColumns="False" ItemsSource="{Binding}">
+				<DataGrid.Columns>
+					<DataGridCheckBoxColumn Binding="{Binding Selected}" Header="" Width="25"/>
+					<DataGridTextColumn Binding="{Binding Name}" Header="Primary Genres"/>
+				</DataGrid.Columns>
+			</DataGrid>
+			<DataGrid x:Name="CastGrid" Margin="208,191,371,17" AutoGenerateColumns="False" ItemsSource="{Binding}">
+				<DataGrid.Columns>
+					<DataGridCheckBoxColumn Binding="{Binding Selected}" Header="" Width="25"/>
+					<DataGridTextColumn Binding="{Binding Name}" Header="Main Cast"/>
+				</DataGrid.Columns>
+			</DataGrid>
+			<Button x:Name="PosterNext" Content="-&gt;" HorizontalAlignment="Right" Height="28" Margin="0,202,209,0" VerticalAlignment="Top" Width="29" Click="PNext"/>
+			<Button x:Name="PosterBack" Content="&lt;-" HorizontalAlignment="Right" Height="28" Margin="0,202,242,0" VerticalAlignment="Top" Width="29" Click="PBack"/>
+			<Button x:Name="FreshNext" Content="-&gt;" HorizontalAlignment="Right" Height="28" Margin="0,14,252,0" VerticalAlignment="Top" Width="29" Click="FNext"/>
+			<Button x:Name="FreshBack" Content="&lt;-" HorizontalAlignment="Right" Height="28" Margin="0,13,285,0" VerticalAlignment="Top" Width="29" Click="FBack"/>
+			<Button x:Name="MetaBack" Content="&lt;-" HorizontalAlignment="Right" Height="28" Margin="0,90,285,0" VerticalAlignment="Top" Width="29" Click="MBack"/>
+			<Button x:Name="MetaNext" Content="-&gt;" HorizontalAlignment="Right" Height="28" Margin="0,90,252,0" VerticalAlignment="Top" Width="29" Click="MNext"/>
+			<TextBox x:Name="XmlBox" Height="26" Margin="0,0,28,17" TextWrapping="Wrap" Text="Server Response" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="305" Background="#FFF3F3F3" MouseDoubleClick="DisplayHtml"/>
+			<TextBox x:Name="CodeBox" HorizontalAlignment="Left" Height="29" Margin="13,158,0,0" TextWrapping="Wrap" Text="IMDB Code" VerticalAlignment="Top" Width="141" UndoLimit="10"/>
+			<Button x:Name="UpdateIMDB" Content="Update" HorizontalAlignment="Left" Height="26" Margin="163,158,0,0" VerticalAlignment="Top" Width="59" Click="SearchClick"/>
+		</Grid>
+		<Grid x:Name="WebGrid" Margin="0,50,0,0" d:IsHidden="True">
+			<WebBrowser x:Name="MiniBrowser" Margin="0,0,0,-50" Source="http://www.google.com" d:IsHidden="True"/>
+		</Grid>
+		<Grid x:Name="BrowserGrid" Margin="0,0,163,0" Height="50" VerticalAlignment="Top" Background="#FFEBEBEB" Panel.ZIndex="1" d:IsHidden="True">
+			<TextBox x:Name="BrowserBar" Margin="17,12,8,13" TextWrapping="Wrap" MouseDoubleClick="UpdateBrowser"/>
+		</Grid>
+		<Grid x:Name="ControlGrid" Height="50" VerticalAlignment="Top" Background="#FFEBEBEB">
+			<TextBox x:Name="SearchBox" HorizontalAlignment="Left" Margin="18,12,0,12" TextWrapping="Wrap" Text="Movie Title" Width="247"/>
+			<Button x:Name="SearchButton" Content="Search" Margin="279,6,0,6" HorizontalAlignment="Left" Width="109" Click="SearchClick"/>
+			<Button x:Name="AddButton" Content="Add to Database" HorizontalAlignment="Right" Margin="0,6,284,6" Width="98" Foreground="Black" BorderBrush="#FF707070" Click="makexml">
+				<Button.Background>
+					<LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
+						<GradientStop Color="#FFF3F3F3" Offset="0"/>
+						<GradientStop Color="#FFEBEBEB" Offset="0.5"/>
+						<GradientStop Color="#FFDDDDDD" Offset="0.5"/>
+						<GradientStop Color="#FFCDCDCD" Offset="1"/>
+					</LinearGradientBrush>
+				</Button.Background>
+			</Button>
+			<Button x:Name="WebClose" Content="Web" HorizontalAlignment="Right" Margin="0,12,50,12" Width="91" Click="ToggleWeb"/>
+		</Grid>
+	</Grid>
+</Window>
