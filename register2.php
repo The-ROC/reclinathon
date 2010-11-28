@@ -8,6 +8,7 @@ include "templateHead.html";
 
 <?php
 // Comment Comment
+// comment Comment 2
 if($FirstName == '' || $LastName == '' || $Email == '' || $Status == '') {
   echo "<H1>You have not entered all of the required information.  Go back and try again.";
   exit();
