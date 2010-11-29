@@ -7,6 +7,7 @@
 
 <body class="noborder">
 <?php
+// Hellooooooo
 session_start();
 $currentPage = "register";
 include "header.php";
