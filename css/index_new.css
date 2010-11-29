@@ -31,23 +31,6 @@ div.main
   background-repeat: repeat-x
 }
 
-div.container
-{
-  width: 800px;
-  height: 667px;
-  background-image: url('../images/film_aged.png');
-}
-
-div.content
-{
-  width: 560px;
-}
-
-h1.heading
-{
-  color: #556677;
-}
-
 a:link
 {
   text-decoration: none;

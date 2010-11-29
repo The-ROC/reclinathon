@@ -2,6 +2,7 @@
 <head>
 <title>Reclinathon Registration</title>
 <link rel="stylesheet" type="text/css" href="css/index_new.css" />
+<link rel="stylesheet" type="text/css" href="css/register.css" />
 </head>
 
 <body class="noborder">
