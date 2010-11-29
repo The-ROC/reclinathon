@@ -7,11 +7,6 @@
 
 <body class="noborder">
 <?php
-// Comment
-// Comment 2
-// Comment 3
-// Comment 4
-// Comment 5
 session_start();
 $currentPage = "register";
 include "header.php";
