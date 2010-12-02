@@ -1,6 +1,6 @@
 <?php
 session_start();
-include "connect.php";
+include $_SERVER['DOCUMENT_ROOT']."\include\connect.php";
 ?>
 
 <bgsound src="alarm.wav" loop=-1">

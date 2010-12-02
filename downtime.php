@@ -4,7 +4,7 @@ session_name("reclinathon");
 session_id("reclinathon");
 session_Start();
 
-include "connect.php";
+include $_SERVER['DOCUMENT_ROOT']."\include\connect.php";
 
 if(!session_is_registered("GO")) {
   $GO = 0;
