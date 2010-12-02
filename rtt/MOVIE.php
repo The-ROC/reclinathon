@@ -406,7 +406,7 @@ class MOVIE extends RTT_COMMON
         $TotalRunTime = 0;
         $GenreRunTimes;
 
-        $query = "SELECT m.MovieID FROM MOVIE m JOIN MOVIE_LIST l ON m.MovieID = l.MovieID WHERE l.Name = 'Ballot' ORDER BY m.Freshness DESC";
+        $query = "SELECT m.MovieID FROM MOVIE m JOIN MOVIE_LIST l ON m.MovieID = l.MovieID WHERE l.Name = 'Ballot' ORDER BY m.Freshness DESC, m.Metascore DESC";
         $result = $this->Query($query);
         if (!$result)
         {
