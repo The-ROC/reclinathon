@@ -395,7 +395,7 @@ class MOVIE_LIST extends RTT_COMMON
         $FreshnessTickets = $NumTickets;
 
 	//Fetch the golden votes
-	$query = "SELECT distinct MovieID from  VOTE WHERE Season = 'Winter2009' AND Golden = 1";
+	$query = "SELECT distinct MovieID from  VOTE WHERE Season = 'Winter2010' AND Golden = 1";
 	$result = $this->query($query);
 	if (!$result)
         {
@@ -409,7 +409,7 @@ class MOVIE_LIST extends RTT_COMMON
 	    
 
         //Fetch the votes
-        $query = "SELECT m.MovieID, COUNT(v.VoteID) AS TotalVotes FROM VOTE v JOIN MOVIE m ON v.MovieID = m.MovieID WHERE v.Season = 'Winter2009' GROUP BY v.MovieID ORDER BY TotalVotes DESC";
+        $query = "SELECT m.MovieID, COUNT(v.VoteID) AS TotalVotes FROM VOTE v JOIN MOVIE m ON v.MovieID = m.MovieID WHERE v.Season = 'Winter2010' GROUP BY v.MovieID ORDER BY TotalVotes DESC";
         $result = $this->query($query);
         if (!$result)
         {
