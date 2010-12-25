@@ -1,10 +1,17 @@
+<?php
+set_include_path("/kunden/homepages/6/d95429370/htdocs/reclinathon");
+require_once("config.php");
+?>
+
 <html>
 
 <head>
-<link rel="stylesheet" type="text/css" href="css/index_new.css" />
+<link rel="stylesheet" type="text/css" href=<?php echo BASE_URL . "css/index_new.css"?> />
 </head>
 
 <?php
+  require_once "config.php";
+
   function showLinks($leftArray, $rightArray) {
     $result = "<table width='100%' bgcolor=#222222><tr>";
 
@@ -41,7 +48,7 @@
     if(strcmp($currentPage, $name) == 0) {
       $result .= "<font color=#888888>" . $name . "</font>";
     } else {
-      $result .= "<a href='" . $url . "'>" . $name . "</a>";
+      $result .= "<a target='_top' href='" . $url . "'>" . $name . "</a>";
     }
     return $result;
   }
@@ -54,11 +61,11 @@
 <body class="noborder">
 <div class="nav">
   <?php 
-  $leftAligned = array(array("name"=>"home", "url"=>"index.php"),
-		       array("name"=>"about", "url"=>"about.php"),
-		       array("name"=>"register", "url"=>"register.php"),
-		       array("name"=>"tracking", "url"=>"tracking_wrapper.php"));
-  $rightAligned = array(array("name"=>"login", "url"=>"login.php"));
+  $leftAligned = array(array("name"=>"home", "url"=>BASE_URL . "index.php"),
+		       array("name"=>"about", "url"=>BASE_URL . "about.php"),
+		       array("name"=>"register", "url"=>BASE_URL . "register"),
+		       array("name"=>"tracking", "url"=>BASE_URL . "tracking_wrapper.php"));
+  $rightAligned = array(array("name"=>"login", "url"=>BASE_URL . "login.php"));
   
   echo showLinks($leftAligned, $rightAligned);
   ?>
