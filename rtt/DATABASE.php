@@ -11,6 +11,13 @@ class DATABASE
 
     private function Connect()
     {
+        $TEST_SERVER = file_exists($_SERVER['DOCUMENT_ROOT']."\include\localdb");
+        if ($TEST_SERVER)
+        {
+            $this->server = 'localhost';
+            $this->username = 'ROC_USER';
+        }
+
         if ($this->connection)
         {
             return TRUE;

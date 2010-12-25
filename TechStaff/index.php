@@ -4,7 +4,7 @@ session_name("reclinathon2");
 session_id("reclinathon2");
 session_Start();
 
-include "connect.php";
+include $_SERVER['DOCUMENT_ROOT']."\include\connect.php";
 
 ?>
 
