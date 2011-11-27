@@ -2,7 +2,7 @@
 
 include 'RTTHeader.php';
 
-$CURRENT_SEASON = "Winter 2009";
+$CURRENT_SEASON = $this->GetCurrentSeason();
 $DEFAULT_LOGO = "images/DefaultLogo.png";
 
 class RECLINATHON_CONTEXT extends RTT_COMMON
@@ -219,7 +219,7 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
     {
         $END_OF_REGULATION = 1261998720;
         $MovieList = new MOVIE_LIST();
-        if (!$MovieList->Load("Winter2009"))
+        if (!$MovieList->Load($CURRENT_SEASON))
         {
             return false;
         }
@@ -328,7 +328,7 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
     public function DisplayCaptainModule()
     {
         $MovieList = new MOVIE_LIST();
-        if (!$MovieList->Load("Winter2009"))
+        if (!$MovieList->Load($CURRENT_SEASON))
         {
             return false;
         }
@@ -718,7 +718,7 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
 
         if ($Season == "latest")
         {
-            $Season = "Winter2010";
+            $Season = $CURRENT_SEASON;
         }
 
         if ($Command != "DB_DumpMovies" && $Command != "SENSOR_GetData" && !$this->LoadCurrent($Season))
