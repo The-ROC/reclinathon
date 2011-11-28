@@ -65,7 +65,7 @@ abstract class RTT_COMMON
         return self::$Database->Query($query);
     }
 
-    public function GetCurrentSeasion()
+    public function GetCurrentSeason()
     {
         $query = "SELECT * from CURRENT_SEASON";
 	$result = $this->Query($query);

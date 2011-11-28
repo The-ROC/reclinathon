@@ -6,7 +6,7 @@ include "RECLINATHON_CONTEXT.php";
 //$duration = $START + $TIMER - $currenttime;
 
 $rcx = new RECLINATHON_CONTEXT();
-$SEASON = "Winter2011";
+$SEASON = $rcx->GetCurrentSeason();
 
 if ($_POST["ContextID"] != '')
 {
