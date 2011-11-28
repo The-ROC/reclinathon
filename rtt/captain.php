@@ -1,7 +1,7 @@
 <?php
 
 include "RECLINATHON_CONTEXT.php";
-$CAPTAIN_SEASON = 'Winter 2009';
+$CAPTAIN_SEASON = 'Winter 2011';
 
 //$currenttime = round(1000 * (microtime(true) + time()));
 //$duration = $START + $TIMER - $currenttime;

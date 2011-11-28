@@ -44,7 +44,7 @@ require(BASE_PATH . "header.php");
 	<?php if($limit > 3) echo "<OPTION VALUE='Advanced Recliner'>Advanced Recliner</OPTION>"; ?>
 	<?php if($limit > 4) echo "<OPTION VALUE='Reclining Machine'>Reclining Machine</OPTION>"; ?>
 </select></td></tr>
-<tr><td><input type="hidden" name="forward" value=<?php echo BASE_URL . "register2.php"; ?>></td></tr>
+<tr><td><input type="hidden" name="forward" value=<?php echo BASE_URL . "register/register2.php"; ?>></td></tr>
 </table><br />
 <INPUT TYPE="submit" VALUE="Continue">
 </div>
