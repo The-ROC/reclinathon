@@ -272,11 +272,28 @@ class MOVIE_LIST extends RTT_COMMON
     public function DisplayMovieList($list, $NumMovies)
     {
         echo "<BR>Movie List<BR>";
+        echo "<TABLE>";
         for ($i = 0; $i < $NumMovies; $i++)
         {
-            echo $list[$i] . "<BR>";
+            echo "<TR>";
+            echo "<TD>" . $list[$i] . "</TD><TD>";
+            $voteQuery = "SELECT COUNT(v.VoteID) AS TotalVotes, SUM(v.Golden) AS TotalGoldenVotes FROM VOTE v JOIN MOVIE m ON v.MovieID = m.MovieID WHERE v.MovieID = '" . $list[$i]->GetID() . "' GROUP BY v.MovieID";
+            $voteResult = $this->query($voteQuery);
+            if ($voteResult)
+            {
+                $voteRow = mysql_fetch_assoc($voteResult);
+                if ($voteRow)
+	 	{
+		    echo "(" . $voteRow["TotalVotes"] . " votes, " . $voteRow["TotalGoldenVotes"] . " golden)";
+		}
+                else
+                {
+                    echo "(No votes)";
+                }
+	    }
+            echo "</TD></TR>"; 
         }
-        echo "<BR>";
+        echo "</TABLE><BR>";
     }
 
     public function DisplaySelectList($SelectedMovieID)
@@ -374,75 +391,31 @@ class MOVIE_LIST extends RTT_COMMON
         $Tickets;			// INT list
         $NumTickets = 0;    		// INT
         $TotalMovies = 0;		// INT
-	$GoldenVotes;			// INT list
-	$NumGoldenVotes = 0;		// INT
+	$AutoApprovedMovies;		// INT list
+	$NumAutoApprovedMovies = 0;	// INT
         $QuotasFull = ($NumQuotas == 0);
 
         $CurrentSeason = $this->GetCurrentSeason();
 
-        //Fetch the full pool of movies
-        $query = "SELECT m.MovieID, m.Freshness FROM MOVIE m JOIN MOVIE_LIST l on l.MovieID = m.MovieID where l.Name = 'Ballot'";
-        $result = $this->Query($query);
-        if (!$result)
-        {
-            return FALSE;
-        }
-
-        //Assign tickets based on freshness
-        while($row = mysql_fetch_assoc($result))
-        {
-            $TotalMovies++;
-            for ($i = 0; $i < $row["Freshness"]; $i++)
-            {
-                $Tickets[$NumTickets++] = $row["MovieID"];
-            }
-        }
-        $FreshnessTickets = $NumTickets;
-
-	//Fetch the golden votes
-	$query = "SELECT distinct MovieID from  VOTE WHERE Season = '" . $CurrentSeason . "' AND Golden = 1";
-	$result = $this->query($query);
-	if (!$result)
-        {
-            return FALSE;
-        }
-
-        while($row = mysql_fetch_assoc($result))
-        {
- 	    $GoldenVotes[$NumGoldenVotes++] = $row["MovieID"];
-	}
-	    
-
         //Fetch the votes
-        $query = "SELECT m.MovieID, COUNT(v.VoteID) AS TotalVotes FROM VOTE v JOIN MOVIE m ON v.MovieID = m.MovieID WHERE v.Season = '" . $CurrentSeason . "' GROUP BY v.MovieID ORDER BY TotalVotes DESC";
+        $query = "SELECT m.MovieID, COUNT(v.VoteID) AS TotalVotes, SUM(v.Golden) AS TotalGoldenVotes FROM VOTE v JOIN MOVIE m ON v.MovieID = m.MovieID WHERE v.Season = '" . $CurrentSeason . "' GROUP BY v.MovieID ORDER BY TotalVotes DESC, TotalGoldenVotes DESC";
         $result = $this->query($query);
         if (!$result)
         {
             return FALSE;
         }
 
-        //Add extra tickets for each vote, and auto-approve movies with sufficient votes
+        //Add tickets for each vote, and auto-approve movies with sufficient votes
         while($row = mysql_fetch_assoc($result))
         {
-	    //Add a ton of votes if the movie got a golden  vote.
-	    for ($i = 0; $i < $NumGoldenVotes; $i++)
-	    {
-		if ($row["MovieID"] == $GoldenVotes[$i])
-		{
-		    $row["TotalVotes"] = 1000;
-                    break;
- 		}
-	    }
-
-            if ($row["TotalVotes"] >= $VotesPerAutoApprove)
+	    if ($row["TotalGoldenVotes"] > 0 || $row["TotalVotes"] >= $VotesPerAutoApprove)
             {
                 //auto-approve
                 $movie = new MOVIE();
                 $movie->Load($row["MovieID"]);
                 $this->AddToUnplayedList($movie);
                 $QuotasFull = $this->UpdateQuotas($movie, $QuotaList, $NumQuotas);
-                $this->RemoveTickets($Tickets, $NumTickets, $row["MovieID"]);
-                $TotalMovies--;
+		$AutoApprovedMovies[$NumAutoApprovedMovies++] = $row["MovieID"];
             }
             else
             {
@@ -453,8 +426,43 @@ class MOVIE_LIST extends RTT_COMMON
             }
         }
 
+        $VoteTickets = $NumTickets;
+
+        //Fetch the full pool of movies
+        $query = "SELECT m.MovieID, (m.Freshness + m.MetaScore) AS CriticScore FROM MOVIE m JOIN MOVIE_LIST l on l.MovieID = m.MovieID where l.Name = 'Ballot'";
+        $result = $this->Query($query);
+        if (!$result)
+        {
+            return FALSE;
+        }
+
+        //Assign tickets based on critic score for each non-auto-approved movie
+        while($row = mysql_fetch_assoc($result))
+        {
+	    $MovieAutoApproved = FALSE;
+
+            for ($i = 0; $i < $NumAutoApprovedMovies; $i++)
+	    {
+	        if ($row["MovieID"] == $AutoApprovedMovies[$i])
+    		{
+		    $MovieAutoApproved = TRUE;
+		    break;
+		}
+	    }
+
+	    if (!$MovieAutoApproved)
+	    {
+                $TotalMovies++;
+                for ($i = 0; $i < $row["CriticScore"]; $i++)
+                {
+                    $Tickets[$NumTickets++] = $row["MovieID"];
+                }
+    	    }
+        }
+
         echo $NumTickets . " tickets.<BR>";
-        echo $NumTickets - $FreshnessTickets . " (" . (($NumTickets - $FreshnessTickets)/$NumTickets)*100 . "%) come from votes.<BR>";
+        echo $NumTickets - $VoteTickets . " come from critic score.<BR>";
+        echo $VoteTickets . " (" . ($VoteTickets/$NumTickets)*100 . "%) come from votes.<BR>";
         //Add all movies to either the unplayed movie list or backup movie list
         for($i = 0; $i < $TotalMovies; $i++)
         {
