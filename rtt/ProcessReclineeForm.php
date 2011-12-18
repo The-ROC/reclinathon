@@ -10,10 +10,14 @@ $URL = "http://" . $_SERVER['SERVER_NAME'] . "/rtt/ControlCenter.php";
 
 if ($result)
 {
-    header ("Location: $URL");
+    echo "Success!";
+    echo "<meta http-equiv='refresh' content=\"0;url=" . $URL . "\" />";
+}
+else
+{
+    echo "Failed to update your user information.  Please verify the form fields and try again.<br />";
 }
 
-echo "Failed to update your user information.  Please verify the form fields and try again.<br />";
 echo "<a href='" . $URL . "'>Go back</a>";
 
 ?>
