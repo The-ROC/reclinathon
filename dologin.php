@@ -1,11 +1,12 @@
 <?php
 
 session_start();
+$_SESSION = array();
+session_destroy();
+session_start();
+$_SESSION = array();
 
 include "include/connect.php";
-
-$_SESSION = array();
-session_regenerate_id(TRUE);
 
 $LoginSuccessful = FALSE;
 $user = $_POST["username"];
