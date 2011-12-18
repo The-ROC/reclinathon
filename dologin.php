@@ -4,6 +4,9 @@ session_start();
 
 include "include/connect.php";
 
+$_SESSION = array();
+session_regenerate_id(TRUE);
+
 $LoginSuccessful = FALSE;
 $user = $_POST["username"];
 $password = $_POST["password"];
