@@ -122,8 +122,15 @@ function ShowAll()
 
 <FORM NAME='vote' ACTION="vote.php" METHOD="post">
 <?php 
-$reclinee = new RECLINEE();
-$reclinee->DisplayRocMemberList();
+if ($_POST["ReclineeID"] == "")
+{
+    $reclinee = new RECLINEE();
+    $reclinee->DisplayRocMemberList();
+}
+else
+{
+    echo "<INPUT TYPE='HIDDEN' NAME='ReclineeID' VALUE='" . $_POST["ReclineeID"] . "'>";
+}
 ?>
 <INPUT TYPE="HIDDEN" NAME="GoldenMovieID" VALUE="">
 <INPUT TYPE="TEXT" NAME="MoviesSelected" VALUE="LOADING..."  style="border: 0px; text-align:right" readonly>

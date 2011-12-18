@@ -63,7 +63,7 @@ require_once("config.php");
   <?php 
   $leftAligned = array(array("name"=>"home", "url"=>BASE_URL . "index.php"),
 		       array("name"=>"about", "url"=>BASE_URL . "about.php"),
-		       array("name"=>"register", "url"=>BASE_URL . "register"),
+		       array("name"=>"register", "url"=>BASE_URL . "register.php"),
 		       array("name"=>"tracking", "url"=>BASE_URL . "tracking_wrapper.php"));
   $rightAligned = array(array("name"=>"login", "url"=>BASE_URL . "login.php"));
   

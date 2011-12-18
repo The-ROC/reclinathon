@@ -53,3 +53,8 @@ a:hover
 {
   color: #dddddd;
 }
+
+table.commandcenter
+{
+  border:0px solid white;
+}
