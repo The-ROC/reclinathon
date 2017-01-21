@@ -2,9 +2,8 @@
 
 session_start();
 
-include "RECLINATHON_CONTEXT.php";
-
 $ReclineeID = $_SESSION["ReclineeID"];
+//$ReclineeID = $_POST["ReclineeID"];
 
 //$_SESSION = array();
 
@@ -12,9 +11,12 @@ $ReclineeID = $_SESSION["ReclineeID"];
 
 if ($ReclineeID == "")
 {
-    $URL = "http://" . $_SERVER['SERVER_NAME'] . "/login.php";
+    $URL = "http://" . $_SERVER['SERVER_NAME'] . "/login.php?message=You must log in to access the command center.";
     header ("Location: $URL");
+    //echo "<meta http-equiv='refresh' content=\"0;url=" . $URL . "\" />";
+    exit();
 }
+include "RECLINATHON_CONTEXT.php";
 
 $reclinee = new RECLINEE();
 $reclinee->Load($ReclineeID);
@@ -27,7 +29,7 @@ echo "</head>";
 
 echo "<body class='noborder'>";
 
-$currentPage = "login";
+$currentPage = "command center";
 include "../header.php";
 
 echo "<div class='main'>";
@@ -44,15 +46,47 @@ echo "<table class='commandcenter' cellspacing='20'>";
 
 echo "<tr><td>Edit your user information.</td><td><form action='EditReclinee.php' method='post'>" . $ReclineeIDInput . "<input type='submit' value='Go' /></form></tr>";
 
-echo "<tr><td>Vote for the movies you want to see at this year's Reclinathon.</td><td>";
-if ($reclinee->HasVoted())
+// Update this to true when an election is in progress.
+$voteActive = true;
+
+if ($voteActive)
 {
-    echo "Done! Thank you for voting.";
+    echo "<tr><td>Vote for the movies you want to see at this year's Reclinathon.</td><td>";
+    if ($reclinee->HasVoted())
+    {
+        echo "Done! Thank you for voting.";
+    }
+    else
+    {
+        echo "<form action='SpecialElection.php' method='post'>" . $ReclineeIDInput . "<input type='submit' value='Go' /></form>";
+    }
+    echo "</td></tr>";
 }
-else
+
+// Get the active quiz metadata.
+$query = "SELECT * FROM QUIZ_METADATA WHERE ACTIVE = '1'";
+$result = $reclinee->Query($query);
+$row = mysql_fetch_assoc($result);
+
+if ($row["QuizName"] != "")
 {
-    echo "<form action='display.php' method='post'>" . $ReclineeIDInput . "<input type='submit' value='Go' /></form>";
+    $introMessage = $row["IntroMessage"];
+    $completionMessage = $row["CompletionMessage"];
+    echo "<tr><td>$introMessage</td><td>";
+    if ($reclinee->HasAnsweredQuiz($row["QuizName"]))
+    {
+        echo $completionMessage;
+    }
+    else
+    {
+        echo "<form action='quiz.php' method='post'>" . $ReclineeIDInput . "<input type='submit' value='Go' /></form>";
+    }
+    echo "</td></tr>";
 }
+
+echo "<tr><td>Log out</td><td>";
+$URL = "http://" . $_SERVER['SERVER_NAME'] . "/logout.php";
+echo "<form action='$URL' method='post'><input type='submit' value='Go' /></form>";
 echo "</td></tr>";
 
 echo "</form></table><br />";

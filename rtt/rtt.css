@@ -49,9 +49,35 @@ TH.right
   margin-right: 5px;
 }
 
+TH.theme
+{
+  font-size: 120%;
+  background-color: #9c4a08;
+  color: #ffe29e;
+  text-align: left;
+  margin-left: 5px;
+}
+
+TH.themeRight
+{
+  font-size: 90%;
+  background-color: #9c4a08;
+  color: #ffe29e;
+  text-align: right;
+  margin-right: 5px;
+}
+
 TD
 {
   background-color: #C6D9F1;
+  border-width: 1px 1px 0 0;
+  color: black;
+  padding: 0px; 
+}
+
+TD.theme
+{
+  background-color: #fae1c3;
   border-width: 1px 1px 0 0;
   color: black;
   padding: 0px; 

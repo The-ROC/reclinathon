@@ -36,22 +36,37 @@ a:link
   text-decoration: none;
   color: #aaaaaa;
 }
-
 a:visited
 {
   text-decoration: none;
   color: #aaaaaa;
 }
-
 a:active
 {
   text-decoration: none;
   color: #aaaaaa;
 }
-
 a:hover
 {
   color: #dddddd;
+}
+
+a.live:link {
+    text-decoration: none;
+    color: #cccccc;
+}
+a.live:visited {
+    text-decoration: none;
+    color: #cccccc;
+}
+a.live:active {
+    text-decoration: none;
+    color: #cccccc;
+}
+a.live:hover {
+    text-decoration: none;
+    color: #ffffff;
+    cursor: hand;
 }
 
 table.commandcenter

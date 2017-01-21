@@ -184,7 +184,7 @@ class RECLINEE extends RTT_COMMON
         return $this->ReclineeID;
     }
 
-    public function Hasvoted()
+    public function HasVoted()
     {
         $CurrentSeason = $this->GetCurrentSeason();
 
@@ -197,6 +197,51 @@ class RECLINEE extends RTT_COMMON
         }
 
         return true;
+    }
+
+    public function HasAnsweredQuiz($quizName)
+    {
+        $LatestQuestionOrder = 0;
+        $LastQuestionOrder = 0;
+
+        $query = "SELECT MAX(q.Ordering) AS LatestQuestionOrder FROM QUIZ_ANSWERS a JOIN QUIZ_QUESTION q ON q.QuestionID = a.QuestionID WHERE q.Season = '" . $quizName. "' AND a.ReclineeID = '" . $this->ReclineeID . "'";
+        $result = $this->query($query);
+
+        if (!$result)
+        {
+            return false;
+        }
+
+        $row = mysql_fetch_assoc($result);
+
+        if ($row["LatestQuestionOrder"] != "")
+        {
+            $LatestQuestionOrder = $row["LatestQuestionOrder"]; 
+        }
+
+        $query = "SELECT MAX(Ordering) AS LastQuestionOrder FROM QUIZ_QUESTION WHERE Season = '" . $quizName. "'";
+        $result = $this->query($query);
+
+        if (!$result)
+        {
+            return false;
+        }
+
+        $row = mysql_fetch_assoc($result);
+
+        if (!$row || $row["LastQuestionOrder"] == "")
+        {
+            return false;
+        }
+
+        $LastQuestionOrder = $row["LastQuestionOrder"];
+
+        if ($LatestQuestionOrder == $LastQuestionOrder)
+        {
+            return true;
+        }
+
+        return false;
     }
 
     public function __tostring()

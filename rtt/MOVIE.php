@@ -33,6 +33,10 @@ class MOVIE extends RTT_COMMON
     protected $Metascore;	// INT
     protected $NumActors;	// INT
     protected $Actors;		// STRING list
+	protected $ThemeMovie;   // BOOL
+	protected $HighlightThemeMovies; // BOOL
+	protected $SpecialEvent; // BOOL
+	protected $ShowVoting; // BOOL
    
     function __construct() 
     {
@@ -48,7 +52,21 @@ class MOVIE extends RTT_COMMON
         $this->Year = 0;
         $this->Metascore = 0;
         $this->NumActors = 0;
+		$this->ThemeMovie = false;
+		$this->HighlightThemeMovies = false;
+		$this->SpecialEvent = false;
+		$this->ShowVoting = true;
     }
+	
+	public function HideVotingInfo()
+	{
+		$this->ShowVoting = false;
+	}
+	
+	public function HighlightThemeMovies()
+	{
+		$this->HighlightThemeMovies = true;
+	}
 
     public function Load($MovieID)
     {
@@ -86,6 +104,14 @@ class MOVIE extends RTT_COMMON
 
         while ($row = mysql_fetch_assoc($result))
         {
+			if ($row["Name"] == "Reclinathon Theme")
+			{
+				$this->ThemeMovie = true;
+			}
+			else if ($row["Name"] == "Reclinathon Special Event")
+			{
+				$this->SpecialEvent = true;
+			}
             $this->Genres[$this->NumGenres] = new GENRE($row["GenreID"], $row["Name"], $row["Canonical"]);
             $this->NumGenres++;
         }
@@ -126,6 +152,11 @@ class MOVIE extends RTT_COMMON
         {
             if ($_POST["genre" . $row[GenreID]] != "")
             {
+				if ($row["Name"] == "Reclinathon Theme")
+			    {
+				    $this->ThemeMovie = true;
+			    }
+				
                 $this->Genre += $row["Value"];
                 $this->Genres[$this->NumGenres] = new GENRE($row["GenreID"], $row["Name"], $row["Canonical"]);
                 $this->NumGenres++;
@@ -172,6 +203,10 @@ class MOVIE extends RTT_COMMON
             }
 
             $row = mysql_fetch_assoc($result);
+			if ($row["Name"] == "Reclinathon Theme")
+			{
+				$this->ThemeMovie = true;
+			}
             $this->Genres[$this->NumGenres] = new GENRE($row["GenreID"], $row["Name"], $row["Canonical"]);
             $this->NumGenres++;
         }        
@@ -233,6 +268,11 @@ class MOVIE extends RTT_COMMON
     public function GetID()
     {
         return $this->MovieID;
+    }
+	
+	public function GetTitle()
+    {
+        return $this->Title;
     }
 
     public function DisplayImage()
@@ -355,7 +395,17 @@ class MOVIE extends RTT_COMMON
     public function DisplayModule()
     {
         echo "<TABLE>";
-        echo "<TR cellspacing='0'><TH>";
+        echo "<TR cellspacing='0'>";
+		
+		if ($this->HighlightThemeMovies && $this->ThemeMovie)
+		{
+			echo "<TH class='theme'>";
+		}
+		else
+		{
+			echo "<TH>";
+		}
+		
         //echo "<A HREF = 'insert.php?class=MOVIE&ObjectID=" . $this->MovieID . "'>";
         echo $this->Title;
 
@@ -365,17 +415,32 @@ class MOVIE extends RTT_COMMON
         }
 
         //echo "</A>";
-        echo "</TH><TH CLASS='right'>" . $this->Freshness . "%";
+        echo "</TH>";
+		
+		$class = ($this->HighlightThemeMovies && $this->ThemeMovie) ? "themeRight" : "right";
+		echo "<TH CLASS='$class'>";
+		
+		if ($this->Freshness != 0 && $this->Freshness != "")
+		{
+			echo "$this->Freshness" . "%";
+		}
 
         if ($this->Metascore != 0 && $this->Metascore != "")
         {
             echo "(" . $this->Metascore . ")";
         }
 
-        echo "<INPUT TYPE='checkbox' NAME='vote" . $this->MovieID . "' ID='vote" . $this->MovieID . "' VALUE='movie" . $this->MovieID . "' onclick='ToggleDisplay(this)'><INPUT TYPE='button' VALUE='GOLD' onclick='SetGolden(" . $this->MovieID . ", \"" . $this->Title . "\")'></TH></TR>";
-        echo "<TR ID='movie" . $this->MovieID . "'><TD>";
+		$OpenCellTag = ($this->HighlightThemeMovies && $this->ThemeMovie) ? "<TD class='theme'>" : "<TD>";
+		$inputClass = ($this->ThemeMovie) ? "themeMovie" : "generalMovie";
+		
+		if ($this->ShowVoting)
+		{
+            echo "<INPUT TYPE='checkbox' CLASS='$inputClass' NAME='vote" . $this->MovieID . "' ID='vote" . $this->MovieID . "' VALUE='movie" . $this->MovieID . "' onclick='ToggleDisplay(this)'><INPUT TYPE='button' VALUE='GOLD' onclick='SetGolden(" . $this->MovieID . ", \"" . $this->Title . "\")'>";
+		}
+		echo "</TH></TR>";
+        echo "<TR ID='movie" . $this->MovieID . "'>$OpenCellTag";
         echo $this->DisplayImage();
-        echo "</TD><TD>";
+        echo "</TD>$OpenCellTag";
         echo "<B><U><FONT SIZE='+2'>Genre(s):</FONT></U></B>" . $this->DisplayGenres() . "<BR><BR><B><U><FONT SIZE='+2'>Runtime:</FONT></U></B><BR>" . $this->RunTime . " min";
         echo "<BR><BR><B><U><FONT SIZE='+2'>Cast and Crew:</FONT></U></B><BR>Director: " . $this->Director . "<BR>" . $this->DisplayCast();
         echo "<BR><BR><BR><A HREF='" . $this->IMDBLink . "' target='_blank'>IMDB</A><BR><A HREF = '" . $this->TrailerLink . "' target='_blank'>Trailer</A></TD></TR>";
@@ -425,6 +490,98 @@ class MOVIE extends RTT_COMMON
                 $GenreRunTimes[$movie->Genres[$i]->GenreID] += $movie->RunTime;
             }
         }
+        echo "<BR>Total Run Time:  " . ((int)($TotalRunTime / 60)) . " hours " . $TotalRunTime % 60 . " min<BR>";
+
+        $query = "SELECT * FROM GENRE";
+        $result = $this->query($query);
+        while ($row = mysql_fetch_assoc($result))
+        {
+            echo "<BR>" . $row["Name"];
+            if ($row["Canonical"] == 1)
+            {
+                echo "*";
+            }
+            echo ":  " . $GenreRunTimes[$row["GenreID"]] . " min";
+        }
+
+    }
+	
+	public function DisplaySpecialElection()
+    {
+        $TotalRunTime = 0;
+        $GenreRunTimes;
+
+        $query = "SELECT m.MovieID FROM MOVIE m JOIN MOVIE_LIST l ON m.MovieID = l.MovieID WHERE l.Name = 'Ballot' ORDER BY (m.Freshness + m.Metascore) DESC";
+        $result = $this->Query($query);
+        if (!$result)
+        {
+            return FALSE;
+        }
+
+        echo "<INPUT TYPE='button' VALUE='Reset' onclick='HideAll()'><INPUT TYPE='button' VALUE='Select All' onclick='ShowAll()'><BR>";
+		$ThemeMovies = array();
+		$GeneralMovies = array();
+		$SpecialEvents = array();
+        while($row = mysql_fetch_assoc($result))
+        {
+            $movie = new MOVIE();
+            $movie->Load($row["MovieID"]);
+			$movie->HighlightThemeMovies();
+			
+			if ($movie->ThemeMovie)
+			{
+				array_push($ThemeMovies, $movie);
+			}
+			else if ($movie->SpecialEvent)
+			{
+				array_push($SpecialEvents, $movie);
+			}
+			else
+			{
+				array_push($GeneralMovies, $movie);
+			}
+		}
+		
+		if (count($ThemeMovies) > 0)
+		{
+		    echo "<BR><H2>Special Election: Reclinathon Theme Movies<BR><I><U>'In Memoriam 2016: So Long, and Thanks for all the Fish'</I></U></H2>";
+			echo "At this year's Reclinathon, we'll honor some of the acting legends that were lost this year.  What better tribute can be offered than a screening of your film in Mary's basement with a bunch of idiots?  Some of those being recognized in the special election ballot are:<br><ul><li>Alan Rickman (Die Hard, Alice Through the Looking Glass)</li><li>Gene Wilder (Blazing Saddles, Willy Wonka and the Chocolate Factory)</li><li>David Bowie (Labyrinth)</li><li>Prince (Purple Rain)</li><li>David Huddleston (The Big Lebowski)</li><li>Jon Polito (The Big Lebowski)</li><li>Anton Yelchin (Star Trek Beyond)</li><li>Gary Shandling (The Jungle Book)</li><li>Kenny Baker (Star Wars: Episode VII - The Force Awakens)</li></ul><br>";
+		    foreach ($ThemeMovies as &$movie)
+		    {			
+                $movie->DisplayModule();
+                $TotalRunTime += $movie->RunTime;
+                for ($i = 0; $i < $movie->NumGenres; $i++)
+                {
+                    $GenreRunTimes[$movie->Genres[$i]->GenreID] += $movie->RunTime;
+                }
+            }
+		}
+		
+		if (count($SpecialEvents) > 0)
+		{
+		    echo "<BR><H2>Reclinathon Special Events</H2>";
+		    foreach ($SpecialEvents as &$movie)
+		    {			
+                $movie->DisplayModule();
+                $TotalRunTime += $movie->RunTime;
+                for ($i = 0; $i < $movie->NumGenres; $i++)
+                {
+                    $GenreRunTimes[$movie->Genres[$i]->GenreID] += $movie->RunTime;
+                }
+            }
+		}
+		
+		echo "<BR><H2>General Election</H2>";
+		foreach ($GeneralMovies as &$movie)
+		{			
+            $movie->DisplayModule();
+            $TotalRunTime += $movie->RunTime;
+            for ($i = 0; $i < $movie->NumGenres; $i++)
+            {
+                $GenreRunTimes[$movie->Genres[$i]->GenreID] += $movie->RunTime;
+            }
+        }
+		
         echo "<BR>Total Run Time:  " . ((int)($TotalRunTime / 60)) . " hours " . $TotalRunTime % 60 . " min<BR>";
 
         $query = "SELECT * FROM GENRE";

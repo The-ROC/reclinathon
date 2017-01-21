@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Reclining Ratio Plotter</title>
+  <script language="JavaScript" src="plotter.js"></script>
+</head>
+
+<body onload="createPlotter();">
+
+<select id="seasonBox" />
+<input id="colorBox" type="text" value="blue"/>
+<button type="button" onclick="draw();">Get Reclining Ratio</button>
+<br />
+<br />
+<table>
+	<tr>
+		<td>Smallest reclining ratio</td>
+		<td>Largest reclining ratio</td>
+		<td>Smallest time in seconds</td>
+		<td>Largest time in seconds</td>
+		<td> </td>
+	</tr>
+	<tr>
+		<td><input id="verticalMinBox" type="text" value="0.0" /></td>
+		<td><input id="verticalMaxBox" type="text" value="1.0" /></td>
+		<td><input id="horizontalMinBox" type="text" value="0" /></td>
+		<td><input id="horizontalMaxBox" type="text" value="112000" /></td>
+		<td><button type="button" onclick="changeScale();">Change Scale</button><input type="text" id="valueBox" style="border:1px solid white" readOnly /></td>
+	</tr>
+</table>
+
+</body>
+</html>

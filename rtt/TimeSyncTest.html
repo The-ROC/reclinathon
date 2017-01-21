@@ -1,0 +1,301 @@
+<HTML>
+<HEAD>
+<title>Reclinathon Sync Test</title>
+<link rel="stylesheet" type="text/css" href="rtt.css" />
+
+<script language="JavaScript">
+<!-- Begin
+
+var startTime = 0;
+var timerInterval = 100;
+
+var callOpenTime = 0;
+var callSendTime = 0;
+var openedTime = 0;
+var headersReceivedTime = 0;
+var loadingTime = 0;
+var responseReceivedTime = 0;
+var serverHeaderTime = 0;
+var serverBodyTime = 0;
+var requestDuration = 0;
+var clientServerRawDelta = 0;
+var estimatedClientSyncTime = 0;
+var clientServerAdjustedDelta = 0;
+var minimumRequestDuration = 0;
+var serverSyncTime = 0;
+var accuracy = 0;
+var mediaStartTime = 1456378260131;
+var mediaDuration = 442000;
+var mediaTimeStamp = 0;
+var actualTimeStamp = 0;
+var timeStampDelta = 0;
+var averageTimeStampDelta = 0;
+var timeStampDeltaCalculations = 0;
+var syncRequested = false;
+var syncInProgress = false;
+var seekOperationOverhead = 0;
+var seekOperationStart = 0;
+
+function ajaxFunction()
+{
+var xmlHttp;
+try
+  {
+  // Firefox, Opera 8.0+, Safari
+  xmlHttp=new XMLHttpRequest();
+  }
+catch (e)
+  {
+  // Internet Explorer
+  try
+    {
+    xmlHttp=new ActiveXObject("Msxml2.XMLHTTP");
+    }
+  catch (e)
+    {
+    try
+      {
+      xmlHttp=new ActiveXObject("Microsoft.XMLHTTP");
+      }
+    catch (e)
+      {
+      alert("Your browser does not support AJAX!");
+      return false;
+      }
+    }
+  }
+  
+  xmlHttp.onreadystatechange=function() {
+    if(xmlHttp.readyState==1) {
+          openedTime = (new Date()).getTime();
+          callSendTime = (new Date()).getTime();
+          xmlHttp.send(null);
+    }
+    else if(xmlHttp.readyState==2) {
+          headersReceivedTime = (new Date()).getTime();
+          serverHeaderTime = Number(xmlHttp.getResponseHeader("X-CurrentTime"));
+    }
+    else if(xmlHttp.readyState==3) {
+          loadingTime = (new Date()).getTime();       
+    }
+    else if(xmlHttp.readyState==4) {
+          responseReceivedTime = (new Date()).getTime();          
+          requestDuration = headersReceivedTime - callSendTime;
+          
+          
+          if (minimumRequestDuration == 0 || requestDuration < minimumRequestDuration)
+          {
+             minimumRequestDuration = requestDuration;
+             estimatedClientSyncTime = callSendTime + (requestDuration / 2);
+             serverSyncTime = serverHeaderTime;
+             
+             clientServerRawDelta = serverHeaderTime - callSendTime;      
+             clientServerAdjustedDelta = serverHeaderTime - estimatedClientSyncTime;
+             
+             accuracy = minimumRequestDuration / 2;
+          }
+          
+          document.getElementById('requestStatus').value = "Done";
+          document.getElementById('callSendTime').value = callSendTime;
+          document.getElementById('headersReceivedTime').value = headersReceivedTime;
+          document.getElementById('responseReceivedTime').value = responseReceivedTime;       
+          document.getElementById('requestDuration').value = requestDuration;
+                  
+          document.getElementById('minimumRequestDuration').value = minimumRequestDuration;
+          
+          document.getElementById('clientServerRawDelta').value = clientServerRawDelta;
+          document.getElementById('clientServerAdjustedDelta').value = clientServerAdjustedDelta;
+          
+          document.getElementById('estimatedClientSyncTime').value = estimatedClientSyncTime;
+          document.getElementById('serverSyncTime').value = serverSyncTime;
+          document.getElementById('accuracy').value = accuracy;
+    }
+  };
+
+  document.getElementById('requestStatus').value = "Submitting";
+  
+  callOpenTime = (new Date()).getTime();
+  xmlHttp.open("GET","GetTime.php",true);  
+}
+
+function Sync()
+{
+    ajaxFunction();
+    var updatedVideo = document.getElementById("test-video");
+    if (!updatedVideo.paused && !updatedVideo.ended)
+    {
+        updatedVideo.pause();
+        updatedVideo.play();
+    }
+}
+
+function Days(data) {
+
+    return ( Math.floor(data/(1000*60*60*24)) );
+}
+
+function Hours(data) {
+
+    return ( Math.floor(data/(1000*60*60)) % 24 );
+}
+
+function Minutes(data) {
+
+    return ( Math.floor(data/(1000*60)) % 60 );
+}
+
+function Seconds(data) {
+
+    return ( Math.floor(data/1000) % 60);
+}
+
+function Display(hours,min,sec) {
+
+    var disp = "";
+
+    if(hours<=9) disp += "0";
+
+    disp +=hours+":";
+ 
+    if(min<=9) disp += "0";
+
+    disp+=min+":";
+
+    if(sec<=9) disp+="0";
+
+    disp+=sec;
+
+    return(disp); 
+}
+
+function Down() {
+    startTime = ((new Date()).getTime());
+    
+    var video = document.getElementById("test-video");
+    
+    video.addEventListener("playing", function () {
+       DownRepeat();
+       seek(mediaTimeStamp / 1000);
+	   averageTimeStampDelta = 0;
+       timeStampDeltaCalculations = 0;
+     }, false);
+     
+     video.addEventListener("timeupdate", function () {
+       var updatedVideo = document.getElementById("test-video");       
+       actualTimeStamp = updatedVideo.currentTime * 1000;
+       
+	   DownRepeat();
+	   
+       var currentTime = ((new Date()).getTime());
+       
+        timeStampDelta = (mediaTimeStamp / 1000) - updatedVideo.currentTime;
+        timeStampDeltaCalculations++;
+        averageTimeStampDelta = ((averageTimeStampDelta * (timeStampDeltaCalculations - 1)) + timeStampDelta) / timeStampDeltaCalculations; 
+               
+        if (syncRequested && !syncInProgress)
+        {
+		    seekOperationStart = ((new Date()).getTime());
+		    updatedVideo.currentTime += timeStampDelta;
+			while (updatedVideo.seeking)
+			{
+			}
+			seekOperationOverhead = ((new Date()).getTime()) - seekOperationStart;
+			updatedVideo.currentTime += (2*(seekOperationOverhead / 1000));
+			//syncInProgress = true;	
+            syncRequested = false;			
+        }
+        else if (syncInProgress)
+        { 
+		    if (updatedVideo.seeking)
+			{
+				//seekOperationOverhead = timeStampDelta;		
+			}
+            else
+			{
+			    seekOperationOverhead = currentTime - seekOperationStart;
+				updatedVideo.currentTime += (timeStampDelta + (seekOperationOverhead / 1000));
+				syncInProgress = false;
+				syncRequested = false;
+				averageTimeStampDelta = 0;
+				timeStampDeltaCalculations = 0;
+			}
+        }
+     }, false);
+     
+    DownRepeat();
+}
+
+function DownRepeat() {
+    var currentTime = ((new Date()).getTime());
+        
+    if (estimatedClientSyncTime != 0)
+    {
+        var serverMillisElapsed = currentTime - estimatedClientSyncTime;
+        var currentTimeRst = new Date(serverSyncTime + serverMillisElapsed);        
+        mediaTimeStamp = (currentTimeRst.getTime() - mediaStartTime) % mediaDuration;
+                
+        document.getElementById('rstDisplay').value=Display(currentTimeRst.getHours(), currentTimeRst.getMinutes(), currentTimeRst.getSeconds());
+        document.getElementById('averageTimeStampDelta').value = averageTimeStampDelta;
+        document.getElementById('timeStampDelta').value = timeStampDelta;
+		document.getElementById('seekOperationOverhead').value = seekOperationOverhead;
+        document.getElementById('mediaTimeStamp').value=Display(Hours(mediaTimeStamp), Minutes(mediaTimeStamp), Seconds(mediaTimeStamp));       
+        document.getElementById('actualMediaTimeStamp').value=Display(Hours(actualTimeStamp), Minutes(actualTimeStamp), Seconds(actualTimeStamp));
+    }
+
+    var localMillisElapsed =  currentTime - startTime;
+    var currentTimeLocal = new Date(startTime + localMillisElapsed);
+    document.getElementById('localTimeDisplay').value=Display(currentTimeLocal.getHours(), currentTimeLocal.getMinutes(), currentTimeLocal.getSeconds());
+
+    setTimeout("DownRepeat()", timerInterval);  
+}
+
+function seek (seconds) {
+    var video = document.getElementById("test-video");
+    video.currentTime = seconds;
+}
+
+function AdjustMediaSync()
+{
+    syncRequested = true;
+}
+
+// End -->
+</script>
+
+</HEAD>
+<BODY bgcolor='white' onload='Down()'>
+Local Time: <input type='text' name='localTimeDisplay' id='localTimeDisplay' value="00:00:00" /><br /><br />
+Reclinathon Standard Time: <input type='text' name='rstDisplay' id='rstDisplay' value="00:00:00" /><br /><br />
+<button onclick='Sync()'>Sync</button><button onclick='AdjustMediaSync()'>Adjust Media Sync</button><br /><br />
+Request Status <input type='text' name='requestStatus' id='requestStatus' value="Not Submitted" /><br />
+Call Send Time <input type='text' name='callSendTime' id='callSendTime' value="0" /><br />
+Headers Received Time <input type='text' name='headersReceivedTime' id='headersReceivedTime' value="0" /><br />
+Response Received Time <input type='text' name='responseReceivedTime' id='responseReceivedTime' value="0" /><br />
+Request Duration <input type='text' name='requestDuration' id='requestDuration' value="0" /><br />
+<br />
+Minimum Request Duration <input type='text' name='minimumRequestDuration' id='minimumRequestDuration' value="0" /><br />
+Raw Delta <input type='text' name='clientServerRawDelta' id='clientServerRawDelta' value="0" /><br />
+Adjusted Delta <input type='text' name='clientServerAdjustedDelta' id='clientServerAdjustedDelta' value="0" /><br />
+<br />
+Client Sync Time <input type='text' name='estimatedClientSyncTime' id='estimatedClientSyncTime' value="0" /><br />
+Server Sync Time <input type='text' name='serverSyncTime' id='serverSyncTime' value="0" /><br />
+Accuracy <input type='text' name='accuracy' id='accuracy' value="0" /><br />
+<br />
+<br />
+Desired Media Time Stamp <input type='text' name='mediaTimeStamp' id='mediaTimeStamp' value="0" /><br />
+Actual Media Time Stamp <input type='text' name='actualMediaTimeStamp' id='actualMediaTimeStamp' value="0" /><br />
+Instantaneous Time Stamp Delta <input type='text' name='timeStampDelta' id='timeStampDelta' value="0" /><br />
+Average Time Stamp Delta <input type='text' name='averageTimeStampDelta' id='averageTimeStampDelta' value="0" /><br />
+Sync Operation Overhead <input type='text' name='seekOperationOverhead' id='seekOperationOverhead' value="0" /><br />
+<video id="test-video" class="video-js" controls preload="auto" width="640" height="264" data-setup="{}">
+    <source src="http://reclinathon.com/media/ReclinathonTrailer2015_720.mp4" type='video/mp4'>
+    <p class="vjs-no-js">
+      To view this video please enable JavaScript, and consider upgrading to a web browser that
+      <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+    </p>
+</video>
+
+</BODY>
+
+</HTML>
+

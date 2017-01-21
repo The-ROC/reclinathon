@@ -208,7 +208,7 @@ function DownRepeat() {
 $rcx->DisplayTitleLogo();
 
 
-echo "<BR><CENTER><TABLE CLASS='RttFrame'>";
+echo "<CENTER><A HREF='http://www.reclinathon.com/watch.php'>Watch Live</A><BR><BR><TABLE CLASS='RttFrame'>";
 
 //----------------
 // OLD TITLE TR
@@ -241,6 +241,7 @@ echo "<TR>";
   echo "<TD CLASS='RttFrame'>";
     if ($rcx->HasMovie())
     {
+		$rcx->GetMovie()->HideVotingInfo();
         $rcx->GetMovie()->DisplayModule();
     }
   echo "</TD>";

@@ -1,0 +1,39 @@
+<!DOCTYPE html> 
+<html> 
+
+<head>
+  <link href="http://vjs.zencdn.net/5.6.0/video-js.css" rel="stylesheet">
+  
+  <script language="JavaScript">
+
+  function seek (seconds) {
+        var video = document.getElementById("test-video");
+        video.currentTime = seconds;
+  }
+  
+  function seekClick() {
+        var seconds = Number(document.getElementById("seekBox").value);
+        seek(seconds);
+  }
+	
+  </script>
+</head>
+
+<body>
+  <video id="test-video" class="video-js" controls preload="auto" width="640" height="264" data-setup="{}">
+    <source src="CupSong.mp4" type='video/mp4'>
+    <p class="vjs-no-js">
+      To view this video please enable JavaScript, and consider upgrading to a web browser that
+      <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+    </p>
+  </video>
+
+  <?-- <script src="http://vjs.zencdn.net/5.6.0/video.js"></script> --?>
+  
+  <br />
+  <input type="text" name="seekBox" id="seekBox" />
+  <button onclick="seekClick();">Seek</button>
+</body>
+
+</body> 
+</html>

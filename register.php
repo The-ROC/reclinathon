@@ -98,7 +98,8 @@ if ($FormValid)
         if ($result)
         {
             $UserAdded = TRUE;
-            echo "Registration succeeded.";
+            $url = BASE_URL . "rtt/controlcenter.php";
+            echo "Registration succeeded.<br /><a href='$url'>Go to your command center</a>.";
             exit();
         }
         else

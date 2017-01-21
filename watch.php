@@ -1,20 +1,46 @@
 <html>
 <head><title>Reclinathon Live</title>
-<link rel="stylesheet" type="text/css" href="css/index_new.css" />
 </head>
 <body class="noborder">
 <div class="main">
 
 <?php
-$currentPage = "live"; 
+$currentPage = "watch live"; 
 include("header.php"); 
 ?>
 
-<center>
-<h1>Reclinathon Live</h1>
-<!--<br />-->
-<object width="640" height="385" id="lsplayer" classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"><param name="movie" value="http://cdn.livestream.com/grid/LSPlayer.swf?channel=reclinathon&amp;color=0xe7e7e7&amp;autoPlay=false&amp;mute=false&amp;iconColorOver=0x888888&amp;iconColor=0x777777"></param><param name="allowScriptAccess" value="always"></param><param name="allowFullScreen" value="true"></param><embed name="lsplayer" wmode="transparent" src="http://cdn.livestream.com/grid/LSPlayer.swf?channel=reclinathon&amp;color=0xe7e7e7&amp;autoPlay=false&amp;mute=false&amp;iconColorOver=0x888888&amp;iconColor=0x777777" width="640" height="385" allowScriptAccess="always" allowFullScreen="true" type="application/x-shockwave-flash"></embed></object><div style="font-size: 11px;padding-top:10px;text-align:center;width:640px">Watch <a href="http://www.livestream.com/?utm_source=lsplayer&amp;utm_medium=embed&amp;utm_campaign=footerlinks" title="live streaming video">live streaming video</a> from <a href="http://www.livestream.com/reclinathon?utm_source=lsplayer&amp;utm_medium=embed&amp;utm_campaign=footerlinks" title="Watch reclinathon at livestream.com">reclinathon</a> at livestream.com</div>
-</center>
+<h1 style="margin-bottom:20px;">Reclinathon Live</h1>
+Participate in Reclinathon remotely using Google Hangouts on your computer or mobile device.
+
+<h2 style="margin-bottom:5px;">Watch.</h2>
+Join our hangout to participate in Reclinathon from the comfort of your own desk recliner (you *are* sitting in a recliner by your computer, right?). Bonus points if stream the video to your TV.
+<br /> <br />
+<strong>
+	<a href="https://hangouts.google.com/call/styow2upujcp3hvhninl64l5uee" target="_blank" class="live">
+		Join the Reclinathon Hangout! 
+		<br />
+		<img src="/media/webcast_preview.png" />
+	</a>
+</strong>
+
+<br />
+
+<h2 style="margin-bottom:5px;">Interact.</h2>
+The hangout will be muted in the arena while movies are playing, but we’ll unmute it during downtime so you can speak with the athletes. Join the arena chat to send messages while movies are playing.    
+<br /> <br />
+<strong>
+	<a href="https://hangouts.google.com/group/boM5ECwudLIJIDVW2" target="_blank" class="live">
+		Join the Arena Chat!
+		<br />
+		<img src="/media/arena_chat_preview.png" />
+	</a>
+</strong>
+
+<br /><br />
+
+Merry Reclinathon! Enjoy the webcast, and we hope to see you in the arena next year!
+<br /><br />
+
 </div>
 </body>
 </html>

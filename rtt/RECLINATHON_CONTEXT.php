@@ -60,7 +60,7 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
             $this->RecliningState == 'Downtime'  ||
             ($this->RecliningState == 'Preseason' && $this->RecliningStateModifier == 'Final Countdown'))
         {
-            return true;
+            return ($this->Movie->GetID() != 0);
         }
         else
         {
@@ -533,6 +533,109 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
         print "</ContextList>";
     }
     
+	public function GetContextListBySeason($season)
+    {
+        $query = "SELECT * FROM RECLINATHON_CONTEXT WHERE Season = '" . $season . "' ORDER BY TimeStamp";
+        $result = $this->query($query);
+
+		$ContextList = array();
+        while($row = mysql_fetch_assoc($result))
+        {
+            $context = new RECLINATHON_CONTEXT();
+            $context->Load($row["ContextID"]);
+            $ContextList[] = $context;
+        }
+		
+		return $ContextList;
+    }
+	
+	public function GetMovieListBySeason($season)
+    {
+        $query = "SELECT * FROM RECLINATHON_CONTEXT WHERE Season = '" . $season . "' ORDER BY TimeStamp";
+        $result = $this->query($query);
+
+		$MovieList = array();
+        while($row = mysql_fetch_assoc($result))
+        {
+            $context = new RECLINATHON_CONTEXT();
+            $context->Load($row["ContextID"]);
+			
+			if ($context->RecliningState == "Reclining")
+			{
+				$title = $context->Movie->GetTitle();
+				if (!array_key_exists($title, $MovieList))
+				{
+					$MovieList[$title] = $context->Movie;
+				}
+			}
+        }
+		
+		return $MovieList;
+    }
+	
+    public function ShowRecliningRatio($season)
+    {
+        echo "<RecliningRatios>";
+        $ContextList = $this->GetContextListBySeason($season);
+        $Preseason = true;
+        $PreviousRecliningState = "";
+        $PreviousTimeStamp = 0;
+        $TimeReclined = 0;
+        $TotalTime = 0;
+		
+        foreach ($ContextList as $i => $context) 
+        {
+            if ($Preseason)
+            {
+                if ($context->RecliningState == "Reclining")
+                {
+                    $Preseason = false;
+                    $PreviousTimeStamp = $context->TimeStamp;
+                    $PreviousRecliningState = $context->RecliningState;
+                }
+				
+                continue;
+            }
+			
+            $TimeElapsed = $context->TimeStamp - $PreviousTimeStamp;
+			
+            if ("Reclining" == $PreviousRecliningState)
+            {
+                $TimeReclined += $TimeElapsed;
+            }
+			
+            $TotalTime += $TimeElapsed;
+			
+            $PreviousTimeStamp = $context->TimeStamp;
+            $PreviousRecliningState = $context->RecliningState;
+			
+            $RecliningRatio = $TimeReclined / $TotalTime;
+            echo "<RecliningRatio timestamp='$TotalTime' ratio='$RecliningRatio' />";
+
+            if ($context->RecliningState == "Postseason")
+            {
+                break;
+            }
+        }
+
+        echo "</RecliningRatios>";
+    }
+	
+	public function GetSeasons()
+    {
+        echo "<Seasons>";
+        
+		$query = "SELECT DISTINCT Season FROM RECLINATHON_CONTEXT ORDER BY Season DESC";
+        $result = $this->query($query);
+
+        while($row = mysql_fetch_assoc($result))
+        {
+		    $season = $row["Season"];
+		    echo "<Season name='$season' />";
+        }
+		
+        echo "</Seasons>";
+    }
 
     public function Insert()
     {
