@@ -37,6 +37,7 @@ class MOVIE extends RTT_COMMON
 	protected $HighlightThemeMovies; // BOOL
 	protected $SpecialEvent; // BOOL
 	protected $ShowVoting; // BOOL
+	protected $Synopsis; //STRING
    
     function __construct() 
     {
@@ -56,6 +57,7 @@ class MOVIE extends RTT_COMMON
 		$this->HighlightThemeMovies = false;
 		$this->SpecialEvent = false;
 		$this->ShowVoting = true;
+		$this->Synopsis = '';
     }
 	
 	public function HideVotingInfo()
@@ -93,6 +95,7 @@ class MOVIE extends RTT_COMMON
         $this->Year = $row["Year"];
         $this->Metascore = $row["Metascore"];
         $this->Director = $row["Director"];
+		$this->Synopsis = $row["Synopsis"];
 
         $this->NumGenres = 0;
         $query = "SELECT g.GenreID as GenreID, g.Name as Name, g.Canonical as Canonical FROM GENRE g JOIN MOVIE_GENRE mg ON g.GenreID = mg.GenreID WHERE mg.MovieID = " . $MovieID;
@@ -274,6 +277,11 @@ class MOVIE extends RTT_COMMON
     {
         return $this->Title;
     }
+	
+	public function GetSynopsis()
+	{
+		return $this->Synopsis;
+	}
 
     public function DisplayImage()
     {
@@ -441,6 +449,10 @@ class MOVIE extends RTT_COMMON
         echo "<TR ID='movie" . $this->MovieID . "'>$OpenCellTag";
         echo $this->DisplayImage();
         echo "</TD>$OpenCellTag";
+		if ($this->Synopsis != "")
+		{
+			echo "Synopsis:<BR>" . $this->Synopsis . "<BR>";
+		}
         echo "<B><U><FONT SIZE='+2'>Genre(s):</FONT></U></B>" . $this->DisplayGenres() . "<BR><BR><B><U><FONT SIZE='+2'>Runtime:</FONT></U></B><BR>" . $this->RunTime . " min";
         echo "<BR><BR><B><U><FONT SIZE='+2'>Cast and Crew:</FONT></U></B><BR>Director: " . $this->Director . "<BR>" . $this->DisplayCast();
         echo "<BR><BR><BR><A HREF='" . $this->IMDBLink . "' target='_blank'>IMDB</A><BR><A HREF = '" . $this->TrailerLink . "' target='_blank'>Trailer</A></TD></TR>";
