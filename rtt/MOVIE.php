@@ -403,7 +403,7 @@ class MOVIE extends RTT_COMMON
     public function DisplayModule()
     {
         echo "<TABLE>";
-        echo "<TR cellspacing='0'>";
+        echo "<TR cellspacing='0' cellpadding='10'>";
 		
 		if ($this->HighlightThemeMovies && $this->ThemeMovie)
 		{
