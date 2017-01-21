@@ -451,7 +451,7 @@ class MOVIE extends RTT_COMMON
         echo "</TD>$OpenCellTag";
 		if ($this->Synopsis != "")
 		{
-			echo "Synopsis:<BR>" . $this->Synopsis . "<BR>";
+			echo "<B><U><FONT SIZE='+2'>Synopsis:</FONT></U></B><BR>" . $this->Synopsis . "<BR><BR>";
 		}
         echo "<B><U><FONT SIZE='+2'>Genre(s):</FONT></U></B>" . $this->DisplayGenres() . "<BR><BR><B><U><FONT SIZE='+2'>Runtime:</FONT></U></B><BR>" . $this->RunTime . " min";
         echo "<BR><BR><B><U><FONT SIZE='+2'>Cast and Crew:</FONT></U></B><BR>Director: " . $this->Director . "<BR>" . $this->DisplayCast();
