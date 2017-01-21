@@ -10,7 +10,7 @@ include("header.php");
 ?>
 
 <h1 style="margin-bottom:20px;">Reclinathon Live</h1>
-Participate in Reclinathon remotely using Google Hangouts on your computer or mobile device.
+Participate in Reclinathon remotely using Google Hangouts on your computer, mobile device, or hologram machine.
 
 <h2 style="margin-bottom:5px;">Watch.</h2>
 Join our hangout to participate in Reclinathon from the comfort of your own desk recliner (you *are* sitting in a recliner by your computer, right?). Bonus points if stream the video to your TV.
