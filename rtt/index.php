@@ -235,7 +235,7 @@ echo "<TR>";
     $rcx->DisplayHistoryModule();
   echo "</TD>";
 echo "</TR>";
-echo "<TR><TD ID='ajaxtest'></TD></TR>"
+echo "<TR><TD ID='ajaxtest'></TD></TR>";
 echo "</TABLE></CENTER>";
 
 ?>
