@@ -1,0 +1,52 @@
+C:\Users\Andrew\Desktop\MovieScrubber\MovieScrubber\obj\Release\MainWindow.baml
+C:\Users\Andrew\Desktop\MovieScrubber\MovieScrubber\obj\Release\MainWindow.g.cs
+C:\Users\Andrew\Desktop\MovieScrubber\MovieScrubber\obj\Release\App.g.cs
+C:\Users\Andrew\Desktop\MovieScrubber\MovieScrubber\obj\Release\MovieScrubber_MarkupCompile.cache
+C:\Users\Andrew\Desktop\MovieScrubber\MovieScrubber\obj\Release\MovieScrubber.g.resources
+C:\Users\Andrew\Desktop\MovieScrubber\MovieScrubber\bin\Release\MovieScrubber.exe
+C:\Users\Andrew\Desktop\MovieScrubber\MovieScrubber\bin\Release\MovieScrubber.pdb
+C:\Users\Andrew\Desktop\MovieScrubber\MovieScrubber\bin\Release\HtmlAgilityPack.dll
+C:\Users\Andrew\Desktop\MovieScrubber\MovieScrubber\bin\Release\HtmlAgilityPack.xml
+C:\Users\Andrew\Desktop\MovieScrubber\MovieScrubber\obj\Release\MovieScrubber.csprojResolveAssemblyReference.cache
+C:\Users\Andrew\Desktop\MovieScrubber\MovieScrubber\obj\Release\MovieScrubber.exe
+C:\Users\Andrew\Desktop\MovieScrubber\MovieScrubber\obj\Release\MovieScrubber.pdb
+C:\Users\Andrew\SkyDrive\Reclinathon\MovieScrubber\MovieScrubber\obj\Release\MovieScrubber.exe
+C:\Users\Andrew\SkyDrive\Reclinathon\MovieScrubber\MovieScrubber\obj\Release\MovieScrubber.pdb
+C:\Users\Andrew\SkyDrive\Reclinathon\MovieScrubber\MovieScrubber\bin\Release\MovieScrubber.exe
+C:\Users\Andrew\SkyDrive\Reclinathon\MovieScrubber\MovieScrubber\bin\Release\MovieScrubber.pdb
+C:\Users\Andrew\SkyDrive\Reclinathon\MovieScrubber\MovieScrubber\bin\Release\HtmlAgilityPack.dll
+C:\Users\Andrew\SkyDrive\Reclinathon\MovieScrubber\MovieScrubber\bin\Release\HtmlAgilityPack.xml
+C:\Users\Andrew\SkyDrive\Reclinathon\MovieScrubber\MovieScrubber\obj\Release\MovieScrubber.csprojResolveAssemblyReference.cache
+C:\Users\Andrew\SkyDrive\Reclinathon\MovieScrubber\MovieScrubber\obj\Release\MainWindow.baml
+C:\Users\Andrew\SkyDrive\Reclinathon\MovieScrubber\MovieScrubber\obj\Release\MainWindow.g.cs
+C:\Users\Andrew\SkyDrive\Reclinathon\MovieScrubber\MovieScrubber\obj\Release\App.g.cs
+C:\Users\Andrew\SkyDrive\Reclinathon\MovieScrubber\MovieScrubber\obj\Release\MovieScrubber_MarkupCompile.cache
+C:\Users\Andrew\SkyDrive\Reclinathon\MovieScrubber\MovieScrubber\obj\Release\MovieScrubber.g.resources
+C:\Users\Andrew\Documents\Visual Studio 2015\MovieScrubber\MovieScrubber\obj\Release\MovieScrubber.exe
+C:\Users\Andrew\Documents\Visual Studio 2015\MovieScrubber\MovieScrubber\obj\Release\MovieScrubber.pdb
+C:\Users\Andrew\Documents\Visual Studio 2015\MovieScrubber\MovieScrubber\bin\Release\MovieScrubber.exe
+C:\Users\Andrew\Documents\Visual Studio 2015\MovieScrubber\MovieScrubber\bin\Release\MovieScrubber.pdb
+C:\Users\Andrew\Documents\Visual Studio 2015\MovieScrubber\MovieScrubber\bin\Release\HtmlAgilityPack.dll
+C:\Users\Andrew\Documents\Visual Studio 2015\MovieScrubber\MovieScrubber\bin\Release\HtmlAgilityPack.xml
+C:\Users\Andrew\Documents\Visual Studio 2015\MovieScrubber\MovieScrubber\obj\Release\MovieScrubber.csprojResolveAssemblyReference.cache
+C:\Users\Andrew\Documents\Visual Studio 2015\MovieScrubber\MovieScrubber\obj\Release\MainWindow.baml
+C:\Users\Andrew\Documents\Visual Studio 2015\MovieScrubber\MovieScrubber\obj\Release\MainWindow.g.cs
+C:\Users\Andrew\Documents\Visual Studio 2015\MovieScrubber\MovieScrubber\obj\Release\App.g.cs
+C:\Users\Andrew\Documents\Visual Studio 2015\MovieScrubber\MovieScrubber\obj\Release\MovieScrubber_MarkupCompile.cache
+C:\Users\Andrew\Documents\Visual Studio 2015\MovieScrubber\MovieScrubber\obj\Release\MovieScrubber.g.resources
+C:\Users\Andrew\Documents\Visual Studio 2015\Projects\MovieScrubber\MovieScrubber\obj\Release\MovieScrubber.exe
+C:\Users\Andrew\Documents\Visual Studio 2015\Projects\MovieScrubber\MovieScrubber\obj\Release\MovieScrubber.pdb
+C:\Users\Andrew\Documents\Visual Studio 2015\Projects\MovieScrubber\MovieScrubber\bin\Release\MovieScrubber.exe.config
+C:\Users\Andrew\Documents\Visual Studio 2015\Projects\MovieScrubber\MovieScrubber\bin\Release\MovieScrubber.exe
+C:\Users\Andrew\Documents\Visual Studio 2015\Projects\MovieScrubber\MovieScrubber\bin\Release\MovieScrubber.pdb
+C:\Users\Andrew\Documents\Visual Studio 2015\Projects\MovieScrubber\MovieScrubber\bin\Release\HtmlAgilityPack.dll
+C:\Users\Andrew\Documents\Visual Studio 2015\Projects\MovieScrubber\MovieScrubber\bin\Release\HtmlAgilityPack.xml
+C:\Users\Andrew\Documents\Visual Studio 2015\Projects\MovieScrubber\MovieScrubber\obj\Release\MovieScrubber.csprojResolveAssemblyReference.cache
+C:\Users\Andrew\Documents\Visual Studio 2015\Projects\MovieScrubber\MovieScrubber\obj\Release\MainWindow.baml
+C:\Users\Andrew\Documents\Visual Studio 2015\Projects\MovieScrubber\MovieScrubber\obj\Release\MainWindow.g.cs
+C:\Users\Andrew\Documents\Visual Studio 2015\Projects\MovieScrubber\MovieScrubber\obj\Release\App.g.cs
+C:\Users\Andrew\Documents\Visual Studio 2015\Projects\MovieScrubber\MovieScrubber\obj\Release\MovieScrubber_MarkupCompile.cache
+C:\Users\Andrew\Documents\Visual Studio 2015\Projects\MovieScrubber\MovieScrubber\obj\Release\MovieScrubber.g.resources
+C:\Users\Andrew\Documents\GitHubVisualStudio\reclinathon\MovieScrubber\MovieScrubber\bin\Release\MovieScrubber.exe.config
+C:\Users\Andrew\Documents\GitHubVisualStudio\reclinathon\MovieScrubber\MovieScrubber\obj\Release\MovieScrubber.exe
+C:\Users\Andrew\Documents\GitHubVisualStudio\reclinathon\MovieScrubber\MovieScrubber\obj\Release\MovieScrubber.pdb
