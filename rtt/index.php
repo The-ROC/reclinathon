@@ -55,49 +55,35 @@ var  duration = 0;
 var  timerinterval = 200;
 var  refreshinterval = 10000;
 
-function ajaxFunction()
+function createXMLHttpRequest() 
 {
-var xmlHttp;
-try
-  {
-  // Firefox, Opera 8.0+, Safari
-  xmlHttp=new XMLHttpRequest();
-  }
-catch (e)
-  {
-  // Internet Explorer
-  try
-    {
-    xmlHttp=new ActiveXObject("Msxml2.XMLHTTP");
-    }
-  catch (e)
-    {
-    try
-      {
-      xmlHttp=new ActiveXObject("Microsoft.XMLHTTP");
-      }
-    catch (e)
-      {
-      alert("Your browser does not support AJAX!");
-      return false;
-      }
-    }
-  }
-  xmlHttp.onreadystatechange=function()
-    {
-    if(xmlHttp.readyState==4)
-      {
-      //duration = ;
-      var localdate = new Date();
-      localstart = localdate.getTime();
-      refreshtime = duration - (duration % refreshinterval);
-      //refreshstart = localdate.getTime();
-      //document.sw.beg2.value = refreshtime;
-      }
-    }
-  xmlHttp.open("GET","ajaxtest.php",true);
-  xmlHttp.send(null);
-  }
+	try { return new XMLHttpRequest(); } catch(e) {}
+	try { return new ActiveXObject("Msxml2.XMLHTTP"); } catch (e) {}
+	alert("XMLHttpRequest not supported");
+	return null;
+}
+	
+function GetTriviaContent()
+{
+	var xhReq = createXMLHttpRequest();
+	xhReq.open("GET", "GetTriviaContent.php", true);
+	xhReq.onreadystatechange = function() {
+		if (xhReq.readyState != 4) { return; }
+		var xml = xhReq.responseXML;
+		var newQuestion = "";
+		var newAnswer = "";
+		
+		var result = xml.getElementsByTagName("trivia");
+		if (result.length > 0)
+		{
+			newQuestion = result[0].getAttribute("question");
+			newAnswer = result[0].getAttribute("answer");
+		}
+		
+		document.getElementById('ajaxtest').innerHTML = newQuestion + "<br /> + newAnswer;
+	};
+	xhReq.send(null);
+}
 
 function Days(data) {
 
@@ -198,7 +184,7 @@ function DownRepeat() {
 </script>
 
 </HEAD>
-<BODY bgcolor='white' onload='Down();SetAnswerTimer()' CLASS='noborder'>
+<BODY bgcolor='white' onload='Down();SetAnswerTimer();GetTriviaContent()' CLASS='noborder'>
 
 <?php
 //----------------
@@ -249,6 +235,7 @@ echo "<TR>";
     $rcx->DisplayHistoryModule();
   echo "</TD>";
 echo "</TR>";
+echo "<TR><TD ID='ajaxtest'></TD></TR>"
 echo "</TABLE></CENTER>";
 
 ?>

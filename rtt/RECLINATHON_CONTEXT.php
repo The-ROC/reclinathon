@@ -480,6 +480,20 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
         echo "</TABLE>";
     }
 
+	public function GetRandomTriviaItem()
+	{
+		$query = "SELECT MAX(TID) AS LargestID FROM Trivia";
+		$result = $this->query($query);
+		$row = mysql_fetch_assoc($result);
+		$RandID = mt_rand(1, $row["LargestID"]);
+		$query = "SELECT * FROM Trivia WHERE TID >= '" . $RandID . "' ORDER BY TID LIMIT 1";
+		$result = $this->query($query);
+		$row = mysql_fetch_assoc($result);
+		$question = $row["Question"];
+		$answer = $row["Answer"];
+		
+		echo "<trivia question='$question' answer='$answer' />";
+	}
 
     public function GetMovie()
     {
