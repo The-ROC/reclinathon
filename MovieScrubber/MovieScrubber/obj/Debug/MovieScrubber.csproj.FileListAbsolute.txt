@@ -23,3 +23,32 @@ C:\backup\Windows.old\Users\David\Documents\Expression\Blend 4\Projects\MovieScr
 C:\backup\Windows.old\Users\David\Documents\Expression\Blend 4\Projects\MovieScrubber\MovieScrubber\obj\Debug\MovieScrubber.g.resources
 C:\backup\Windows.old\Users\David\Documents\Expression\Blend 4\Projects\MovieScrubber\MovieScrubber\obj\Debug\MovieScrubber.exe
 C:\backup\Windows.old\Users\David\Documents\Expression\Blend 4\Projects\MovieScrubber\MovieScrubber\obj\Debug\MovieScrubber.pdb
+C:\Users\David\Documents\Expression\Blend 4\Projects\MovieScrubber\MovieScrubber\bin\Debug\MovieScrubber.exe.manifest
+C:\Users\David\Documents\Expression\Blend 4\Projects\MovieScrubber\MovieScrubber\bin\Debug\MovieScrubber.application
+C:\Users\David\Documents\Expression\Blend 4\Projects\MovieScrubber\MovieScrubber\obj\Debug\MovieScrubber.exe.manifest
+C:\Users\David\Documents\Expression\Blend 4\Projects\MovieScrubber\MovieScrubber\obj\Debug\MovieScrubber.application
+C:\Users\Andrew\Desktop\MovieScrubber\MovieScrubber\obj\Debug\MovieScrubber.exe
+C:\Users\Andrew\Desktop\MovieScrubber\MovieScrubber\obj\Debug\MovieScrubber.pdb
+C:\Users\Andrew\Desktop\MovieScrubber\MovieScrubber\bin\Debug\MovieScrubber.exe
+C:\Users\Andrew\Desktop\MovieScrubber\MovieScrubber\bin\Debug\MovieScrubber.pdb
+C:\Users\Andrew\Desktop\MovieScrubber\MovieScrubber\bin\Debug\HtmlAgilityPack.pdb
+C:\Users\Andrew\Desktop\MovieScrubber\MovieScrubber\bin\Debug\HtmlAgilityPack.xml
+C:\Users\Andrew\Desktop\MovieScrubber\MovieScrubber\obj\Debug\MovieScrubber.csprojResolveAssemblyReference.cache
+C:\Users\Andrew\Desktop\MovieScrubber\MovieScrubber\obj\Debug\MainWindow.baml
+C:\Users\Andrew\Desktop\MovieScrubber\MovieScrubber\obj\Debug\MainWindow.g.cs
+C:\Users\Andrew\Desktop\MovieScrubber\MovieScrubber\obj\Debug\App.g.cs
+C:\Users\Andrew\Desktop\MovieScrubber\MovieScrubber\obj\Debug\MovieScrubber_MarkupCompile.cache
+C:\Users\Andrew\Desktop\MovieScrubber\MovieScrubber\obj\Debug\MovieScrubber.g.resources
+C:\Users\Andrew\Documents\Visual Studio 2015\Projects\MovieScrubber\MovieScrubber\bin\Debug\MovieScrubber.exe.config
+C:\Users\Andrew\Documents\Visual Studio 2015\Projects\MovieScrubber\MovieScrubber\obj\Debug\MovieScrubber.exe
+C:\Users\Andrew\Documents\Visual Studio 2015\Projects\MovieScrubber\MovieScrubber\obj\Debug\MovieScrubber.pdb
+C:\Users\Andrew\Documents\Visual Studio 2015\Projects\MovieScrubber\MovieScrubber\obj\Debug\MovieScrubber.csprojResolveAssemblyReference.cache
+C:\Users\Andrew\Documents\Visual Studio 2015\Projects\MovieScrubber\MovieScrubber\obj\Debug\MainWindow.baml
+C:\Users\Andrew\Documents\Visual Studio 2015\Projects\MovieScrubber\MovieScrubber\obj\Debug\MainWindow.g.cs
+C:\Users\Andrew\Documents\Visual Studio 2015\Projects\MovieScrubber\MovieScrubber\obj\Debug\App.g.cs
+C:\Users\Andrew\Documents\Visual Studio 2015\Projects\MovieScrubber\MovieScrubber\obj\Debug\MovieScrubber_MarkupCompile.cache
+C:\Users\Andrew\Documents\Visual Studio 2015\Projects\MovieScrubber\MovieScrubber\obj\Debug\MovieScrubber.g.resources
+C:\Users\Andrew\Documents\Visual Studio 2015\Projects\MovieScrubber\MovieScrubber\bin\Debug\MovieScrubber.exe
+C:\Users\Andrew\Documents\Visual Studio 2015\Projects\MovieScrubber\MovieScrubber\bin\Debug\MovieScrubber.pdb
+C:\Users\Andrew\Documents\Visual Studio 2015\Projects\MovieScrubber\MovieScrubber\bin\Debug\HtmlAgilityPack.dll
+C:\Users\Andrew\Documents\Visual Studio 2015\Projects\MovieScrubber\MovieScrubber\bin\Debug\HtmlAgilityPack.xml

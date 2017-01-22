@@ -1,458 +1,396 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 using System.Web;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Collections;
 using HtmlAgilityPack;
 
 namespace MovieDatabase
 {
+    public enum MovieInfoChangedType
+    {
+        ImdbInfoAvailable,
+        ImdbInfoUnavailable,
+        TrailerInfoAvailable,
+        RottenTomatoesInfoAvailable,
+        MetaCriticInfoAvailable,
+        NewPosterAvailable,
+        AllPostersAvailable
+    }
+    public class MovieInfoChangedEventArgs : EventArgs
+    {
+        public MovieInfoChangedType InfoType { get; set; }        
+    }
+
+    public class GenericMovieInfoChangedEventArgs : MovieInfoChangedEventArgs
+    {
+        public GenericMovieInfoChangedEventArgs(MovieInfoChangedType type)
+        {
+            InfoType = type;
+        }
+    }
+
+    public class SingleStringMovieInfoEventArgs : MovieInfoChangedEventArgs
+    {
+        public string infoString { get; set; }
+        public SingleStringMovieInfoEventArgs(MovieInfoChangedType type, string data)
+        {
+            InfoType = type;
+            infoString = data;
+        }
+    }
+
+    public class MovieDetailsEventArgs : MovieInfoChangedEventArgs
+    {
+        public string imdbLink { get; set; }
+        public string imdbId { get; set; }
+        public string movieTitle { get; set; }
+        public string releaseYear { get; set; }
+        public string directorName { get; set; }
+        public string movieRuntime { get; set; }
+        public List<string> castList { get; set; }
+        public List<string> genreList { get; set; }
+        public string synopsisText { get; set; }
+
+        public MovieDetailsEventArgs(string link, string id, string title, string year, string director, string runtime, List<string> cast, List<string> genres, string synopsis)
+        {
+            InfoType = MovieInfoChangedType.ImdbInfoAvailable;
+            imdbLink = link;
+            imdbId = id;
+            movieTitle = title;
+            releaseYear = year;
+            directorName = director;
+            movieRuntime = runtime;
+            castList = cast;
+            genreList = genres;
+            synopsisText = synopsis;
+        }
+    }
+
+    public class NewPosterArrivedEventArgs : MovieInfoChangedEventArgs
+    {
+        public int posterIndex { get; set; }
+        public string posterUrl { get; set; }
+
+        public NewPosterArrivedEventArgs(int index, string url)
+        {
+            InfoType = MovieInfoChangedType.NewPosterAvailable;
+            posterIndex = index;
+            posterUrl = url;
+        }
+    }
+
+    public class MovieScoreEventArgs : MovieInfoChangedEventArgs
+    {
+        public Dictionary<string, string> movieScoreList { get; set; }
+
+        public MovieScoreEventArgs(MovieInfoChangedType type, Dictionary<string, string> scoreList)
+        {
+            InfoType = type;
+            movieScoreList = scoreList;
+        }
+    }
+
+    public delegate void MovieInfoChangedEventHandler(object sender, MovieInfoChangedEventArgs e);
+
     class MovieInfo
     {
-        private HtmlAgilityPack.HtmlDocument _markup;
-		private HtmlAgilityPack.HtmlDocument _markup2;
-		private HtmlAgilityPack.HtmlDocument _markup3;
-		private HtmlAgilityPack.HtmlDocument _markup4;
-		private HtmlAgilityPack.HtmlDocument _markup5;
-		private string _trailer;
+        private TimeSpan _loadAll;
+        private TimeSpan _loadImdb;
+        private TimeSpan _loadImdbBestMatch;
+        private TimeSpan _loadRottenTomatoes;
+        private TimeSpan _loadMetacritic;
+        private TimeSpan _loadWikipedia;
+        private TimeSpan _loadPosters;
+       
+        public event MovieInfoChangedEventHandler _movieInfoChanged;
 
-        public bool Search(string query)
+        public virtual void OnMovieInfoChanged(MovieInfoChangedEventArgs e)
+        {
+            if (_movieInfoChanged != null)
+            {
+                _movieInfoChanged(this, e);
+            }
+        }
+
+        public void Search(string query, string imdbId)
         {
 			query = query.Replace(" ","+");
             HtmlWeb web = new HtmlWeb();
-            _markup = web.Load("http://www.imdb.com/find?s=all&q=" + query);
-			_markup2 = web.Load("http://www.rottentomatoes.com/movie/browser.php?title_search=" + query);
-			//_markup3 = web.Load("http://apps.metacritic.com/search/process?tfs=movie_title&ts=" + query);
-			_markup3 = web.Load("http://www.metacritic.com/search/movie/"+ query + "/results");
-			_markup4 = web.Load("http://en.wikipedia.org/w/index.php?title=Special%3ASearch&redirs=1&search=" + query + "+poster&fulltext=Search&ns6=1");
-			_markup5 = web.Load("http://www.youtube.com/results?search_query=" + query + "trailer&aq=f");
-			//_trailer = "http://www.youtube.com/results?search_query=" + query + " trailer";
-			_trailer = "http://www.youtube.com/results?search_filter=1&search_type=videos&suggested_categories=1%2C24&uni=3&partner=1&search_query=" + query + "+trailer";
-			
-            if (!IsMoviePage())
-            {
-                string urlBestResult = FindBestMatch();
-                if (!String.IsNullOrEmpty(urlBestResult))
+
+            DateTime loadStart = DateTime.Now;
+
+            List<Task> tasks = new List<Task>();
+
+            tasks.Add(Task.Run(() => {
+                DateTime loadImdbStart = DateTime.Now;
+
+                string imdbUrl = (imdbId != String.Empty) ? "http://www.imdb.com/title/tt" + imdbId : "http://www.imdb.com/find?s=all&q=" + query;
+                HtmlAgilityPack.HtmlDocument imdbPage = web.Load(imdbUrl);
+
+                _loadImdb = new TimeSpan(DateTime.Now.Ticks - loadImdbStart.Ticks);
+
+                if (imdbId == String.Empty && !IsMoviePage(imdbPage))
                 {
-                    _markup = web.Load(urlBestResult);
+                    string urlBestResult = FindBestMatch(imdbPage);
+                    if (!String.IsNullOrEmpty(urlBestResult))
+                    {
+                        DateTime loadImdbBestMatchStart = DateTime.Now;
+                        imdbPage = web.Load(urlBestResult);
+                        _loadImdbBestMatch = new TimeSpan(DateTime.Now.Ticks - loadImdbBestMatchStart.Ticks);
+                    }
                 }
-                else return false;
+
+                if (!IsMoviePage(imdbPage))
+                {
+                    OnMovieInfoChanged(new GenericMovieInfoChangedEventArgs(MovieInfoChangedType.ImdbInfoUnavailable));
+                    return;
+                }
+
+                HtmlNode titleNode = imdbPage.DocumentNode.SelectSingleNode("//title");
+                HtmlNode yearNode = imdbPage.DocumentNode.SelectSingleNode("//title");
+                HtmlNode linkNode = imdbPage.DocumentNode.SelectSingleNode("//link[contains(@rel, 'canonical')]");
+                HtmlNodeCollection movieInfoNodes = imdbPage.DocumentNode.SelectNodes("//h4[contains(@class, 'inline')]");
+                HtmlNodeCollection castNodes = imdbPage.DocumentNode.SelectNodes("//td[contains(@itemprop, 'actor')]/a/span[contains(@itemprop, 'name')]");
+                HtmlNode synopsisNode = imdbPage.DocumentNode.SelectSingleNode("//div[contains(@class, 'summary_text')]");
+
+                string title = (titleNode == null) ? String.Empty : titleNode.InnerText.Remove(titleNode.InnerText.IndexOf("(")).Replace("&#x22;", String.Empty);
+                string releaseYear = (yearNode == null) ? String.Empty : Regex.Match(yearNode.InnerText, @"\((.*?)\)").Groups[1].Value;
+                string imdbLink = (linkNode == null) ? String.Empty : linkNode.Attributes["href"].Value;
+                imdbId = imdbLink.Replace("http://www.imdb.com/title/tt", String.Empty).TrimEnd('/');
+                string director = String.Empty;
+                List<string> genreList = new List<string>();
+                string runtime = String.Empty;
+                List<string> castList = new List<string>();
+                string synopsis = (synopsisNode == null) ? String.Empty : synopsisNode.InnerText.Trim();
+
+                if (movieInfoNodes != null)
+                {
+                    foreach (HtmlNode node in movieInfoNodes)
+                    {
+                        if (director == String.Empty && node.InnerText.Contains("Director"))
+                        {
+                            HtmlNode directorNameNode = node.ParentNode.SelectSingleNode(".//a");
+                            director = (directorNameNode == null) ? String.Empty : directorNameNode.InnerText.Trim();
+                        }
+                        else if (node.InnerText.Contains("Genre"))
+                        {
+                            foreach (HtmlNode genreNode in node.ParentNode.Elements("a"))
+                            {
+                                genreList.Add(genreNode.InnerText);
+                            }
+                        }
+                        else if (runtime == String.Empty && node.InnerText.Contains("Runtime"))
+                        {
+                            HtmlNode runtimeNode = node.ParentNode;
+                            runtime = (runtimeNode == null) ? String.Empty : runtimeNode.InnerText;
+                            string target = "0123456789";
+                            char[] anyOf = target.ToCharArray();
+                            int at = runtime.IndexOfAny(anyOf);
+                            int lastat = runtime.LastIndexOfAny(anyOf);
+                            runtime = runtime.Substring(at, lastat - at + 1);
+                        }
+                    }
+                }
+
+                if (castNodes != null)
+                foreach (HtmlNode node in castNodes)
+                {
+                    castList.Add(node.InnerText.Trim());
+                }
+
+                OnMovieInfoChanged(new MovieDetailsEventArgs(imdbLink, imdbId, title, releaseYear, director, runtime, castList, genreList, synopsis));
+            }));
+
+            tasks.Add(Task.Run(() => {
+                DateTime loadRottenTomatoesStart = DateTime.Now;
+                HtmlAgilityPack.HtmlDocument rottenTomatoesPage = web.Load("http://www.rottentomatoes.com/search/?search=" + query);
+                _loadRottenTomatoes = new TimeSpan(DateTime.Now.Ticks - loadRottenTomatoesStart.Ticks);
+
+                Dictionary<string, string> freshnessScores = new Dictionary<string, string>();
+
+                HtmlNode moviePageNode = rottenTomatoesPage.DocumentNode.SelectSingleNode("//div[contains(@id, 'mainColumn')]");
+                if (moviePageNode != null)
+                {
+                    HtmlNode freshnessScoreNode = moviePageNode.SelectSingleNode("//span[contains(@itemprop, 'ratingValue')]");
+                    HtmlNode titleNode = moviePageNode.SelectSingleNode("h1[contains(@itemprop, 'name')]");
+
+                    if (freshnessScoreNode != null && titleNode != null)
+                    {
+                        string freshnessScore = freshnessScoreNode.InnerText.Trim();
+                        string title = titleNode.InnerText.Trim();
+
+                        if (!freshnessScores.ContainsKey(title))
+                        {
+                            freshnessScores.Add(title, freshnessScore);
+                        }
+                    }
+                }
+                else
+                {
+                    HtmlNodeCollection movieNodes = rottenTomatoesPage.DocumentNode.SelectNodes("//li[contains(@class, 'bottom_divider clearfix')]");
+                    if (movieNodes != null)
+                    {
+                        foreach (HtmlNode node in movieNodes)
+                        {                           
+                            HtmlNode freshnessScoreNode = node.SelectSingleNode("div/span/span[contains(@class, 'tMeterScore')]");
+                            HtmlNode titleNode = node.SelectSingleNode("div/div/a");
+                            HtmlNode releaseDateNode = node.SelectSingleNode("div/div/span[contains(@class, 'movie_year')]");
+
+                            if (freshnessScoreNode != null && titleNode != null)
+                            {
+                                string freshnessScore = freshnessScoreNode.InnerText.Trim().Trim('%');
+                                string title = titleNode.InnerText.Trim();
+
+                                if (releaseDateNode != null)
+                                {
+                                    title += " " + releaseDateNode.InnerText.Trim();
+                                }
+
+                                if (!freshnessScores.ContainsKey(title))
+                                {
+                                    freshnessScores.Add(title, freshnessScore);
+                                }
+                            }
+                        }
+                    }
+                }                
+
+                OnMovieInfoChanged(new MovieScoreEventArgs(MovieInfoChangedType.RottenTomatoesInfoAvailable, freshnessScores));
+            }));
+
+            tasks.Add(Task.Run(() => {
+                DateTime loadMetacriticStart = DateTime.Now;
+                HtmlAgilityPack.HtmlDocument metaCriticPage = web.Load("http://www.metacritic.com/search/movie/" + query + "/results");
+                _loadMetacritic = new TimeSpan(DateTime.Now.Ticks - loadMetacriticStart.Ticks);
+
+                Dictionary<string, string> metaScores = new Dictionary<string, string>();
+                HtmlNodeCollection movieNodes = metaCriticPage.DocumentNode.SelectNodes("//div[contains(@class, 'main_stats')]");
+                if (movieNodes != null)
+                {
+                    foreach (HtmlNode node in movieNodes)
+                    {
+                        HtmlNode metaScoreNode = node.SelectSingleNode("span");
+                        HtmlNode titleNode = node.SelectSingleNode("h3/a");
+                        HtmlNode releaseDateNode = node.ParentNode.SelectSingleNode("div/ul/li[contains(@class, 'stat release_date')]/span[contains(@class, 'data')]");
+
+                        if (metaScoreNode != null && titleNode != null)
+                        {
+                            string metaScore = metaScoreNode.InnerText.Trim();
+                            string title = titleNode.InnerText.Trim();
+
+                            if (releaseDateNode != null)
+                            {
+                                title += " (" + releaseDateNode.InnerText.Trim() + ")";
+                            }
+
+                            if (!metaScores.ContainsKey(title))
+                            {
+                                metaScores.Add(title, metaScore);
+                            }
+                        }
+                    }
+                }
+
+                OnMovieInfoChanged(new MovieScoreEventArgs(MovieInfoChangedType.MetaCriticInfoAvailable, metaScores));
+            }));
+
+            tasks.Add(Task.Run(() => {
+                DateTime loadWikipediaStart = DateTime.Now;
+                HtmlAgilityPack.HtmlDocument wikipediaPage = web.Load("http://en.wikipedia.org/w/index.php?title=Special%3ASearch&profile=images&search=" + query + "+poster&fulltext=Search");
+                
+                List<Task> posterTasks = new List<Task>();
+                HtmlNodeCollection nodes = wikipediaPage.DocumentNode.SelectNodes("//ul[contains(@class, 'mw-search-results')]/li/table/tr/td/a[contains(@class, 'image')]");
+                if (nodes != null)
+                {
+                    int postersAdded = 0;
+                    HtmlWeb poster_web = new HtmlWeb();
+                    foreach (HtmlNode node in nodes)
+                    {
+                        if (!IsAcceptableImageType(node.Attributes["href"].Value))
+                        {
+                            continue;
+                        }
+
+                        string lookup = "http://en.wikipedia.org" + node.Attributes["href"].Value;
+
+                        Action<object> loadPosterAction = i =>
+                        {
+                            DateTime loadPosterStart = DateTime.Now;
+                            HtmlAgilityPack.HtmlDocument _pmarkup = web.Load(lookup);
+                            _loadPosters = _loadPosters.Add(new TimeSpan(DateTime.Now.Ticks - loadPosterStart.Ticks));
+
+                            HtmlNode poster = _pmarkup.DocumentNode.SelectSingleNode("//div[contains(@class, 'fullImageLink')]/a");
+                            if (poster != null)
+                            {
+                                OnMovieInfoChanged(new NewPosterArrivedEventArgs((int)i, "http:" + poster.Attributes["href"].Value));
+                            }
+                        };
+
+                        Task loadPosterTask = Task.Factory.StartNew(loadPosterAction, postersAdded);
+
+                        posterTasks.Add(loadPosterTask);
+
+                        postersAdded++;
+                        if (postersAdded > 20)
+                        {
+                            break;
+                        }
+                    }
+                }
+
+                Task.WaitAll(posterTasks.ToArray());
+
+                _loadWikipedia = new TimeSpan(DateTime.Now.Ticks - loadWikipediaStart.Ticks);
+
+                OnMovieInfoChanged(new GenericMovieInfoChangedEventArgs(MovieInfoChangedType.AllPostersAvailable));
+            }));
+
+            string trailerLink = "http://www.youtube.com/results?search_query=" + query + "+trailer%2C+hd%2C+short";
+            OnMovieInfoChanged(new SingleStringMovieInfoEventArgs(MovieInfoChangedType.TrailerInfoAvailable, trailerLink));
+
+            Task.WaitAll(tasks.ToArray());
+
+            _loadAll = new TimeSpan(DateTime.Now.Ticks - loadStart.Ticks);
+        }
+
+        private bool IsAcceptableImageType(string source)
+        {
+            if (source.EndsWith(".jpg") ||
+                source.EndsWith(".png") ||
+                source.EndsWith(".jpef") ||
+                source.EndsWith(".gif") ||
+                source.EndsWith(".bmp"))
+            {
+                return true;
             }
 
-            return IsMoviePage();
+            return false;
         }
-		
-		public bool Search(string query, string IMDB)
+
+        private bool IsMoviePage(HtmlAgilityPack.HtmlDocument imdbPage)
         {
-			query = query.Replace(" ","+");
-            HtmlWeb web = new HtmlWeb();
-            //_markup = web.Load("http://www.imdb.com/title/tt" + IMDB);
-			_markup = web.Load(IMDB);
-			_markup2 = web.Load("http://www.rottentomatoes.com/movie/browser.php?title_search=" + query);
-			//_markup3 = web.Load("http://apps.metacritic.com/search/process?tfs=movie_title&ts=" + query);
-			_markup3 = web.Load("http://www.metacritic.com/search/movie/"+ query + "/results");
-			_markup4 = web.Load("http://en.wikipedia.org/w/index.php?title=Special%3ASearch&redirs=1&search=" + query + "+poster&fulltext=Search&ns6=1");
-			_markup5 = web.Load("http://www.youtube.com/results?search_query=" + query + "trailer&aq=f");
-			//_trailer = "http://www.youtube.com/results?search_query=" + query + " trailer";
-			_trailer = "http://www.youtube.com/results?search_filter=1&search_type=videos&suggested_categories=1%2C24&uni=3&partner=1&search_query=" + query + "+trailer";
-			
-			/*
-            if (!IsMoviePage())
+            return (imdbPage.DocumentNode.SelectSingleNode("//div[contains(@class, 'infobar')]") != null) || 
+                   (imdbPage.DocumentNode.SelectSingleNode("//div[contains(@class, 'titleBar')]") != null);
+        }
+
+
+        private string FindBestMatch(HtmlAgilityPack.HtmlDocument imdbPage)
+        {
+            HtmlNodeCollection headers = imdbPage.DocumentNode.SelectNodes("//td[contains(@class, 'result_text')]");
+            if (headers != null)
             {
-                string urlBestResult = FindBestMatch();
-                if (!String.IsNullOrEmpty(urlBestResult))
+                foreach (HtmlNode header in headers)
                 {
-                    return false;//_markup = web.Load(urlBestResult);
-                }
-                else return false;
-            }
-
-            return IsMoviePage();
-			*/
-			return IsMoviePage();
-        }
-
-
-        private bool IsMoviePage()
-        {
-            //return (_markup.DocumentNode.SelectSingleNode("//h3[contains(., 'Overview')]") != null);
-			return (_markup.DocumentNode.SelectSingleNode("//div[contains(@class, 'infobar')]") != null);
-        }
-
-
-        private string FindBestMatch()
-        {
-            HtmlNodeCollection headers = _markup.DocumentNode.SelectNodes("//p/b[contains(., 'Titles')]");
-            if (headers != null) foreach (HtmlNode header in headers)
-            {
-                HtmlNode link = header.ParentNode.SelectSingleNode(".//a[contains(@href, '/title/')]");
-                if (link != null)
-                {
-                    return "http://www.imdb.com" + link.Attributes["href"].Value;
+                    HtmlNode link = header.SelectSingleNode(".//a[contains(@href, '/title/tt')]");
+                    if (link != null)
+                    {
+                        return "http://www.imdb.com" + link.Attributes["href"].Value;
+                    }
                 }
             }
             return String.Empty;
-        }
-
-
-        public string Title
-        {
-            get
-            {
-                HtmlNode title = _markup.DocumentNode.SelectSingleNode("//title");
-                return title == null ? String.Empty : title.InnerText.Remove(title.InnerText.IndexOf("(")).Replace("&#x22;", String.Empty);
-            }
-        }
-
-
-        public string Year
-        {
-            get
-            {
-                HtmlNode year = _markup.DocumentNode.SelectSingleNode("//title");
-                return year == null ? String.Empty : Regex.Match(year.InnerText, @"\((.*?)\)").Groups[1].Value;
-            }
-        }
-
-
-        public string Link
-        {
-            get
-            {
-                HtmlNode link = _markup.DocumentNode.SelectSingleNode("//link[contains(@rel, 'canonical')]");
-                return link == null ? String.Empty : link.Attributes["href"].Value;
-            }
-        }
-
-
-        public string Id
-        {
-            get
-            {
-                return this.Link.Replace("http://www.imdb.com/title/tt", String.Empty).TrimEnd('/');
-            }
-        }
-
-
-        public string Director
-        {
-            get
-            {
-				HtmlNodeCollection nodes = _markup.DocumentNode.SelectNodes("//h4[contains(@class, 'inline')]");
-				if (nodes != null) foreach (HtmlNode node in nodes)
-				{
-					if (node.InnerText.Contains("Director"))
-					{
-						HtmlNode dirname = node.ParentNode.SelectSingleNode(".//a");
-						return dirname == null ? String.Empty : dirname.InnerText;
-					}
-				}
-					
-                return String.Empty;
-            }
-        }
-
-
-        public string Genre
-        {
-            get
-            {
-                String genres = "";
-				HtmlNodeCollection nodes = _markup.DocumentNode.SelectNodes("//h4[contains(@class, 'inline')]");
-				if (nodes != null) foreach (HtmlNode node in nodes)
-				{
-					if (node.InnerText.Contains("Genre"))
-					{
-						foreach (HtmlNode genrenode in node.ParentNode.Elements("a"))
-						{
-							genres += genrenode.InnerText + "|";
-						}
-						return genres;
-					}
-				}
-					
-                return String.Empty;
-				/*
-				HtmlNode header = _markup.DocumentNode.SelectSingleNode("//div[contains(@class, 'info')]/h5[contains(., 'Genre:')]");
-                if (header != null)
-                {
-                    HtmlNode genre = header.ParentNode.SelectSingleNode(".//div[contains(@class, 'info-content')]");
-                    if (genre != null) return genre.InnerText.Replace("See more&nbsp;&raquo;", String.Empty).Trim();
-                }
-                return String.Empty;
-				//HtmlNodeCollection junk = new HtmlNodeCollection();
-				//junk.Elements*/
-            }
-        }
-		
-		public string Cast
-		{
-			get
-			{
-				String actors = "";
-				HtmlNodeCollection nodes = _markup.DocumentNode.SelectNodes("//td[contains(@class, 'name')]");
-				if (nodes != null) foreach (HtmlNode node in nodes)
-				{
-					actors += node.InnerText.Trim() + "|";
-				}
-					
-				return actors;
-
-			}
-				
-				/*
-				string actors = String.Empty;
-				HtmlNode header = _markup.DocumentNode.SelectSingleNode("//div[contains(@class, 'info')]/div/h3[contains(., 'Cast')]");
-                if (header != null)
-                {
-					//HtmlNode cast = header.ParentNode.ParentNode.SelectSingleNode(".//div[contains(@class, 'info-content block')]/table/tr/td[contains(@class,'nm')]");
-					//if (cast != null){return cast.InnerText;}
-					//string broke = "Broken!";
-					//return broke;
-					//HtmlNode cast = header.ParentNode.ParentNode.SelectSingleNode(".//div[contains(@class, 'info-content block')]");
-					HtmlNodeCollection cast = header.ParentNode.ParentNode.SelectNodes(".//div[contains(@class, 'info-content block')]/table/tr/td[contains(@class,'nm')]");
-					if (cast != null)
-					{
-						foreach (HtmlNode c in cast)
-						{
-							if (c != null) 
-							{
-								if (actors == String.Empty) {actors = actors + c.InnerText;}
-								else {actors =  actors + " | " + c.InnerText;}
-							}
-						}
-						//return actors;
-					}
-					actors = actors.Replace("&#x27;","'").Replace("&#xE9;","e").Replace("&#xE1;","a").Replace("&#xF1;","n");
-					return actors;
-				}
-				return String.Empty;
-				*/
-		}
-
-
-        public string Plot
-        {
-            get
-            {
-                HtmlNode header = _markup.DocumentNode.SelectSingleNode("//div[contains(@class, 'info')]/h5[contains(., 'Plot:')]");
-                if (header != null)
-                {
-                    HtmlNode plot = header.ParentNode.SelectSingleNode(".//div[contains(@class, 'info-content')]");
-                    if (plot != null) return plot.InnerText.Replace("Full summary&nbsp;&raquo;", String.Empty).Trim();
-                }
-                return String.Empty;
-            }
-        }
-		
-		
-		public string Runtime
-        {
-			get
-            {
-				HtmlNodeCollection nodes = _markup.DocumentNode.SelectNodes("//h4[contains(@class, 'inline')]");
-				if (nodes != null) foreach (HtmlNode node in nodes)
-				{
-					if (node.InnerText.Contains("Runtime"))
-					{
-						HtmlNode runtime = node.ParentNode; 
-						string rt = runtime == null ? String.Empty : runtime.InnerText;
-						string target = "0123456789";
-   						char[] anyOf = target.ToCharArray();
-						int at = rt.IndexOfAny(anyOf);
-						int lastat = rt.LastIndexOfAny(anyOf);
-						rt = rt.Substring(at, lastat - at + 1);
-						return rt;
-					}
-				}
-					
-                return String.Empty;
-            }
-        
-        }
-		
-		public string Freshness
-        {
-            get
-            {
-				string fscore = "";
-				HtmlNodeCollection nodes = _markup2.DocumentNode.SelectNodes("//td[contains(@class, 'firstCol tomatometer')]/p/strong");
-				if (nodes != null) foreach (HtmlNode node in nodes)
-				{
-					fscore += node.InnerText.Trim().Trim('%') + "|";
-				}
-					
-				return fscore;
-                /*
-				HtmlNode fscore = _markup2.DocumentNode.SelectSingleNode("//td[contains(@class, 'firstCol tomatometer')]/p/span/span");
-                if (fscore != null)
-                {
-                    return fscore.InnerText;
-                }
-                return String.Empty;
-				*/
-            }
-        }
-		
-		public string FreshTitle
-		{
-			get
-			{	
-				string ftitle = "";
-				HtmlNodeCollection nodes = _markup2.DocumentNode.SelectNodes("//tr[contains(@class, 'e8edf5') or contains(@class, 'alt')]/td/p/strong/a");
-				if (nodes != null) foreach (HtmlNode node in nodes)
-				{
-					ftitle += node.InnerText.Trim() + "|";
-				}
-				
-				return ftitle;
-			}
-				/*
-				HtmlNode ftitle = _markup2.DocumentNode.SelectSingleNode("//tr[contains(@class, 'e8edf5')]/td/p/strong/a");
-				if (ftitle != null)
-				{
-					return ftitle.InnerText;
-				}
-				return "No Match Found!";
-				*/
-		}
-		
-		public string MetaScore
-        {
-            get
-            {
-				string mscore = "";
-				
-				HtmlNodeCollection nodes = _markup3.DocumentNode.SelectNodes("//span[contains(@class,'data metascore')]");
-				if (nodes != null) foreach (HtmlNode node in nodes)
-				{
-					string ms = node.InnerText;
-					/*HtmlNode mscore2 = node.ParentNode;
-                    string ms = mscore2 == null ? String.Empty : mscore2.InnerText;
-					string target = "0123456789";
-   					char[] anyOf = target.ToCharArray();
-					int at = ms.IndexOfAny(anyOf);
-					int lastat = ms.LastIndexOfAny(anyOf);
-					ms = ms.Substring(at, lastat - at + 1);*/
-					mscore += ms + "|";
-				}
-				
-				return mscore;
-				
-				/*
-                HtmlNode mscore = _markup3.DocumentNode.SelectSingleNode("//div[contains(@class,'score_wrap')]/span");//("//span[contains(@class, 'green') or contains(@class, 'yellow') or contains(@class, 'red')]");
-                if (mscore != null)
-                {
-					HtmlNode mscore2 = mscore.ParentNode;
-                    string ms = mscore2 == null ? String.Empty : mscore2.InnerText;
-					string target = "0123456789";
-   					char[] anyOf = target.ToCharArray();
-					int at = ms.IndexOfAny(anyOf);
-					int lastat = ms.LastIndexOfAny(anyOf);
-					ms = ms.Substring(at, lastat - at + 1);
-					return ms;
-					
-                }
-                return "N/R";
-				*/
-            }
-        }
-		
-		public string MetaTitle
-		{
-			get
-			{
-				string mtitle = "";
-				HtmlNodeCollection nodes = _markup3.DocumentNode.SelectNodes("//div[contains(@class, 'main_stats')]/h3/a");
-				if (nodes != null) foreach (HtmlNode node in nodes)
-				{
-					mtitle += node.InnerText.Trim() + "|";
-				}
-				
-				return mtitle;
-				/*
-				HtmlNode mtitle = _markup3.DocumentNode.SelectSingleNode("//div[contains(@class, 'main_stats')]/h3/a");//("//a[contains(@href, 'http://www.metacritic.com')]/b");
-				if (mtitle != null)
-				{
-					return mtitle.InnerText;
-				}
-				return "No Match Found!";
-				*/
-			}
-		}
-		
-		public string PosterLink
-		{
-			get
-			{
-				String posters = "";
-				HtmlNodeCollection nodes = _markup4.DocumentNode.SelectNodes("//ul[contains(@class, 'mw-search-results')]/li/table/tr/td/a");
-				if (nodes != null) foreach (HtmlNode node in nodes)
-				{
-					string lookup = "http://en.wikipedia.org" + node.Attributes["href"].Value;
-					HtmlWeb poster_web = new HtmlWeb();
-					HtmlAgilityPack.HtmlDocument _pmarkup = poster_web.Load(lookup);
-					
-					HtmlNode poster = _pmarkup.DocumentNode.SelectSingleNode("//div[contains(@class, 'fullImageLink')]/a");
-					if (poster != null)
-					{
-						posters = posters + poster.Attributes["href"].Value + "|";
-					}
-				}
-					return posters;
-			}
-		}	
-			/*	
-			HtmlNode plink = _markup4.DocumentNode.SelectSingleNode("//ul[contains(@class, 'mw-search-results')]/li/table/tr/td/a");
-				if (plink != null)
-				{
-					//return "http://en.wikipedia.org" + plink.Attributes["href"].Value;	
-					string lookup = "http://en.wikipedia.org" + plink.Attributes["href"].Value;
-					HtmlWeb poster_web = new HtmlWeb();
-					HtmlAgilityPack.HtmlDocument _pmarkup = poster_web.Load(lookup);
-					
-					HtmlNode poster = _pmarkup.DocumentNode.SelectSingleNode("//div[contains(@class, 'fullImageLink')]/a");
-					if (poster != null)
-					{
-						return poster.Attributes["href"].Value;
-						//string address =  poster.Attributes["href"].Value;
-						//return address;
-					}
-					return String.Empty;
-				}
-				return String.Empty;
-			}
-		}*/
-		
-		/*public System.Windows.Media.Imaging.BitmapImage PosterImage
-		{
-			get
-			{
-				HtmlNode plink = _markup4.DocumentNode.SelectSingleNode("//ul[contains(@class, 'mw-search-results')]/li/table/tr/td/a");
-				if (plink != null)
-				{
-					string lookup = "http://en.wikipedia.org" + plink.Attributes["href"].Value;
-				
-					HtmlWeb poster_web = new HtmlWeb();
-					HtmlAgilityPack.HtmlDocument _pmarkup = poster_web.Load(lookup);
-				
-					HtmlNode poster = _pmarkup.DocumentNode.SelectSingleNode("//div[contains(@class, 'fullImageLink')]/a");
-					if (poster != null)
-					{
-						string address =  poster.Attributes["href"].Value;
-						return new System.Windows.Media.Imaging.BitmapImage(new System.Uri(address));
-					}
-					return new System.Windows.Media.Imaging.BitmapImage(new System.Uri(@"C:\Users\David\Pictures\movie_reel.jpg"));
-				}
-				return new System.Windows.Media.Imaging.BitmapImage(new System.Uri(@"C:\Users\David\Pictures\movie_reel.jpg"));
-			}
-		}*/
-		
-		public string TrailerLink
-		{
-			get
-			{
-				return _trailer;
-			}
-		}
-			
+        }					
     }
 }
