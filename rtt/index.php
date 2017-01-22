@@ -80,7 +80,7 @@ function GetTriviaContent()
 			newAnswer = result[0].getAttribute("answer");
 		}
 		
-		document.getElementById('ajaxtest').innerHTML = newQuestion + "<br /> + newAnswer;
+		document.getElementById('ajaxtest').innerHTML = newQuestion + "<br />" + newAnswer;
 	};
 	xhReq.send(null);
 }
@@ -140,6 +140,11 @@ function ShowAnswer() {
 
 }
 
+function SetNewTriviaTimer() {
+	var interval=3000;
+	setInterval("GetTriviaContent()", interval);
+}
+
 function Down() {
 
 	var localdate = new Date();
@@ -184,7 +189,7 @@ function DownRepeat() {
 </script>
 
 </HEAD>
-<BODY bgcolor='white' onload='Down();SetAnswerTimer();GetTriviaContent()' CLASS='noborder'>
+<BODY bgcolor='white' onload='Down();SetAnswerTimer();GetTriviaContent();SetNewTriviaTimer();' CLASS='noborder'>
 
 <?php
 //----------------
