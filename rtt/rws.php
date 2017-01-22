@@ -32,6 +32,7 @@ $XmlNodes["Movie"]["Freshness"] = "leaf";
 $XmlNodes["Movie"]["MetaScore"] = "leaf";
 $XmlNodes["Movie"]["Genres"] = "list";
 $XmlNodes["Movie"]["Actors"] = "list";
+$XmlNodes["Movie"]["Synopsis"] = "leaf";
 $XmlNodes["Genres"]["Genre"] = "leaf";
 $XmlNodes["Actors"]["Actor"] = "leaf";
 

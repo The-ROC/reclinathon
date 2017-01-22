@@ -259,6 +259,11 @@ class MOVIE extends RTT_COMMON
                 $this->NumActors++;
             }
         }
+		
+		if ($movie["Synopsis"] != "")
+        {
+            $this->Synopsis = $movie["Synopsis"];
+        }
 
         return TRUE;
     }
@@ -675,7 +680,7 @@ class MOVIE extends RTT_COMMON
 
     public function Insert()
     {
-        $query = "INSERT INTO MOVIE (Title, RunTime, TrailerLink, IMDBLink, Freshness, Image, Metascore, Director, Year) VALUES (";
+        $query = "INSERT INTO MOVIE (Title, RunTime, TrailerLink, IMDBLink, Freshness, Image, Metascore, Director, Year, Synopsis) VALUES (";
         $query = $query . "'" . $this->Title . "', ";
         $query = $query . "'" . $this->RunTime . "', ";
         $query = $query . "'" . $this->TrailerLink . "', ";
@@ -684,7 +689,8 @@ class MOVIE extends RTT_COMMON
         $query = $query . "'" . $this->Image . "', ";
         $query = $query . "'" . $this->Metascore . "', ";
         $query = $query . "'" . $this->Director . "', ";
-        $query = $query . "'" . $this->Year . "')";
+        $query = $query . "'" . $this->Year . "', ";
+		$query = $query . "'" . $this->Synopsis . "')";
 
         //echo $query . "<BR>";
         $result = $this->Query($query);
@@ -723,7 +729,8 @@ class MOVIE extends RTT_COMMON
         $query = $query . ", Image = '" . $this->Image . "'";
         $query = $query . ", Metascore = '" . $this->Metascore . "'";
         $query = $query . ", Director = '" . $this->Director . "'";
-        $query = $query . ", Year = '" . $this->Year . "' WHERE MovieID = '" . $this->MovieID . "'";
+        $query = $query . ", Year = '" . $this->Year . "'";
+		$query = $query . ", Synopsis = '" . $this->Synopsis . "' WHERE MovieID = '" . $this->MovieID . "'";
 
         //echo $query . "<BR>";
         $result = $this->Query($query);
