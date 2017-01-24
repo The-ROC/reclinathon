@@ -53,7 +53,9 @@ var  localstart = 0;
 var  refreshtime = 0;
 var  duration = 0;
 var  timerinterval = 200;
-var  refreshinterval = 10000;
+var  answerToNewQuestionInterval = 5000;
+var  questionToAnswerInterval = 5000;
+var  triviaAnswer = "";
 
 function createXMLHttpRequest() 
 {
@@ -73,14 +75,24 @@ function GetTriviaContent()
 		var newQuestion = "";
 		var newAnswer = "";
 		
-		var result = xml.getElementsByTagName("trivia");
-		if (result.length > 0)
+		if (xml != null)
 		{
-			newQuestion = result[0].getAttribute("question");
-			newAnswer = result[0].getAttribute("answer");
+			var result = xml.getElementsByTagName("trivia");
+			if (result.length > 0)
+			{
+				newQuestion = result[0].getAttribute("question");
+				newAnswer = result[0].getAttribute("answer");
+			}
+			
+			document.getElementById('TriviaQuestion').innerHTML = newQuestion;
+			triviaAnswer = newAnswer;
+			document.getElementById('TriviaAnswer').innerHTML = "";
+			setTimeout("ShowAnswer()", questionToAnswerInterval);
 		}
-		
-		document.getElementById('ajaxtest').innerHTML = newQuestion + "<br />" + newAnswer;
+		else
+		{
+			setTimeout("GetTriviaContent()", 500);
+		}
 	};
 	xhReq.send(null);
 }
@@ -128,21 +140,9 @@ function Display(days,hours,min,sec) {
 	return(disp); 
 }
 
-function SetAnswerTimer() {
-
-	var answerinterval=20000/2;
-	setTimeout("ShowAnswer()", answerinterval);
-}
-
 function ShowAnswer() {
-
-	document.getElementById('DowntimeAnswer').style.display="";
-
-}
-
-function SetNewTriviaTimer() {
-	var interval=3000;
-	setInterval("GetTriviaContent()", interval);
+	document.getElementById('TriviaAnswer').innerHTML = triviaAnswer;
+	setTimeout("GetTriviaContent()", answerToNewQuestionInterval);
 }
 
 function Down() {
@@ -189,7 +189,7 @@ function DownRepeat() {
 </script>
 
 </HEAD>
-<BODY bgcolor='white' onload='Down();SetAnswerTimer();GetTriviaContent();SetNewTriviaTimer();' CLASS='noborder'>
+<BODY bgcolor='white' onload='Down();GetTriviaContent();' CLASS='noborder'>
 
 <?php
 //----------------
@@ -240,7 +240,6 @@ echo "<TR>";
     $rcx->DisplayHistoryModule();
   echo "</TD>";
 echo "</TR>";
-echo "<TR><TD ID='ajaxtest'></TD></TR>";
 echo "</TABLE></CENTER>";
 
 ?>

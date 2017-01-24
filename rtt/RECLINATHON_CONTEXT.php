@@ -472,11 +472,9 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
         }
 
         echo "<TABLE>";
-        echo "<TR cellspacing='0'><TH>Entertainment</TH>";
-        echo "<TR><TD><FONT SIZE='+1'%'>" . $question . "<BR><BR></TD></TR>";
-        echo "<TR ID='DowntimeAnswer' style=\"display:none;\"><TD><FONT SIZE='+2'%'>" . $answer . "</TD></TR>";
-        echo "<INPUT TYPE='hidden' ID='DowntimeAnswerInterval' VALUE='" . $refresh/2 . "'>";
-        echo "<meta http-equiv='refresh' content=\"" . $refresh . ";url=" . $URL . "\" />";
+        echo "<TR cellspacing='0'><TH>Entertainment</TH></TR>";
+        echo "<TR><TD ID='TriviaQuestion'></TD></TR>";
+        echo "<TR><TD ID='TriviaAnswer'></TD></TR>";
         echo "</TABLE>";
     }
 
@@ -489,8 +487,8 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
 		$query = "SELECT * FROM Trivia WHERE TID >= '" . $RandID . "' ORDER BY TID LIMIT 1";
 		$result = $this->query($query);
 		$row = mysql_fetch_assoc($result);
-		$question = $row["Question"];
-		$answer = $row["Answer"];
+		$question = htmlspecialchars($row["Question"], ENT_QUOTES | ENT_XML1);
+		$answer = htmlspecialchars($row["Answer"], ENT_QUOTES | ENT_XML1);
 		
 		echo "<trivia question='$question' answer='$answer' />";
 	}
