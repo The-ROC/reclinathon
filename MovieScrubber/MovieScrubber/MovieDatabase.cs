@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Collections;
 using HtmlAgilityPack;
+using Newtonsoft.Json.Linq;
 
 namespace MovieDatabase
 {
@@ -229,28 +230,35 @@ namespace MovieDatabase
                 }
                 else
                 {
-                    HtmlNodeCollection movieNodes = rottenTomatoesPage.DocumentNode.SelectNodes("//li[contains(@class, 'bottom_divider clearfix')]");
-                    if (movieNodes != null)
+                    HtmlNode resultsDivSiblingNode = rottenTomatoesPage.DocumentNode.SelectSingleNode("//div[contains(@id, 'search-results-root')]");
+                    HtmlNode resultsScriptNode = null;
+
+                    if (resultsDivSiblingNode != null && resultsDivSiblingNode.ParentNode != null)
                     {
-                        foreach (HtmlNode node in movieNodes)
-                        {                           
-                            HtmlNode freshnessScoreNode = node.SelectSingleNode("div/span/span[contains(@class, 'tMeterScore')]");
-                            HtmlNode titleNode = node.SelectSingleNode("div/div/a");
-                            HtmlNode releaseDateNode = node.SelectSingleNode("div/div/span[contains(@class, 'movie_year')]");
+                        resultsScriptNode = resultsDivSiblingNode.ParentNode.SelectSingleNode("script");
+                    }
 
-                            if (freshnessScoreNode != null && titleNode != null)
+                    if (resultsScriptNode != null)
+                    {
+                        String resultsScript = resultsScriptNode.InnerText.Trim();
+                        int jsonStartIndex = resultsScript.IndexOf("{", resultsScript.IndexOf("search-results-root"));
+                        int jsonEndIndex = resultsScript.LastIndexOf("}", resultsScript.LastIndexOf("}") - 1);
+                        String resultsJsonString = resultsScript.Substring(jsonStartIndex, jsonEndIndex - jsonStartIndex + 1);
+
+                        JObject resultsJson = JObject.Parse(resultsJsonString);
+
+                        if (resultsJson != null && resultsJson["movies"] != null)
+                        {
+                            foreach (JToken movie in resultsJson["movies"])
                             {
-                                string freshnessScore = freshnessScoreNode.InnerText.Trim().Trim('%');
-                                string title = titleNode.InnerText.Trim();
+                                String title = (String)movie["name"];
+                                String year = (String)movie["year"];
+                                String freshness = (String)movie["meterScore"];
 
-                                if (releaseDateNode != null)
+                                if (title != null && year != null && freshness != null)
                                 {
-                                    title += " " + releaseDateNode.InnerText.Trim();
-                                }
-
-                                if (!freshnessScores.ContainsKey(title))
-                                {
-                                    freshnessScores.Add(title, freshnessScore);
+                                    string freshnessTitle = title + " " + year;
+                                    freshnessScores.Add(freshnessTitle, freshness);
                                 }
                             }
                         }
