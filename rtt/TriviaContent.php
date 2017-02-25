@@ -43,7 +43,7 @@ function SubmitForm(sender)
 		var questionInput = document.createElement("input");
 		questionInput.type = "hidden";
 		questionInput.name = "question";
-		questionInput.value = questionElement.innerText;
+		questionInput.value = questionElement.innerHTML;
 		document.triviaForm.appendChild(questionInput);
 		
 		var answerInput = document.createElement("input");
