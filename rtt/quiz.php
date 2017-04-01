@@ -5,7 +5,7 @@ include "RECLINATHON_CONTEXT.php";
 include "../header.php";
 
 //CHANGE THIS VARIABLE TO CHANGE WHICH QUIZ IS DISPLAYED
-$SEASON = "Winter2015Survey";
+$SEASON = "Winter2016Survey";
 
 //
 //Fetch the Reclinee taking the quiz
@@ -137,7 +137,8 @@ echo $row["Section"] . "<BR><BR>" . $row["Question"] . "<BR><BR>";
 //
 //Fetch the choices for this question
 //
-$query = "SELECT * FROM QUIZ_CHOICES WHERE QuestionID = '" . $row["QuestionID"] . "' ORDER BY Ordering";
+$questionId = $row["QuestionID"];
+$query = "SELECT * FROM QUIZ_CHOICES WHERE QuestionID = '$questionId' ORDER BY Ordering";
 $result = $r->query($query);
 if (!$result)
 {
@@ -146,7 +147,7 @@ if (!$result)
 }
 if (0 == mysql_num_rows($result))
 {
-    echo "No choices found.";
+    echo "$query <BR> No choices found.";
     exit();
 }
 
