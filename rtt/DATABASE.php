@@ -11,7 +11,7 @@ class DATABASE
 
     private function Connect()
     {
-        $TEST_SERVER = file_exists($_SERVER['DOCUMENT_ROOT']."\include\localdb");
+        $TEST_SERVER = file_exists($_SERVER['DOCUMENT_ROOT']."\include\localdb") || file_exists("../include/localdb");
         if ($TEST_SERVER)
         {
             $this->server = 'localhost';
@@ -56,7 +56,7 @@ class DATABASE
         }
         
         $result = mysql_query($query, $this->connection);
-        if (!result)
+        if (!$result)
         {
             $error = 'Error executing query: ' . mysql_error();
         }
