@@ -91,13 +91,14 @@ require_once("config.php");
     $commandCenterText = $_SESSION["ReclineeName"] . "'s command center";
   }
 
-  $leftAligned = array(array("name"=>"home", "url"=>BASE_URL . "index.php"),
-		       array("name"=>"about", "url"=>BASE_URL . "about.php"),
-		       array("name"=>"register", "url"=>BASE_URL . "register.php"),
-		       array("name"=>"tracking", "url"=>BASE_URL . "tracking_wrapper.php"),
-			   array("name"=>"watch live", "url"=>BASE_URL . "watch.php"));
-  $rightAligned = array(array("name"=>"command center", "url"=>BASE_URL . "rtt/controlcenter.php", "displayText"=>$commandCenterText),
-                      array("name"=>"logout", "url"=>BASE_URL . "logout.php", "visible"=>($loggedInReclineeID != "")));
+  $root = "http://" . $_SERVER["SERVER_NAME"] . "/";
+  $leftAligned = array(array("name"=>"home", "url"=>$root . "index.php"),
+		       array("name"=>"about", "url"=>$root . "about.php"),
+		       array("name"=>"register", "url"=>$root . "register.php"),
+		       array("name"=>"tracking", "url"=>$root . "tracking_wrapper.php"),
+			   array("name"=>"watch live", "url"=>$root . "watch.php"));
+  $rightAligned = array(array("name"=>"command center", "url"=>$root . "rtt/controlcenter.php", "displayText"=>$commandCenterText),
+                      array("name"=>"logout", "url"=>$root . "logout.php", "visible"=>($loggedInReclineeID != "")));
   
   echo showLinks($leftAligned, $rightAligned);
   ?>
