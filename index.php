@@ -88,7 +88,12 @@ include("header.php");
   <img src="images/arena_photo.png" /><br /><br />
   <img id="quote"  src="images/teaser_quote.png" /><br /><br />
 </div>
-  <img id="cta" onMouseOver="this.style.cursor='pointer'; this.src='images/teaser_cta_over.png';" onMouseOut="this.style.cursor='default'; this.src='images/teaser_cta.png';" onClick="window.location='register'" src="images/teaser_cta.png" /><br />
+  <img id="cta" 
+    onMouseOver="this.style.cursor='pointer'; this.src='images/teaser_cta_over.png';" 
+    onMouseOut="this.style.cursor='default'; this.src='images/teaser_cta.png';" 
+    onClick="window.location='register'" 
+    src="images/teaser_cta.png" />
+    <br />
 </center>
 </div>
 
