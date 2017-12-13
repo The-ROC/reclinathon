@@ -1,5 +1,6 @@
 <?php
 
+session_start();
 include "RECLINATHON_CONTEXT.php";
 
 ?>
@@ -144,8 +145,6 @@ function ShowAll()
 
 <FORM NAME='vote' ACTION="vote.php" METHOD="post">
 <?php 
-
-session_start();
 
 $reclineeID = $_SESSION["ReclineeID"];
 if($_POST["ReclineeID"] != "")
