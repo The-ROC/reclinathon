@@ -1,5 +1,6 @@
 <?php
 
+session_name("reclinathon");
 session_start();
 echo "Session: " . var_dump($_SESSION);
 echo "Session ID: " . session_id();

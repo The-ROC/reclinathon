@@ -1,6 +1,7 @@
 <?php
 
 session_start();
+session_name("reclinathon");
 
 $ReclineeID = $_SESSION["ReclineeID"];
 //$ReclineeID = $_POST["ReclineeID"];
