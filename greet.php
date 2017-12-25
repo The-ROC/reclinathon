@@ -13,13 +13,13 @@
 <font size=7>
 <br/>
 Welcome to Reclinathon!
-<br/>
 </font>
 </center>
 </h1>
 <H3>
 <center>
 <font size=6>
+<br/>
 <a href="https://hangouts.google.com/call/YvZ0r9JcWpbXbFeUKzjAAAEE"><u>Call the Greeter</u></a> for your official welcome.
 </font>
 </center>
