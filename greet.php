@@ -9,7 +9,12 @@
 <div class="main">
 <center>
 <div class="content" align="left">
-<a href="https://hangouts.google.com/call/YvZ0r9JcWpbXbFeUKzjAAAEE">Call the Greeter</a>
+<h1>
+Welcome to Reclinathon!
+</h1>
+<H3>
+<a href="https://hangouts.google.com/call/YvZ0r9JcWpbXbFeUKzjAAAEE"><u>Call the Greeter</u></a> for your official welcome.
+</H3>
 </div>
 </center>
 
