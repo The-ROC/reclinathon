@@ -20,7 +20,7 @@ Welcome to Reclinathon!
 <center>
 <font size=6>
 <br/>
-<a href="https://hangouts.google.com/call/YvZ0r9JcWpbXbFeUKzjAAAEE"><u>Call the Greeter</u></a> for your official welcome.
+Please <a href="https://hangouts.google.com/call/YvZ0r9JcWpbXbFeUKzjAAAEE"><u>Call the Greeter</u></a> to check in.
 </font>
 </center>
 </H3>
