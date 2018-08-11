@@ -1,7 +1,7 @@
 <HTML>
 <HEAD>
 <title>Reclinathon Tracking Technology</title>
-<link rel="stylesheet" type="text/css" href="rtt.css" />
+<link rel="stylesheet" type="text/css" href="mockup.css" />
 </HEAD>
 
 <BODY bgcolor='white' CLASS='noborder'>
@@ -20,16 +20,18 @@
     <BR>
     <BR>
 -->
-    <TABLE CLASS='RttFrame'>
+    <TABLE CLASS='RttFrameRight'>      
+    <!--
         <TR>
-            <TD CLASS='RttFrame'><FORM NAME='sw'>
+            <TD CLASS='RttFrameRight'><FORM NAME='sw'>
                 <TABLE>
+    -->
                     <TR cellspacing='0'>
                         <TH>Reclining</TH>
                         <TH CLASS='right'>05/12/2018 5:30 PM</TH>
                     </TR><TR>
                         <TD>Movie:</TD>
-                        <TD>Mad Max: Fury Road <IMG BORDER='3' WIDTH='200' SRC = 'http://upload.wikimedia.org/wikipedia/en/6/6e/Mad_Max_Fury_Road.jpg' alt = 'Mad Max: Fury Road ' ></TD>
+                        <TD>Mad Max: Fury Road <br/> <IMG BORDER='3' WIDTH='200' SRC = 'http://upload.wikimedia.org/wikipedia/en/6/6e/Mad_Max_Fury_Road.jpg' alt = 'Mad Max: Fury Road ' ></TD>
                     </TR><TR>
                         <TD>Time Remaining:*</TD>
                         <TD><input type='text' name='disp2' size='18' style="border: 0px; background-color: #C6D9F1; font-size: 125%;" readonly></INPUT></TD>
@@ -37,8 +39,10 @@
                         <TD>Captain:</TD>
                         <TD>Dude</TD>
                     </TR>
+    <!--
                 </TABLE></FORM>
             </TD>
+    -->
 <!-- Entertainment cell
             <TD CLASS='RttFrameRight'>
                 <TABLE>
@@ -57,7 +61,9 @@
             <TD CLASS='RttFrame'><BR></TD>
             <TD CLASS='RttFrameRight'><BR></TD>
 -->
+<!--
         </TR><TR>
+-->
 <!-- Movie detail cell
             <TD CLASS='RttFrame'>
                 <TABLE>
@@ -71,8 +77,10 @@
                 </TABLE>
             </TD>
 -->
+<!--
             <TD CLASS='RttFrameRight'>
                 <TABLE>
+-->
                     <TR>
                         <TH>History</TH>
                         <TH CLASS='right'><A HREF = 'index.php'>Go To Current</A></TH>
@@ -179,9 +187,11 @@
                         <TD><A HREF = 'index.php?ContextID=434'>Preseason:Preparing the Ballots</A></TD>
                         <TD align='right'>12/10/2017 12:00 AM</TD>
                     </TR>
+<!--
                 </TABLE>
             </TD>
         </TR>
+-->
     </TABLE>
 </CENTER>
 </BODY>
