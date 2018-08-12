@@ -1,3 +1,10 @@
+<!--
+Feed ideas.
+ - There is no reclinathon, start one.
+ - Join relcinathon button.
+ - Get extension state.
+-->
+
 <HTML>
 <HEAD>
 <title>Reclinathon Tracking Technology</title>
@@ -20,12 +27,140 @@
     <BR>
     <BR>
 -->
-    <TABLE CLASS='RttFrameRight'>      
+
+    <div id="stateSummary" class="header">
+
+        <?php 
+            if($_GET["activity"] === "Reclining1") {
+        ?>
+
+        <div id="nowPlaying" class="container" style="padding:15px">
+            <div id="nowPlayingPoster" class="content" style="text-align:right">
+                <img border='3' height='150' src="https://m.media-amazon.com/images/M/MV5BMTUwOGFiM2QtOWMxYS00MjU2LThmZDMtZDM2MWMzNzllNjdhXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_.jpg" alt = 'In Bruges ' />
+            </div>
+            <div class="content" style="width:20px"></div>
+            <div id="nowPlayingInfo" class="content" style="text-align:left">
+                <div id="nowPlayingText" class="container" style="height:40px"><div class="content"><b>Now Playing</b></div></div>
+                <div id="movieTitle" class="container" style="height:40px"><div class="content">In Bruges</div></div>
+                <div id="timeRemaining" class="container" style="height:40px"><div class="content">10:00:00</div></div>
+            </div>
+        </div>
+
+        <?php
+            } else if($_GET["activity"] === "Downtime") {
+        ?>
+
+        <div id="upNext" class="container" style="padding:15px">
+            <div id="upNextPoster" class="content" style="text-align:right">
+                <img border='3' height='150' src="https://m.media-amazon.com/images/M/MV5BNzM3NDFhYTAtYmU5Mi00NGRmLTljYjgtMDkyODQ4MjNkMGY2XkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_.jpg" alt = 'Kill Bill: Vol. 1 ' />
+            </div>
+            <div class="content" style="width:20px"></div>
+            <div id="upNextInfo" class="content" style="text-align:left">
+                <div id="upNextText" class="container" style="height:40px"><div class="content"><b>Up Next</b></div></div>
+                <div id="movieTitle" class="container" style="height:40px"><div class="content">Kill Bill: Vol. 1</div></div>
+                <div id="timeRemaining" class="container" style="height:40px"><div class="content">10:00:00</div></div>
+            </div>
+        </div>
+
+        <?php
+            } else if($_GET["activity"] === "Reclining2") {
+        ?>
+
+        <div id="nowPlaying" class="container" style="padding:15px">
+            <div id="nowPlayingPoster" class="content" style="text-align:right">
+                <img border='3' height='150' src="https://m.media-amazon.com/images/M/MV5BNzM3NDFhYTAtYmU5Mi00NGRmLTljYjgtMDkyODQ4MjNkMGY2XkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_.jpg" alt = 'Kill Bill: Vol. 1 ' />
+            </div>
+            <div class="content" style="width:20px"></div>
+            <div id="nowPlayingInfo" class="content" style="text-align:left">
+                <div id="nowPlayingText" class="container" style="height:40px"><div class="content"><b>Now Playing</b></div></div>
+                <div id="movieTitle" class="container" style="height:40px"><div class="content">Kill Bill: Vol. 1</div></div>
+                <div id="timeRemaining" class="container" style="height:40px"><div class="content">10:00:00</div></div>
+            </div>
+        </div>
+    
+        <?php
+            } else {
+        ?>
+
+        <div id="upNext" class="container" style="padding:15px">
+        <div class="container" style="height:65px"><img src="sign.png" width="360"/></div>
+        <div class="container" style="height:40px">No Events Scheduled</div>
+            <div class="container" style="text-align:center">
+                <button class="button">Create a Reclinathon</button>
+            </div>
+        </div>
+
+        <?php
+            }
+        ?>
+    </div>
+<!--
+    <div class="timeRemaining">
+        <br/>
+    </div>
+-->
+    <div id="feed" style="width:100%; text-align:left">
+        <div class="container" style="padding:5px">
+        <form>
+            <div class="content"><img src="reclinathon.jpg" height="50" width="50"/></div>
+            <div class="content" style="text-align:left; padding-left:15px">
+                <div class="container"><input type="text" name="feedPost" value="Post something!" size="75"></div>
+                <div class="container"><input type="submit" name="submit" value="Post"></div>
+            </div>
+        </form>
+        </div>
+
+        <div class="container" style="padding:5px">
+            <div class="content"><img src="downtime.png" height="50" width="50"/></div>
+            <div class="content" style="text-align:left; padding-left:15px">
+                <div class="container">Finished <a href="index.php?ContextID=468">Mad Max: Fury Road</a></div>
+                <div class="container" style="font-size:50%">June 17 at 11:11am</div>
+            </div>
+        </div>
+        <div class="container" style="padding:5px">
+            <div class="content"><img src="dave.jpg" height="50" width="50"/></div>
+            <div class="content" style="text-align:left; padding-left:15px">
+                <div class="container">Mad Max Fury Road just broke the Guinness World Record for longest movie ever, previously held by Logistics.</div>
+                <div class="container" style="font-size:50%">June 17 at 10:30am</div>
+            </div>
+        </div>
+        <div class="container" style="padding:5px">
+            <div class="content" style="width:50px; text-align:center"><img src="http://upload.wikimedia.org/wikipedia/en/6/6e/Mad_Max_Fury_Road.jpg" height="50"/></div>
+            <div class="content" style="text-align:left; padding-left:15px">
+                <div class="container">Started <a href='index.php?ContextID=468'>Mad Max: Fury Road </a></div>
+                <div class="container" style="font-size:50%">May 12 at 5:30pm</div>
+            </div>
+        </div>
+        <div class="container" style="padding:5px">
+            <div class="content"><img src="downtime.png" height="50" width="50"/></div>
+            <div class="content" style="text-align:left; padding-left:15px">
+                <div class="container">Finished <a href="index.php?ContextID=465">The Legend of Old Gregg</a></div>
+                <div class="container" style="font-size:50%">December 28, 2017 at 3:49pm</div>
+            </div>
+        </div>
+        <div class="container" style="padding:5px">
+            <div class="content" style="width:50px; text-align:center"><img src="finish.png" height="50"/></div>
+            <div class="content" style="text-align:left; padding-left:15px">
+                <div class="container">Completed a Full Reclinathon!</div>
+                <div class="container" style="font-size:50%">December 28, 2017 at 3:28pm</div>
+            </div>
+        </div>
+        <div class="container" style="padding:5px">
+            <div class="content" style="width:50px; text-align:center"><img src="https://upload.wikimedia.org/wikipedia/en/d/d8/Boosh_s2.gif" height="50"/></div>
+            <div class="content" style="text-align:left; padding-left:15px">
+                <div class="container">Started <a href="index.php?ContextID=465">The Legend of Old Gregg</a></div>
+                <div class="container" style="font-size:50%">December 28, 2017 at 3:22pm</div>
+            </div>
+        </div>
+    </div>
+    
+    <TABLE CLASS='RttFrameRight'>
     <!--
         <TR>
             <TD CLASS='RttFrameRight'><FORM NAME='sw'>
                 <TABLE>
     -->
+    <!--
                     <TR cellspacing='0'>
                         <TH>Reclining</TH>
                         <th></th>
@@ -43,6 +178,7 @@
                         <TD>Dude</TD>
                         <td></td>
                     </TR>
+-->
     <!--
                 </TABLE></FORM>
             </TD>
@@ -85,24 +221,15 @@
             <TD CLASS='RttFrameRight'>
                 <TABLE>
 -->
+<!--
                     <TR>
                         <TH>History</TH>
                         <th></th>
                         <TH CLASS='right'><A HREF = 'index.php'>Go To Current</A></TH>
-                    </TR><TR>
-                        <TD><IMG SRC = "downtime.png" height="50" width="50"/></TD>
-                        <TD>Finished <A HREF = 'index.php?ContextID=468'>Mad Max: Fury Road </A></TD>
-                        <TD align='right'>06/17/2018 11:11 AM</TD>
-                    </TR><TR>
-                        <TD><IMG SRC = "dave.jpg" height="50" width="50"/></TD>
-                        <TD>Mad Max Fury Road just broke the Guinness World Record for longest movie ever, previously held by Logistics.</TD>
-                        <TD align='right'>06/17/2018 10:30 AM</TD>
-                    </TR><TR>
-                    </TR><TR>
-                        <TD><IMG SRC = "play.png" height="50" width="50"/></TD>
-                        <TD>Started <A HREF = 'index.php?ContextID=468'>Mad Max: Fury Road </A></TD>
-                        <TD align='right'>05/12/2018 5:30 PM</TD>
-                    </TR><TR>
+                    </TR>
+-->
+<!--
+                    <TR>
                         <TD></TD>
                         <TD><A HREF = 'index.php?ContextID=466'>Postseason</A></TD>
                         <TD align='right'>12/28/2017 3:49 PM</TD>
@@ -235,6 +362,7 @@
                         <TD><A HREF = 'index.php?ContextID=434'>Preseason:Preparing the Ballots</A></TD>
                         <TD align='right'>12/10/2017 12:00 AM</TD>
                     </TR>
+-->
 <!--
                 </TABLE>
             </TD>
@@ -244,12 +372,3 @@
 </CENTER>
 </BODY>
 </HTML>
-
-<!--
-Feed ideas.
- - Mad Max Fury Road just broke the Guinness World Record for longest movie ever.
- 5/12/2018 @ 5:30pm + 35d 17h. 6/17/2018 @ 10:30am. Previously held by Logistics.
-   (chat icon)
- - Mad Max Fury Road Started (started icon).
- - Mad Max Fury Road Finished (downtime icon).
--->
