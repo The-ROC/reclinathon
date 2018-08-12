@@ -1,5 +1,5 @@
 <?php
-set_include_path("/kunden/homepages/6/d95429370/htdocs/reclinathon");
+set_include_path($_SERVER["DOCUMENT_ROOT"]);
 require_once "config.php";
 ?>
 

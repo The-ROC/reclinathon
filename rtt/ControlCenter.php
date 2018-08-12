@@ -47,7 +47,7 @@ echo "<table class='commandcenter' cellspacing='20'>";
 echo "<tr><td>Edit your user information.</td><td><form action='EditReclinee.php' method='post'>" . $ReclineeIDInput . "<input type='submit' value='Go' /></form></tr>";
 
 // Update this to true when an election is in progress.
-$voteActive = false;
+$voteActive = true;
 
 if ($voteActive)
 {

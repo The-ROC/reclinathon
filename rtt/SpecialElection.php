@@ -1,7 +1,6 @@
 <?php
-
+session_start();
 include "RECLINATHON_CONTEXT.php";
-
 ?>
 
 <HTML>
@@ -144,17 +143,22 @@ function ShowAll()
 
 <FORM NAME='vote' ACTION="vote.php" METHOD="post">
 <?php 
-if ($_POST["ReclineeID"] == "")
+
+$reclineeID = $_SESSION["ReclineeID"];
+if($_POST["ReclineeID"] != "")
+    $reclineeID = $_POST["ReclineeID"];
+
+if ($reclineeID == "")
 {
     $reclinee = new RECLINEE();
     $reclinee->DisplayRocMemberList();
 }
 else
-{
+{   
 	$reclinee = new RECLINEE();
-    $reclinee->Load($_POST["ReclineeID"]);
+    $reclinee->Load($reclineeID);
 	echo "<h3>Welcome, " . $reclinee . "</h3>";
-    echo "<INPUT TYPE='HIDDEN' NAME='ReclineeID' VALUE='" . $_POST["ReclineeID"] . "'>";
+    echo "<INPUT TYPE='HIDDEN' NAME='ReclineeID' VALUE='" . $reclineeID . "'>";
 }
 ?>
 <INPUT TYPE="HIDDEN" NAME="GoldenMovieID" VALUE="">

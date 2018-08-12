@@ -563,8 +563,8 @@ class MOVIE extends RTT_COMMON
 		
 		if (count($ThemeMovies) > 0)
 		{
-		    echo "<BR><H2>Special Election: Reclinathon Theme Movies<BR><I><U>'In Memoriam 2016: So Long, and Thanks for all the Fish'</I></U></H2>";
-			echo "At this year's Reclinathon, we'll honor some of the acting legends that were lost this year.  What better tribute can be offered than a screening of your film in Mary's basement with a bunch of idiots?  Some of those being recognized in the special election ballot are:<br><ul><li>Alan Rickman (Die Hard, Alice Through the Looking Glass)</li><li>Gene Wilder (Blazing Saddles, Willy Wonka and the Chocolate Factory)</li><li>David Bowie (Labyrinth)</li><li>Prince (Purple Rain)</li><li>David Huddleston (The Big Lebowski)</li><li>Jon Polito (The Big Lebowski)</li><li>Anton Yelchin (Star Trek Beyond)</li><li>Gary Shandling (The Jungle Book)</li><li>Kenny Baker (Star Wars: Episode VII - The Force Awakens)</li></ul><br>";
+		    echo "<BR><H2>Special Election: Reclinathon Theme Movies<BR><BR><I><U>'Wonder Women: A celebration of fierce leading ladies'</I></U></H2>";
+			echo "Given the kind of year we've had, a celebration of \"Dudliness\" might seem a bit...exclusive...no?  But fear not!  We here at Reclinathon believe everyone has the power to be a Dude, not just the tough guys and cool cats.<BR>Therefore, this year we're giving props to some of the the kick-ass women who have graced the silver screen by being tough, smart, and just generally awesome.<BR><BR>Hats off to you, Ladies...you're what being a Dude is all about!<BR><BR>";
 		    foreach ($ThemeMovies as &$movie)
 		    {			
                 $movie->DisplayModule();
