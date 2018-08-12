@@ -1,5 +1,6 @@
 var destinationUrl = "";
 var refreshTime = "";
+var sidebarUrl = "";
 
 function createXMLHttpRequest() 
 {
@@ -26,6 +27,7 @@ function GetNextDestination(url)
 			{
 				destinationUrl = result[0].getAttribute("url");
 				refreshTime = parseInt(result[0].getAttribute("time"));
+				sidebarUrl = result[0].getAttribute("sidebar");
 				ProcessCurrentUrl();
 			}
 		}
@@ -35,27 +37,31 @@ function GetNextDestination(url)
 
 function ProcessCurrentUrl()
 {
-	var width = window.getComputedStyle(document.body, null).getPropertyValue("width");
-	var newWidth = width - 350;
-	document.body.style.width = newWidth + "px";
+	if (sidebarUrl != "")
+	{
+	    var width = window.getComputedStyle(document.body, null).getPropertyValue("width");
+	    var newWidth = width - 350;
+	    document.body.style.width = newWidth + "px";
 	
-	var div = document.createElement('div');
-	div.style.position = 'fixed';
-	div.style.top = 0;
-	div.style.right = 0;
-	div.style.width = "300px";
-	div.style.height = "100%";
-	div.style.zIndex = 999999;
+	    var div = document.createElement('div');
+	    div.style.position = 'fixed';
+	    div.style.top = 0;
+	    div.style.right = 0;
+	    div.style.width = "300px";
+	    div.style.height = "100%";
+	    div.style.zIndex = 999999;
 	
-	var iframe = document.createElement('iframe');
-	iframe.src = "https://www.reclinathon.com/rtt/feed_mockup.php";
-	iframe.style.width = "100%";
-	iframe.style.height = "100%";
-	div.appendChild(iframe);
+	    var iframe = document.createElement('iframe');
+	    iframe.src = sidebarUrl;
+	    iframe.style.width = "100%";
+	    iframe.style.height = "100%";
+	    div.appendChild(iframe);
+	
+	    document.body.appendChild(div);
+	}
 	
 	if (destinationUrl != "")
-	{
-		document.body.appendChild(div);
+	{	
 		setTimeout(function(){ window.location.href = destinationUrl; }, refreshTime);
 	}
 }
