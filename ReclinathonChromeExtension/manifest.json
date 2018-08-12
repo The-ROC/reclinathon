@@ -1,0 +1,20 @@
+{
+  "name": "Reclinathon",
+  "version": "1.0",
+  "description": "The greatest and best event in the world.  Tribute.",
+  "manifest_version": 2,
+  "permissions": ["activeTab", "tabs", "<all_urls>"],
+  "background": {
+    "scripts": [ "background.js" ]
+  },
+   "browser_action": {
+    "default_title": "Reclinathon"
+  },
+  "content_scripts": [
+   {
+     "matches": ["http://developer.chrome.com/*"],
+     "js": ["content.js"],
+	 "run_at": "document_end"
+   }
+ ]
+}
