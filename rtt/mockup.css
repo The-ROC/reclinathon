@@ -13,6 +13,51 @@ BODY.noborder
   border:0px;
 }
 
+.header
+{
+  width:100%;
+  background-color: #C6D9F1;
+  color: black;
+}
+
+.container
+{
+  display: table;
+  /*border: 1px solid #000000;*/
+}
+
+.content
+{
+  display: table-cell;
+  vertical-align: middle;
+  /*border: 1px solid red;*/
+}
+
+.button {
+  background-color: rgb(46, 146, 223);
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color: rgb(82, 162, 223);
+}
+
+div
+{
+  min-height: 1px;
+}
+
+DIV.timeRemaining
+{
+  background-color: #595959;
+  color: #8EB4E3;
+}
+
 DIV.title
 {
   width: 100%;
