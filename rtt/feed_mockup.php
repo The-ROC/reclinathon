@@ -13,6 +13,15 @@ Feed ideas.
 
 <BODY bgcolor='white' CLASS='noborder'>
 
+<?php
+
+$startedInBruges = false;
+$finishedInBruges = false;
+$startedKillBill = false;
+$finishedKillBill = false;
+
+?>
+
 <!-- Logo
 <DIV CLASS='title'>
     <CENTER>
@@ -31,7 +40,9 @@ Feed ideas.
     <div id="stateSummary" class="header">
 
         <?php 
-            if($_GET["activity"] === "Reclining1") {
+            if($_GET["activity"] === "Reclining1" || $_GET["activity"] === "join")
+			{
+				$startedInBruges = true;
         ?>
 
         <div id="nowPlaying" class="container" style="padding:15px">
@@ -47,7 +58,15 @@ Feed ideas.
         </div>
 
         <?php
-            } else if($_GET["activity"] === "Downtime") {
+                if ($_GET["activity"] === "join")
+			    {
+			        echo "<div class='container' style='text-align:center'>";
+                    echo "<button class='button' onclick=\"window.location.href = 'https://www.netflix.com/watch/70083111?t=52';\">Join the Reclinathon</button>";
+					echo "<div class='container' style='height:10px'>&nbsp;</div>";
+                    echo "</div>";
+			    }
+			}
+			else if($_GET["activity"] === "Downtime") { $startedInBruges = true; $finishedInBruges = true;
         ?>
 
         <div id="upNext" class="container" style="padding:15px">
@@ -63,7 +82,7 @@ Feed ideas.
         </div>
 
         <?php
-            } else if($_GET["activity"] === "Reclining2") {
+            } else if($_GET["activity"] === "Reclining2") { $startedInBruges = true; $finishedInBruges = true; $startedKillBill = true;
         ?>
 
         <div id="nowPlaying" class="container" style="padding:15px">
@@ -79,9 +98,26 @@ Feed ideas.
         </div>
     
         <?php
-            } else {
-        ?>
+            }
+			
+			else if ($_GET["activity"] === "EndReclinathon")
+			{
+				$startedInBruges = true;
+				$finishedInBruges = true;
+				$startedKillBill = true;
+				$finishedKillBill = true;
+				$showCreateButton = true;
+			}
+			else
+			{
+				$showCreateButton = true;
+			}
 
+		    if ($showCreateButton)
+		    {
+			
+		?>
+		
         <div id="upNext" class="container" style="padding:15px">
         <div class="container" style="height:65px"><img src="sign.png" width="360"/></div>
         <div class="container" style="height:40px">No Events Scheduled</div>
@@ -110,6 +146,70 @@ Feed ideas.
         </form>
         </div>
 
+		<?php
+		
+		if ($finishedKillBill)
+		{
+			echo "<div class='container' style='padding:5px'>";
+            echo "<div class='content' style='width:50px; text-align:center'><img src='finish.png' height='50'/></div>";
+            echo "<div class='content' style='text-align:left; padding-left:15px'>";
+            echo "<div class='container'>Completed a Mini Reclinathon!</div>";
+            echo "<div class='container' style='font-size:50%'>August 12 at 7:10pm</div>";
+            echo "</div>";
+            echo "</div>";
+			
+			echo "<div class='container' style='padding:5px'>";
+            echo "<div class='content'><img src='downtime.png' height='50' width='50'/></div>";
+            echo "<div class='content' style='text-align:left; padding-left:15px'>";
+            echo "<div class='container'>Finished <a href='index.php?ContextID=468'>Kill Bill</a></div>";
+            echo "<div class='container' style='font-size:50%'>August 12 at 7:10pm</div>";
+            echo "</div>";
+            echo "</div>";
+		}
+		
+		if ($startedKillBill)
+		{
+			echo "<div class='container' style='padding:5px'>";
+            echo "<div class='content' style='width:50px; text-align:center'><img src='https://m.media-amazon.com/images/M/MV5BNzM3NDFhYTAtYmU5Mi00NGRmLTljYjgtMDkyODQ4MjNkMGY2XkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_.jpg' height='50'/></div>";
+            echo "<div class='content' style='text-align:left; padding-left:15px'>";
+            echo "<div class='container'>Started <a href='index.php?ContextID=468'>Kill Bill</a></div>";
+            echo "<div class='container' style='font-size:50%'>August 12 at 4:43pm</div>";
+            echo "</div>";
+            echo "</div>";
+		}
+		
+		if ($finishedInBruges)
+		{
+			echo "<div class='container' style='padding:5px'>";
+            echo "<div class='content'><img src='downtime.png' height='50' width='50'/></div>";
+            echo "<div class='content' style='text-align:left; padding-left:15px'>";
+            echo "<div class='container'>Finished <a href='index.php?ContextID=468'>In Bruges</a></div>";
+            echo "<div class='container' style='font-size:50%'>August 12 at 4:30pm</div>";
+            echo "</div>";
+            echo "</div>";
+		}
+		
+		if ($startedInBruges)
+		{
+			echo "<div class='container' style='padding:5px'>";
+            echo "<div class='content' style='width:50px; text-align:center'><img src='https://m.media-amazon.com/images/M/MV5BMTUwOGFiM2QtOWMxYS00MjU2LThmZDMtZDM2MWMzNzllNjdhXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_.jpg' height='50'/></div>";
+            echo "<div class='content' style='text-align:left; padding-left:15px'>";
+            echo "<div class='container'>Started <a href='index.php?ContextID=468'>In Bruges</a></div>";
+            echo "<div class='container' style='font-size:50%'>August 12 at 2:30pm</div>";
+            echo "</div>";
+            echo "</div>";
+			
+			echo "<div class='container' style='padding:5px'>";
+            echo "<div class='content' style='width:50px; text-align:center'><img src='play.png' height='50' width='50' /></div>";
+            echo "<div class='content' style='text-align:left; padding-left:15px'>";
+            echo "<div class='container'>Started a Mini Reclinathon!</div>";
+            echo "<div class='container' style='font-size:50%'>August 12 at 2:15pm</div>";
+            echo "</div>";
+            echo "</div>";
+		}
+		
+		?>
+		
         <div class="container" style="padding:5px">
             <div class="content"><img src="downtime.png" height="50" width="50"/></div>
             <div class="content" style="text-align:left; padding-left:15px">
