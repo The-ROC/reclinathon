@@ -9,6 +9,7 @@ Feed ideas.
 <HEAD>
 <title>Reclinathon Tracking Technology</title>
 <link rel="stylesheet" type="text/css" href="mockup.css" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 </HEAD>
 
 <BODY bgcolor='white' CLASS='noborder'>
@@ -118,7 +119,7 @@ $finishedKillBill = false;
 			
 		?>
 		
-        <div id="upNext" class="container" style="padding:15px">
+        <div id="upNext" class="container" style="padding:15px 0">
         <div class="container" style="height:65px"><img src="sign.png" width="360"/></div>
         <div class="container" style="height:40px">No Events Scheduled</div>
             <div class="container" style="text-align:center">
@@ -136,11 +137,11 @@ $finishedKillBill = false;
     </div>
 -->
     <div id="feed" style="width:100%; text-align:left">
-        <div class="container" style="padding:5px">
+        <div class="container" style="padding:5px; width:100%; box-sizing: border-box">
         <form>
             <div class="content"><img src="reclinathon.jpg" height="50" width="50"/></div>
-            <div class="content" style="text-align:left; padding-left:15px">
-                <div class="container"><input type="text" name="feedPost" value="Post something!" size="75"></div>
+            <div class="content" style="text-align:left; padding-left:15px; width: 100%; box-sizing: border-box">
+                <div class="container" style="width:100%"><input type="text" name="feedPost" value="Post something!" style="width:100%"></div>
                 <div class="container"><input type="submit" name="submit" value="Post"></div>
             </div>
         </form>
