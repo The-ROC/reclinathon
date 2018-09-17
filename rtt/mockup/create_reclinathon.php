@@ -55,7 +55,7 @@ if(isset($_GET['img'])) {
             <br />
             Movies<br />
             <div class="dropdown">
-            <input type="text" name="movielink" style="width:360px" oninput="getSearchResults(this.value)" />
+            <input type="text" name="movielink" style="width:360px" oninput="getSearchResults(this.value)" onclick="" />
                 <div id="testDropdown" class="dropdown-content"></div>
             </div>
             <br />
@@ -127,5 +127,16 @@ function createXMLHttpRequest() {
 	try { return new ActiveXObject("Msxml2.XMLHTTP"); } catch (e) {}
 	alert("XMLHttpRequest not supported");
 	return null;
+}
+
+window.onclick = function(event) {
+    var dropdowns = document.getElementsByClassName("dropdown-content");
+    var i;
+    for(i=0; i<dropdowns.length; i++) {
+        var openDropdown = dropdowns[i];
+        if(openDropdown.classList.contains("show")) {
+            openDropdown.classList.remove("show");
+        }
+    }
 }
 </script>
