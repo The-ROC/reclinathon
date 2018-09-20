@@ -53,10 +53,10 @@ if(isset($_GET['img'])) {
             Start time<br />
             <input type="datetime-local" name="starttime" /><br />
             <br />
-            Movies<br />
-            <div class="dropdown">
-            <input type="text" name="movielink" style="width:360px" oninput="getSearchResults(this.value)" onclick="" />
-                <div id="testDropdown" class="dropdown-content"></div>
+            <div id="moviesHeader" style="width:360px; margin:0 auto">Movies<br /></div>
+            <div id="moviesInput" class="dropdown">
+            <input type="text" id="movieInput" name="movieInput" style="width:360px" oninput="getSearchResults(this.value)" onclick="" />
+                <div id="moviesDropdown" class="dropdown-content"></div>
             </div>
             <br />
             <br />
@@ -73,35 +73,65 @@ function getSearchResults(s) {
         if (xhReq.readyState != 4) { return; }
 
         var myArr = JSON.parse(this.responseText);
-        console.log(myArr);
 
-        var testDiv = document.getElementById('testDropdown');
-        if(!testDiv.classList.contains("show"))
-            testDiv.classList.toggle("show");
+        var dropdown = document.getElementById('moviesDropdown');
+        if(!dropdown.classList.contains("show"))
+            dropdown.classList.toggle("show");
 
-        testDiv.innerHTML = "";
+        dropdown.innerHTML = "";
 
         if('byReference' in myArr.jsonGraph.search) {
 
             var movieList = getMovieList(myArr);
+            var movieDatas = [];
 
             var count = 0;
             for(var i in movieList) {
                 if(!Number.isNaN(Number(i))) {
                     var movieId = getMovieId(i, movieList);
                     var artUrl = getBoxArtUrl(movieId, myArr);
-                    testDiv.innerHTML += "<a style='vertical-align:middle; min-height:50' href='" + getMovieUrl(movieId) + "'>" + 
-                        "<img style='float:left' src='create_reclinathon.php?img=" + encodeURIComponent(artUrl) + "' height=50/>" + 
-                        movieList[i].summary.value.name + 
-                        "</a>";
+                    dropdown.innerHTML += "<div id='dropdownElement-" + i + "' style='min-height:50px; padding:2px'>" +
+                        "<img style='float:left' src='create_reclinathon.php?img=" + encodeURIComponent(artUrl) + 
+                        "' height=50/>" + movieList[i].summary.value.name + "</div>";
+
+
+                    movieDatas[i] = {};
+                    movieDatas[i].movieId = movieId;
+                    movieDatas[i].movieName = movieList[i].summary.value.name;
+                    movieDatas[i].json = myArr;
+                    movieDatas[i].clickHandler = function(event) {
+                        addSelectedMovie(this.movieId, this.movieName, this.json);
+                        clearMovieInput();
+                    };
+
                     count++;
                     if(count >= 6)
                         break;
                 }
             }
+
+            var movieDivs = Array.from(dropdown.childNodes);
+            var i = 0;
+            movieDivs.forEach(function(movieDiv) {
+                if(movieDiv.id.includes("dropdownElement")) {
+                    movieDiv.onclick = movieDatas[i].clickHandler.bind(movieDatas[i]);
+                    i++;
+                }
+            });
         }
     };
     xhReq.send();
+}
+
+function addSelectedMovie(movieId, movieName, json) {
+    var moviesHeader = document.getElementById("moviesHeader");
+    var artUrl = getBoxArtUrl(movieId, json);
+    moviesHeader.innerHTML += "<div><img style='float:left' src='create_reclinathon.php?img=" + encodeURIComponent(artUrl) + 
+        "' height=50/>" + movieName + "</div><br />";
+}
+
+function clearMovieInput() {
+    document.getElementById("movieInput").value = "";
 }
 
 function getMovieList(json) {
@@ -130,6 +160,9 @@ function createXMLHttpRequest() {
 }
 
 window.onclick = function(event) {
+    if(event.target.id === "moviesDropdown")
+        return;
+
     var dropdowns = document.getElementsByClassName("dropdown-content");
     var i;
     for(i=0; i<dropdowns.length; i++) {
