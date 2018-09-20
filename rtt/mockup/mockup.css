@@ -73,7 +73,7 @@ BODY.noborder
 
 .show { display: block; }
 
-.movie-element {
+.movielist-element {
   min-height:50px; 
   padding:2px
 }

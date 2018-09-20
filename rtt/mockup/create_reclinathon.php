@@ -90,7 +90,7 @@ function getSearchResults(s) {
                 if(!Number.isNaN(Number(i))) {
                     var movieId = getMovieId(i, movieList);
                     var artUrl = getBoxArtUrl(movieId, myArr);
-                    dropdown.innerHTML += "<div id='dropdownElement-" + i + "' class='movie-element'>" +
+                    dropdown.innerHTML += "<div id='dropdownElement-" + i + "' class='movielist-element'>" +
                         "<img style='float:left' src='create_reclinathon.php?img=" + encodeURIComponent(artUrl) + 
                         "' height=50/>" + movieList[i].summary.value.name + "</div>";
 
@@ -126,7 +126,7 @@ function getSearchResults(s) {
 function addSelectedMovie(movieId, movieName, json) {
     var moviesHeader = document.getElementById("moviesHeader");
     var artUrl = getBoxArtUrl(movieId, json);
-    moviesHeader.innerHTML += "<div class='movie-element'><img style='float:left' src='create_reclinathon.php?img=" + encodeURIComponent(artUrl) + 
+    moviesHeader.innerHTML += "<div class='movielist-element'><img style='float:left' src='create_reclinathon.php?img=" + encodeURIComponent(artUrl) + 
         "' height=50/>" + movieName + "</div>";
 }
 
