@@ -3,7 +3,7 @@ if(isset($_GET['s'])) {
     $s = $_GET['s'];
 
     $url = "https://www.netflix.com/api/shakti/va91c86c0/pathEvaluator?drmSystem=widevine&isWatchlistEnabled=false&isShortformEnabled=false&isVolatileBillboardsEnabled=false&falcor_server=0.1.0&withSize=true&materialize=true";
-    $data = '{"paths":[["search","byTerm","|' . $s . '","titles",48,["id","length","listId","name","referenceId","requestId","trackIds"]],["search","byTerm","|' . $s . '","titles",48,{"from":0,"to":48},"summary"],["search","byTerm","|' . $s . '","titles",48,{"from":0,"to":48},"reference",["promoVideo","summary","title","titleMaturity","userRating","userRatingRequestId","runtime"]],["search","byTerm","|' . $s . '","titles",48,{"from":0,"to":48},"reference","boxarts","_342x192","webp"]],"authURL":"1536265599850.Nw0CQSLoth8eNtVv81hYyQNOT8U="}';
+    $data = '{"paths":[["search","byTerm","|' . $s . '","titles",48,["id","length","listId","name","referenceId","requestId","trackIds"]],["search","byTerm","|' . $s . '","titles",48,{"from":0,"to":48},"summary"],["search","byTerm","|' . $s . '","titles",48,{"from":0,"to":48},"reference",["promoVideo","summary","title","titleMaturity","userRating","userRatingRequestId","runtime"]],["search","byTerm","|' . $s . '","titles",48,{"from":0,"to":48},"reference","boxarts","_342x192","jpg"]],"authURL":"1536265599850.Nw0CQSLoth8eNtVv81hYyQNOT8U="}';
 
     $headers = [
         'Content-Type: application/json',
@@ -145,7 +145,7 @@ function getMovieId(i, movieList) {
 }
 
 function getBoxArtUrl(movieId, json) {
-    return json.jsonGraph.videos[movieId].boxarts["_342x192"].webp.value.url;
+    return json.jsonGraph.videos[movieId].boxarts["_342x192"].jpg.value.url;
 }
 
 function getMovieUrl(movieId) {
