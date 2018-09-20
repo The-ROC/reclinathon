@@ -73,6 +73,11 @@ BODY.noborder
 
 .show { display: block; }
 
+.movie-element {
+  min-height:50px; 
+  padding:2px
+}
+
 input[type='text'],
 input[type='number'],
 textarea {
