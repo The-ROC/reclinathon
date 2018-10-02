@@ -17,14 +17,22 @@ if (!$object->ProcessForm())
 
 else
 {
-    if ($_POST["ObjectID"] == 0)
+    if (method_exists($object, 'FinishProcessForm'))
     {
-        echo "<meta http-equiv='refresh' content=\"0;url=insert.php\" />";
+        $object->FinishProcessForm();
     }
     else
     {
-        echo "<meta http-equiv='refresh' content=\"0;url=display.php\" />";
+        if ($_POST["ObjectID"] == 0)
+        {
+            echo "<meta http-equiv='refresh' content=\"0;url=insert.php\" />";
+        }
+        else
+        {
+            echo "<meta http-equiv='refresh' content=\"0;url=display.php\" />";
+        }
     }
+
 }
 
 

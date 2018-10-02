@@ -49,18 +49,21 @@ if(isset($_GET['img'])) {
         <br />
         Complete the form below to create a Reclinathon for millions of dudes to attend from all over the world!<br />
         <br />
-        <form>
+        <form action="../processform.php" method="post">
             Start time<br />
-            <input type="datetime-local" name="starttime" /><br />
+            <input type="datetime-local" name="startTime" /><br />
             <br />
             <div id="moviesHeader" style="width:360px; margin:0 auto">Movies<br /></div>
             <div id="moviesInput" class="dropdown">
             <input type="text" id="movieInput" name="movieInput" style="width:360px" oninput="getSearchResults(this.value)" onclick="" />
                 <div id="moviesDropdown" class="dropdown-content"></div>
             </div>
+            <div id="hiddenInputs">
+                <input type="hidden" name="class" value="REMOTE_RECLINATHON" />
+            </div>
             <br />
             <br />
-            <button class="button" type="submit" formaction="feed_mockup.php">Create Reclinathon</button>
+            <button class="button" type="submit">Create Reclinathon</button>
         </form>
     </div>
 </body>
@@ -90,6 +93,7 @@ function getSearchResults(s) {
                 if(!Number.isNaN(Number(i))) {
                     var movieId = getMovieId(i, movieList);
                     var artUrl = getBoxArtUrl(movieId, myArr);
+                    var runtime = getRuntime(movieId, myArr);
                     dropdown.innerHTML += "<div id='dropdownElement-" + i + "' class='movielist-element'>" +
                         "<img style='float:left' src='create_reclinathon.php?img=" + encodeURIComponent(artUrl) + 
                         "' height=50/>" + movieList[i].summary.value.name + "</div>";
@@ -97,10 +101,11 @@ function getSearchResults(s) {
 
                     movieDatas[i] = {};
                     movieDatas[i].movieId = movieId;
+                    movieDatas[i].runtime = runtime;
                     movieDatas[i].movieName = movieList[i].summary.value.name;
                     movieDatas[i].json = myArr;
                     movieDatas[i].clickHandler = function(event) {
-                        addSelectedMovie(this.movieId, this.movieName, this.json);
+                        addSelectedMovie(this);
                         clearMovieInput();
                     };
 
@@ -123,11 +128,23 @@ function getSearchResults(s) {
     xhReq.send();
 }
 
-function addSelectedMovie(movieId, movieName, json) {
+var selectedMovieCount = 0;
+function addSelectedMovie(movieData) {
     var moviesHeader = document.getElementById("moviesHeader");
-    var artUrl = getBoxArtUrl(movieId, json);
+    var artUrl = getBoxArtUrl(movieData.movieId, movieData.json);
     moviesHeader.innerHTML += "<div class='movielist-element'><img style='float:left' src='create_reclinathon.php?img=" + encodeURIComponent(artUrl) + 
-        "' height=50/>" + movieName + "</div>";
+        "' height=50/>" + movieData.movieName + "</div>";
+
+    var hiddenInputs = document.getElementById("hiddenInputs");
+
+    // Fill in hidden input fields for title, runtime, image, id, url
+    hiddenInputs.innerHTML += "<input type='hidden' name='movies[" + selectedMovieCount + "][title]' value='" + movieData.movieName + "' />";
+    hiddenInputs.innerHTML += "<input type='hidden' name='movies[" + selectedMovieCount + "][runtime]' value='" + movieData.runtime + "' />";
+    hiddenInputs.innerHTML += "<input type='hidden' name='movies[" + selectedMovieCount + "][image]' value='" + encodeURIComponent(artUrl) + "' />";
+    hiddenInputs.innerHTML += "<input type='hidden' name='movies[" + selectedMovieCount + "][netflixId]' value='" + movieData.movieId + "' />";
+    hiddenInputs.innerHTML += "<input type='hidden' name='movies[" + selectedMovieCount + "][netflixURL]' value='" + getMovieUrl(movieData.movieId) + "' />";
+
+    selectedMovieCount++;
 }
 
 function clearMovieInput() {
@@ -142,6 +159,10 @@ function getMovieList(json) {
 
 function getMovieId(i, movieList) {
     return movieList[i].summary.value.id;
+}
+
+function getRuntime(i, json) {
+    return json.jsonGraph.videos[i].runtime.value;
 }
 
 function getBoxArtUrl(movieId, json) {
