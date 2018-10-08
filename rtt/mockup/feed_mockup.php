@@ -41,7 +41,25 @@ $finishedKillBill = false;
     <div id="stateSummary" class="header">
 
         <?php 
-            if($_GET["activity"] === "Reclining1" || $_GET["activity"] === "join")
+            if($_GET["activity"] === "Scheduled") {
+        ?>
+
+        <div id="scheduledReclinathon" class="container" style="padding:15px">
+            <div id="nowPlayingText" class="container"><div class="content"><b>Countdown to Reclinathon!</b></div></div>
+            <div id="timeRemaining" class="container"><div class="content">23:23:23</div></div>
+            <div id="timeRemaining" class="container" style="height:10px"><div class="content"></div></div>
+            <div id="moviePosters" class="container">
+                <div id="nowPlayingPoster1" class="content" style="text-align:right">
+                    <img border='3' height='150' src="https://m.media-amazon.com/images/M/MV5BMTUwOGFiM2QtOWMxYS00MjU2LThmZDMtZDM2MWMzNzllNjdhXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_.jpg" alt = 'In Bruges ' />
+                </div>
+                <div id="nowPlayingPoster2" class="content" style="text-align:right">
+                    <img border='3' height='150' src="https://m.media-amazon.com/images/M/MV5BNzM3NDFhYTAtYmU5Mi00NGRmLTljYjgtMDkyODQ4MjNkMGY2XkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_.jpg" alt = 'Kill Bill: Vol. 1 ' />
+                </div>
+            </div>
+        </div>
+
+        <?php 
+            } else if($_GET["activity"] === "Reclining1" || $_GET["activity"] === "join")
 			{
 				$startedInBruges = true;
         ?>
