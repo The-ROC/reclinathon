@@ -9,7 +9,7 @@ class REMOTE_RECLINATHON extends RTT_COMMON
     {
         $this->StartTime = $_POST["startTime"];
         $this->Movies = [];
-        foreach($_POST["movies"] as $movie)
+        foreach((array)$_POST["movies"] as $movie)
         {
             $movieNetflix = new MOVIE_NETFLIX();
             $movieNetflix->LoadFromObject($movie);
