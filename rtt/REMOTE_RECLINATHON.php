@@ -26,11 +26,7 @@ class REMOTE_RECLINATHON extends RTT_COMMON
 
     public function FinishProcessForm()
     {
-        // Option 1 - send to downtime feed as a proxy for countdown to reclinathon.
-        echo "<meta http-equiv='refresh' content='0;mockup/feed_mockup.php?activity=Downtime' />";
-        
-        // Option 2 - send to first movie link as a proxy for starting a reclinathon.
-        //echo "<meta http-equiv='refresh' content='0;" . $this->Movies[0]->GetNetflixURL() . "' />";
+        echo "<meta http-equiv='refresh' content='0;mockup/feed_mockup.php?activity=Scheduled' />";
     }
 }
 

@@ -14,6 +14,55 @@ Feed ideas.
 
 <BODY bgcolor='white' CLASS='noborder'>
 
+    <script>
+        function setCountdownTimer(milliseconds)
+        {
+            this.countdownToTime(new Date().getTime() + milliseconds);
+        }
+
+        function countdownToTime(countdownTimeMS)
+        {
+            var x = setInterval(function()
+            {
+                var now = new Date().getTime();
+                var distance = countdownTimeMS - now;
+                
+                var countdownDiv = this.displayTimer(distance);
+
+                if(distance < 0) {
+                    clearInterval(x);
+                    countdownDiv.innerHTML = "Merry Reclinathon!";
+                }
+            }, 200);
+        }
+
+        function displayTimer(distanceMS)
+        {
+            var days = Math.floor(distanceMS / (1000 * 60 * 60 * 24));
+                var hours = Math.floor((distanceMS % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                var minutes = Math.floor((distanceMS % (1000 * 60 * 60)) / (1000 * 60));
+                var seconds = Math.floor((distanceMS % (1000 * 60)) / 1000);
+                
+                var countdownDiv = document.getElementById("countdown");
+                countdownDiv.innerHTML = "";
+                if(days == 1)
+                    countdownDiv.innerHTML += days + " day<br/>";
+                else if(days > 1)
+                    countdownDiv.innerHTML += days + " days<br/>";
+                countdownDiv.innerHTML += pad(hours, 2) + ":" + pad(minutes, 2) + ":" + pad(seconds, 2);
+
+            return countdownDiv;
+        }
+
+        function pad(num, digits)
+        {
+            var s = num + "";
+            while(s.length < digits)
+                s = "0" + s;
+            return s;
+        }
+    </script>
+
 <?php
 
 $startedInBruges = false;
@@ -46,7 +95,7 @@ $finishedKillBill = false;
 
         <div id="scheduledReclinathon" class="container" style="padding:15px">
             <div id="nowPlayingText" class="container"><div class="content"><b>Countdown to Reclinathon!</b></div></div>
-            <div id="timeRemaining" class="container"><div class="content">23:23:23</div></div>
+            <div id="timeRemaining" class="container"><div id="countdown" class="content"><script>this.displayTimer(2*60*1000); this.setCountdownTimer(2*60*1000);</script></div></div>
             <div id="timeRemaining" class="container" style="height:10px"><div class="content"></div></div>
             <div id="moviePosters" class="container">
                 <div id="nowPlayingPoster1" class="content" style="text-align:right">
@@ -272,7 +321,7 @@ $finishedKillBill = false;
             </div>
         </div>
     </div>
-    
+
     <TABLE CLASS='RttFrameRight'>
     <!--
         <TR>
