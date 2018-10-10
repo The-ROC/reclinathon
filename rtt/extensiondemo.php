@@ -10,9 +10,9 @@ if (strpos($sourceUrl, "hugh") !== false && strpos($sourceUrl, "grant") !== fals
 {
 	echo "<next url='https://reclinathon.com' time='3000' sidebar='' />";
 }
-else if (strpos($sourceUrl, "rtt/startdemo.php") !== false)
+else if (strpos($sourceUrl, "/rtt/mockup/feed_mockup.php?activity=scheduled") !== false)
 {
-	echo "<next url='https://www.netflix.com/watch/70083111?t=52' time='5000' sidebar='' />";
+	echo "<next url='https://www.netflix.com/watch/70083111?t=52' time='120000' sidebar='' />";
 }
 else if (strpos($sourceUrl, "netflix.com/watch/70083111") !== false)
 {
