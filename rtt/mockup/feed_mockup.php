@@ -9,9 +9,59 @@ Feed ideas.
 <HEAD>
 <title>Reclinathon Tracking Technology</title>
 <link rel="stylesheet" type="text/css" href="mockup.css" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 </HEAD>
 
 <BODY bgcolor='white' CLASS='noborder'>
+
+    <script>
+        function setCountdownTimer(milliseconds)
+        {
+            this.countdownToTime(new Date().getTime() + milliseconds);
+        }
+
+        function countdownToTime(countdownTimeMS)
+        {
+            var x = setInterval(function()
+            {
+                var now = new Date().getTime();
+                var distance = countdownTimeMS - now;
+                
+                var countdownDiv = this.displayTimer(distance);
+
+                if(distance < 0) {
+                    clearInterval(x);
+                    countdownDiv.innerHTML = "Merry Reclinathon!";
+                }
+            }, 200);
+        }
+
+        function displayTimer(distanceMS)
+        {
+            var days = Math.floor(distanceMS / (1000 * 60 * 60 * 24));
+                var hours = Math.floor((distanceMS % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                var minutes = Math.floor((distanceMS % (1000 * 60 * 60)) / (1000 * 60));
+                var seconds = Math.floor((distanceMS % (1000 * 60)) / 1000);
+                
+                var countdownDiv = document.getElementById("countdown");
+                countdownDiv.innerHTML = "";
+                if(days == 1)
+                    countdownDiv.innerHTML += days + " day<br/>";
+                else if(days > 1)
+                    countdownDiv.innerHTML += days + " days<br/>";
+                countdownDiv.innerHTML += pad(hours, 2) + ":" + pad(minutes, 2) + ":" + pad(seconds, 2);
+
+            return countdownDiv;
+        }
+
+        function pad(num, digits)
+        {
+            var s = num + "";
+            while(s.length < digits)
+                s = "0" + s;
+            return s;
+        }
+    </script>
 
 <?php
 
@@ -40,7 +90,25 @@ $finishedKillBill = false;
     <div id="stateSummary" class="header">
 
         <?php 
-            if($_GET["activity"] === "Reclining1" || $_GET["activity"] === "join")
+            if($_GET["activity"] === "Scheduled") {
+        ?>
+
+        <div id="scheduledReclinathon" class="container" style="padding:15px">
+            <div id="nowPlayingText" class="container"><div class="content"><b>Countdown to Reclinathon!</b></div></div>
+            <div id="timeRemaining" class="container"><div id="countdown" class="content"><script>this.displayTimer(2*60*1000); this.setCountdownTimer(2*60*1000);</script></div></div>
+            <div id="timeRemaining" class="container" style="height:10px"><div class="content"></div></div>
+            <div id="moviePosters" class="container">
+                <div id="nowPlayingPoster1" class="content" style="text-align:right">
+                    <img border='3' height='150' src="https://m.media-amazon.com/images/M/MV5BMTUwOGFiM2QtOWMxYS00MjU2LThmZDMtZDM2MWMzNzllNjdhXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_.jpg" alt = 'In Bruges ' />
+                </div>
+                <div id="nowPlayingPoster2" class="content" style="text-align:right">
+                    <img border='3' height='150' src="https://m.media-amazon.com/images/M/MV5BNzM3NDFhYTAtYmU5Mi00NGRmLTljYjgtMDkyODQ4MjNkMGY2XkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_.jpg" alt = 'Kill Bill: Vol. 1 ' />
+                </div>
+            </div>
+        </div>
+
+        <?php 
+            } else if($_GET["activity"] === "Reclining1" || $_GET["activity"] === "join")
 			{
 				$startedInBruges = true;
         ?>
@@ -118,11 +186,11 @@ $finishedKillBill = false;
 			
 		?>
 		
-        <div id="upNext" class="container" style="padding:15px">
-        <div class="container" style="height:65px"><img src="sign.png" width="360"/></div>
+        <div id="upNext" class="container" style="padding:15px 0">
+        <div class="container" style="height:65px"><img src="images/sign.png" width="360"/></div>
         <div class="container" style="height:40px">No Events Scheduled</div>
             <div class="container" style="text-align:center">
-                <button class="button">Create a Reclinathon</button>
+                <form style="margin-bottom:0"><button class="button" type="submit" formaction="create_reclinathon.php">Create a Reclinathon</button></form>
             </div>
         </div>
 
@@ -136,11 +204,11 @@ $finishedKillBill = false;
     </div>
 -->
     <div id="feed" style="width:100%; text-align:left">
-        <div class="container" style="padding:5px">
+        <div class="container" style="padding:5px; width:100%; box-sizing: border-box">
         <form>
-            <div class="content"><img src="reclinathon.jpg" height="50" width="50"/></div>
-            <div class="content" style="text-align:left; padding-left:15px">
-                <div class="container"><input type="text" name="feedPost" value="Post something!" size="75"></div>
+            <div class="content"><img src="images/reclinathon.jpg" height="50" width="50"/></div>
+            <div class="content" style="text-align:left; padding-left:15px; width: 100%; box-sizing: border-box">
+                <div class="container" style="width:100%"><input type="text" name="feedPost" value="Post something!" style="width:100%"></div>
                 <div class="container"><input type="submit" name="submit" value="Post"></div>
             </div>
         </form>
@@ -151,7 +219,7 @@ $finishedKillBill = false;
 		if ($finishedKillBill)
 		{
 			echo "<div class='container' style='padding:5px'>";
-            echo "<div class='content' style='width:50px; text-align:center'><img src='finish.png' height='50'/></div>";
+            echo "<div class='content' style='width:50px; text-align:center'><img src='images/finish.png' height='50'/></div>";
             echo "<div class='content' style='text-align:left; padding-left:15px'>";
             echo "<div class='container'>Completed a Mini Reclinathon!</div>";
             echo "<div class='container' style='font-size:50%'>August 12 at 7:10pm</div>";
@@ -159,9 +227,9 @@ $finishedKillBill = false;
             echo "</div>";
 			
 			echo "<div class='container' style='padding:5px'>";
-            echo "<div class='content'><img src='downtime.png' height='50' width='50'/></div>";
+            echo "<div class='content'><img src='images/downtime.png' height='50' width='50'/></div>";
             echo "<div class='content' style='text-align:left; padding-left:15px'>";
-            echo "<div class='container'>Finished <a href='index.php?ContextID=468'>Kill Bill</a></div>";
+            echo "<div class='container'>Finished <a href='../index.php?ContextID=468'>Kill Bill</a></div>";
             echo "<div class='container' style='font-size:50%'>August 12 at 7:10pm</div>";
             echo "</div>";
             echo "</div>";
@@ -172,7 +240,7 @@ $finishedKillBill = false;
 			echo "<div class='container' style='padding:5px'>";
             echo "<div class='content' style='width:50px; text-align:center'><img src='https://m.media-amazon.com/images/M/MV5BNzM3NDFhYTAtYmU5Mi00NGRmLTljYjgtMDkyODQ4MjNkMGY2XkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_.jpg' height='50'/></div>";
             echo "<div class='content' style='text-align:left; padding-left:15px'>";
-            echo "<div class='container'>Started <a href='index.php?ContextID=468'>Kill Bill</a></div>";
+            echo "<div class='container'>Started <a href='../index.php?ContextID=468'>Kill Bill</a></div>";
             echo "<div class='container' style='font-size:50%'>August 12 at 4:43pm</div>";
             echo "</div>";
             echo "</div>";
@@ -181,9 +249,9 @@ $finishedKillBill = false;
 		if ($finishedInBruges)
 		{
 			echo "<div class='container' style='padding:5px'>";
-            echo "<div class='content'><img src='downtime.png' height='50' width='50'/></div>";
+            echo "<div class='content'><img src='images/downtime.png' height='50' width='50'/></div>";
             echo "<div class='content' style='text-align:left; padding-left:15px'>";
-            echo "<div class='container'>Finished <a href='index.php?ContextID=468'>In Bruges</a></div>";
+            echo "<div class='container'>Finished <a href='../index.php?ContextID=468'>In Bruges</a></div>";
             echo "<div class='container' style='font-size:50%'>August 12 at 4:30pm</div>";
             echo "</div>";
             echo "</div>";
@@ -194,13 +262,13 @@ $finishedKillBill = false;
 			echo "<div class='container' style='padding:5px'>";
             echo "<div class='content' style='width:50px; text-align:center'><img src='https://m.media-amazon.com/images/M/MV5BMTUwOGFiM2QtOWMxYS00MjU2LThmZDMtZDM2MWMzNzllNjdhXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_.jpg' height='50'/></div>";
             echo "<div class='content' style='text-align:left; padding-left:15px'>";
-            echo "<div class='container'>Started <a href='index.php?ContextID=468'>In Bruges</a></div>";
+            echo "<div class='container'>Started <a href='../index.php?ContextID=468'>In Bruges</a></div>";
             echo "<div class='container' style='font-size:50%'>August 12 at 2:30pm</div>";
             echo "</div>";
             echo "</div>";
 			
 			echo "<div class='container' style='padding:5px'>";
-            echo "<div class='content' style='width:50px; text-align:center'><img src='play.png' height='50' width='50' /></div>";
+            echo "<div class='content' style='width:50px; text-align:center'><img src='images/play.png' height='50' width='50' /></div>";
             echo "<div class='content' style='text-align:left; padding-left:15px'>";
             echo "<div class='container'>Started a Mini Reclinathon!</div>";
             echo "<div class='container' style='font-size:50%'>August 12 at 2:15pm</div>";
@@ -211,14 +279,14 @@ $finishedKillBill = false;
 		?>
 		
         <div class="container" style="padding:5px">
-            <div class="content"><img src="downtime.png" height="50" width="50"/></div>
+            <div class="content"><img src="images/downtime.png" height="50" width="50"/></div>
             <div class="content" style="text-align:left; padding-left:15px">
-                <div class="container">Finished <a href="index.php?ContextID=468">Mad Max: Fury Road</a></div>
+                <div class="container">Finished <a href="../index.php?ContextID=468">Mad Max: Fury Road</a></div>
                 <div class="container" style="font-size:50%">June 17 at 11:11am</div>
             </div>
         </div>
         <div class="container" style="padding:5px">
-            <div class="content"><img src="dave.jpg" height="50" width="50"/></div>
+            <div class="content"><img src="images/dave.jpg" height="50" width="50"/></div>
             <div class="content" style="text-align:left; padding-left:15px">
                 <div class="container">Mad Max Fury Road just broke the Guinness World Record for longest movie ever, previously held by Logistics.</div>
                 <div class="container" style="font-size:50%">June 17 at 10:30am</div>
@@ -227,19 +295,19 @@ $finishedKillBill = false;
         <div class="container" style="padding:5px">
             <div class="content" style="width:50px; text-align:center"><img src="http://upload.wikimedia.org/wikipedia/en/6/6e/Mad_Max_Fury_Road.jpg" height="50"/></div>
             <div class="content" style="text-align:left; padding-left:15px">
-                <div class="container">Started <a href='index.php?ContextID=468'>Mad Max: Fury Road </a></div>
+                <div class="container">Started <a href='../index.php?ContextID=468'>Mad Max: Fury Road </a></div>
                 <div class="container" style="font-size:50%">May 12 at 5:30pm</div>
             </div>
         </div>
         <div class="container" style="padding:5px">
-            <div class="content"><img src="downtime.png" height="50" width="50"/></div>
+            <div class="content"><img src="images/downtime.png" height="50" width="50"/></div>
             <div class="content" style="text-align:left; padding-left:15px">
-                <div class="container">Finished <a href="index.php?ContextID=465">The Legend of Old Gregg</a></div>
+                <div class="container">Finished <a href="../index.php?ContextID=465">The Legend of Old Gregg</a></div>
                 <div class="container" style="font-size:50%">December 28, 2017 at 3:49pm</div>
             </div>
         </div>
         <div class="container" style="padding:5px">
-            <div class="content" style="width:50px; text-align:center"><img src="finish.png" height="50"/></div>
+            <div class="content" style="width:50px; text-align:center"><img src="images/finish.png" height="50"/></div>
             <div class="content" style="text-align:left; padding-left:15px">
                 <div class="container">Completed a Full Reclinathon!</div>
                 <div class="container" style="font-size:50%">December 28, 2017 at 3:28pm</div>
@@ -248,12 +316,12 @@ $finishedKillBill = false;
         <div class="container" style="padding:5px">
             <div class="content" style="width:50px; text-align:center"><img src="https://upload.wikimedia.org/wikipedia/en/d/d8/Boosh_s2.gif" height="50"/></div>
             <div class="content" style="text-align:left; padding-left:15px">
-                <div class="container">Started <a href="index.php?ContextID=465">The Legend of Old Gregg</a></div>
+                <div class="container">Started <a href="../index.php?ContextID=465">The Legend of Old Gregg</a></div>
                 <div class="container" style="font-size:50%">December 28, 2017 at 3:22pm</div>
             </div>
         </div>
     </div>
-    
+
     <TABLE CLASS='RttFrameRight'>
     <!--
         <TR>

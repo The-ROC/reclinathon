@@ -10,21 +10,21 @@ if (strpos($sourceUrl, "hugh") !== false && strpos($sourceUrl, "grant") !== fals
 {
 	echo "<next url='https://reclinathon.com' time='3000' sidebar='' />";
 }
-else if (strpos($sourceUrl, "rtt/startdemo.php") !== false)
+else if (strpos($sourceUrl, "/rtt/mockup/feed_mockup.php?activity=scheduled") !== false)
 {
-	echo "<next url='https://www.netflix.com/watch/70083111?t=52' time='5000' sidebar='' />";
+	echo "<next url='https://www.netflix.com/watch/70083111?t=52' time='120000' sidebar='' />";
 }
 else if (strpos($sourceUrl, "netflix.com/watch/70083111") !== false)
 {
-	echo "<next url='https://hangouts.google.com/call/styow2upujcp3hvhninl64l5uee' time='60000' sidebar='https://www.reclinathon.com/rtt/feed_mockup.php?activity=Reclining1' />";
+	echo "<next url='https://hangouts.google.com/call/styow2upujcp3hvhninl64l5uee' time='60000' sidebar='https://www.reclinathon.com/rtt/mockup/feed_mockup.php?activity=Reclining1' />";
 }
 else if (strpos($sourceUrl, "hangouts.google.com/call/styow2upujcp3hvhninl64l5uee") !== false)
 {
-	echo "<next url='https://www.netflix.com/watch/60031236?t=5209' time='15000' sidebar='https://www.reclinathon.com/rtt/feed_mockup.php?activity=Downtime' />";
+	echo "<next url='https://www.netflix.com/watch/60031236?t=5209' time='15000' sidebar='https://www.reclinathon.com/rtt/mockup/feed_mockup.php?activity=Downtime' />";
 }
 else if (strpos($sourceUrl, "netflix.com/watch/60031236") !== false)
 {
-	echo "<next url='https://www.reclinathon.com/rtt/feed_mockup.php?activity=EndReclinathon' time='60000' sidebar='https://www.reclinathon.com/rtt/feed_mockup.php?activity=Reclining2' />";
+	echo "<next url='https://www.reclinathon.com/rtt/mockup/feed_mockup.php?activity=EndReclinathon' time='60000' sidebar='https://www.reclinathon.com/rtt/mockup/feed_mockup.php?activity=Reclining2' />";
 }
 else
 {
