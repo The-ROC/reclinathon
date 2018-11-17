@@ -497,7 +497,7 @@ namespace MovieScrubber
 			//string[] Scores = FreshnessBox.Text.Split(ScoreSeperator);
 			string MovieXml = "<RWSRequest><Header>";
 			MovieXml += "<TimeStamp>" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "</TimeStamp>";
-			MovieXml += "<Season>Winter2017</Season>";
+			MovieXml += "<Season>Winter2018</Season>";
 			MovieXml += "<Command>AddToMovieDatabase</Command>";
 			MovieXml += "</Header><Data><Movies><Movie>";
 			MovieXml += "<Title>" + TitleBox.Text + "</Title>";

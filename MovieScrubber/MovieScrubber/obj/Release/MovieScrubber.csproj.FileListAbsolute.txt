@@ -54,7 +54,6 @@ C:\Users\Andrew\Documents\GitHubVisualStudio\reclinathon\MovieScrubber\MovieScru
 C:\Users\Andrew\Documents\GitHubVisualStudio\reclinathon\MovieScrubber\MovieScrubber\bin\Release\MovieScrubber.pdb
 C:\Users\Andrew\Documents\GitHubVisualStudio\reclinathon\MovieScrubber\MovieScrubber\bin\Release\HtmlAgilityPack.dll
 C:\Users\Andrew\Documents\GitHubVisualStudio\reclinathon\MovieScrubber\MovieScrubber\bin\Release\HtmlAgilityPack.xml
-C:\Users\Andrew\Documents\GitHubVisualStudio\reclinathon\MovieScrubber\MovieScrubber\obj\Release\MovieScrubber.csprojResolveAssemblyReference.cache
 C:\Users\Andrew\Documents\GitHubVisualStudio\reclinathon\MovieScrubber\MovieScrubber\obj\Release\MainWindow.baml
 C:\Users\Andrew\Documents\GitHubVisualStudio\reclinathon\MovieScrubber\MovieScrubber\obj\Release\MainWindow.g.cs
 C:\Users\Andrew\Documents\GitHubVisualStudio\reclinathon\MovieScrubber\MovieScrubber\obj\Release\App.g.cs
@@ -77,3 +76,6 @@ D:\git\reclinathon\reclinathon\MovieScrubber\MovieScrubber\obj\Release\MainWindo
 D:\git\reclinathon\reclinathon\MovieScrubber\MovieScrubber\obj\Release\App.g.cs
 D:\git\reclinathon\reclinathon\MovieScrubber\MovieScrubber\obj\Release\MovieScrubber_MarkupCompile.cache
 D:\git\reclinathon\reclinathon\MovieScrubber\MovieScrubber\obj\Release\MovieScrubber.g.resources
+C:\Users\Andrew\Documents\GitHubVisualStudio\reclinathon\MovieScrubber\MovieScrubber\obj\Release\MovieScrubber.csprojAssemblyReference.cache
+C:\Users\Andrew\Documents\GitHubVisualStudio\reclinathon\MovieScrubber\MovieScrubber\obj\Release\MovieScrubber.csproj.CoreCompileInputs.cache
+C:\Users\Andrew\Documents\GitHubVisualStudio\reclinathon\MovieScrubber\MovieScrubber\obj\Release\MovieScrubber.csproj.CopyComplete

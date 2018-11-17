@@ -153,7 +153,7 @@ namespace MovieDatabase
                 HtmlNode yearNode = imdbPage.DocumentNode.SelectSingleNode("//title");
                 HtmlNode linkNode = imdbPage.DocumentNode.SelectSingleNode("//link[contains(@rel, 'canonical')]");
                 HtmlNodeCollection movieInfoNodes = imdbPage.DocumentNode.SelectNodes("//h4[contains(@class, 'inline')]");
-                HtmlNodeCollection castNodes = imdbPage.DocumentNode.SelectNodes("//td[contains(@itemprop, 'actor')]/a/span[contains(@itemprop, 'name')]");
+                HtmlNodeCollection castNodes = imdbPage.DocumentNode.SelectNodes("//td[contains(@class, 'primary_photo')]/a/img");
                 HtmlNode synopsisNode = imdbPage.DocumentNode.SelectSingleNode("//div[contains(@class, 'summary_text')]");
 
                 string title = (titleNode == null) ? String.Empty : titleNode.InnerText.Remove(titleNode.InnerText.IndexOf("(")).Replace("&#x22;", String.Empty);
@@ -198,7 +198,7 @@ namespace MovieDatabase
                 if (castNodes != null)
                 foreach (HtmlNode node in castNodes)
                 {
-                    castList.Add(node.InnerText.Trim());
+                    castList.Add(node.Attributes["title"].Value.Trim());
                 }
 
                 OnMovieInfoChanged(new MovieDetailsEventArgs(imdbLink, imdbId, title, releaseYear, director, runtime, castList, genreList, synopsis));
