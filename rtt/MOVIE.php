@@ -601,20 +601,44 @@ class MOVIE extends RTT_COMMON
             }
         }
 		
-        echo "<BR>Total Run Time:  " . ((int)($TotalRunTime / 60)) . " hours " . $TotalRunTime % 60 . " min<BR>";
+        echo "<BR>Total Run Time:  " . $this->FormatRunTime($TotalRunTime) . "<BR>";
 
         $query = "SELECT * FROM GENRE";
         $result = $this->query($query);
         while ($row = mysql_fetch_assoc($result))
         {
-            echo "<BR>" . $row["Name"];
-            if ($row["Canonical"] == 1)
+            $genreRunTime = $GenreRunTimes[$row["GenreID"]];
+            if($genreRunTime > 0)
             {
-                echo "*";
-            }
-            echo ":  " . $GenreRunTimes[$row["GenreID"]] . " min";
+                echo "<BR>" . $row["Name"];
+                if ($row["Canonical"] == 1)
+                {
+                    echo "*";
+                }
+                echo ":  " . $this->FormatRunTime($genreRunTime);
+            }   
         }
 
+    }
+
+    private function FormatRunTime($runTimeMinutes)
+    {
+        $hours = (int)($runTimeMinutes / 60);
+        $minutes = $runTimeMinutes % 60;
+        $result = "";
+        if($hours > 0)
+        {
+            $result .= $hours . "h";
+        }
+        if($minutes > 0)
+        {
+            if(strlen($result) > 0)
+            {
+                $result .= " ";
+            }
+            $result .= $minutes . "m";
+        }
+        return $result;
     }
 
     public function DisplayForm()
