@@ -1,9 +1,24 @@
-<!--
-Feed ideas.
- - There is no reclinathon, start one.
- - Join relcinathon button.
- - Get extension state.
--->
+<?php
+    if(isset($_GET["feedPost"]))
+    {
+        $feedPost = $_GET["feedPost"];
+        $postDate = GetPostDate(time());
+    }
+
+    function GetPostDate($postTime)
+    {
+        $currentYear = date("Y");
+        $postYear = date("Y", $postTime);
+        if($currentYear == $postYear)
+        {
+            return date("F j \a\\t g:ia", $postTime);
+        }
+        else
+        {
+            return date("F j, Y \a\\t g:ia", $postTime);
+        }
+    }
+?>
 
 <HTML>
 <HEAD>
@@ -208,13 +223,29 @@ $finishedKillBill = false;
         <form>
             <div class="content"><img src="images/reclinathon.jpg" height="50" width="50"/></div>
             <div class="content" style="text-align:left; padding-left:15px; width: 100%; box-sizing: border-box">
-                <div class="container" style="width:100%"><input type="text" name="feedPost" value="Post something!" style="width:100%"></div>
+                <div class="container" style="width:100%"><input type="text" name="feedPost" placeholder="Post something!" style="width:100%"></div>
                 <div class="container"><input type="submit" name="submit" value="Post"></div>
             </div>
         </form>
         </div>
 
 		<?php
+
+        function GetDateFromTimestamp($timestamp)
+        {
+            
+        }
+
+        if($feedPost)
+        {
+            echo "<div class='container' style='padding:5px'>";
+            echo "<div class='content'><img src='images/reclinathon.jpg' height='50' width='50'/></div>";
+            echo "<div class='content' style='text-align:left; padding-left:15px'>";
+            echo "<div class='container'>" . $feedPost . "</div>";
+            echo "<div class='container' style='font-size:50%'>" . $postDate . "</div>";
+            echo "</div>";
+            echo "</div>";
+        }
 		
 		if ($finishedKillBill)
 		{
