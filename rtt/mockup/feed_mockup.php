@@ -2,21 +2,7 @@
     if(isset($_GET["feedPost"]))
     {
         $feedPost = $_GET["feedPost"];
-        $postDate = GetPostDate(time());
-    }
-
-    function GetPostDate($postTime)
-    {
-        $currentYear = date("Y");
-        $postYear = date("Y", $postTime);
-        if($currentYear == $postYear)
-        {
-            return date("F j \a\\t g:ia", $postTime);
-        }
-        else
-        {
-            return date("F j, Y \a\\t g:ia", $postTime);
-        }
+        $postTime = time();
     }
 ?>
 
@@ -25,6 +11,7 @@
 <title>Reclinathon Tracking Technology</title>
 <link rel="stylesheet" type="text/css" href="mockup.css" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<script src="date.format.js"></script>
 </HEAD>
 
 <BODY bgcolor='white' CLASS='noborder'>
@@ -75,6 +62,53 @@
             while(s.length < digits)
                 s = "0" + s;
             return s;
+        }
+
+        function getDateFromTimestamp(timestamp)
+        {
+            var scriptTag = document.scripts[document.scripts.length - 1].parentNode;
+            var postDate = new Date(timestamp*1000);
+            var currentDate = new Date();
+
+            var postDay = new Date(postDate.format('mm/dd/yyyy'));
+            var currentDay = new Date(currentDate.format('mm/dd/yyyy'));
+            var timeDiff = currentDay.getTime() - postDay.getTime();
+            var daysDiff = Math.floor(timeDiff / (1000*3600*24));
+
+            if(daysDiff == 0)
+            {
+                var msAgo = currentDate.getTime() - postDate.getTime();
+                var hoursAgo = Math.floor(msAgo / (1000*3600));
+                var minutesAgo = Math.floor(msAgo / (1000*60));
+                if(hoursAgo == 0)
+                {
+                    if(minutesAgo == 0)
+                        scriptTag.innerHTML += "Just now";
+                    else if(minutesAgo == 1)
+                        scriptTag.innerHTML += minutesAgo + " min";
+                    else
+                        scriptTag.innerHTML += minutesAgo + " mins";
+                }
+                else
+                {
+                    if(hoursAgo == 1)
+                        scriptTag.innerHTML += hoursAgo + " hr";
+                    else
+                        scriptTag.innerHTML += hoursAgo + " hrs";
+                }
+            }
+            else if(daysDiff == 1)
+            {
+                scriptTag.innerHTML += postDate.format('"Yesterday at" h:MMtt');
+            }
+            else if(postDate.getYear() == currentDate.getYear()) 
+            {
+                scriptTag.innerHTML += postDate.format('mmmm d "at" h:MMtt');
+            }
+            else
+            {
+                scriptTag.innerHTML += postDate.format('mmmm d, yyyy "at" h:MMtt');
+            }
         }
     </script>
 
@@ -231,18 +265,13 @@ $finishedKillBill = false;
 
 		<?php
 
-        function GetDateFromTimestamp($timestamp)
-        {
-            
-        }
-
         if($feedPost)
         {
             echo "<div class='container' style='padding:5px'>";
             echo "<div class='content'><img src='images/reclinathon.jpg' height='50' width='50'/></div>";
             echo "<div class='content' style='text-align:left; padding-left:15px'>";
             echo "<div class='container'>" . $feedPost . "</div>";
-            echo "<div class='container' style='font-size:50%'>" . $postDate . "</div>";
+            echo "<div class='container' style='font-size:50%'><script>getDateFromTimestamp(" . $postTime . ");</script></div>";
             echo "</div>";
             echo "</div>";
         }
