@@ -143,12 +143,12 @@ $finishedKillBill = false;
             if($_GET["activity"] === "Scheduled") {
         ?>
             
-        <div id="scheduledReclinathon" class="container" style="padding:15px; width:100%">
+        <div id="scheduledReclinathon" class="container" style="padding:15px 0; width:100%">
             <div id="nowPlayingText" class="container"><div class="content"><b>Countdown to Reclinathon!</b></div></div>
             <div id="timeRemaining" class="container"><div id="countdown" class="content"><script>this.displayTimer(2*60*1000); this.setCountdownTimer(2*60*1000);</script></div></div>
             <div id="timeRemaining" class="container" style="height:10px"><div class="content"></div></div>
 
-            <div class="main-carousel" data-flickity='{ "cellAlign": "center", "contain": false}' style="width:100%">
+            <div class="main-carousel" data-flickity='{ "cellAlign": "center", "contain": false}' style="width:100%;background-image:url('film.png'); background-size: 300px 150px">
                 <div class="carousel-cell">
                     <img border='3' height='150' src="https://m.media-amazon.com/images/M/MV5BMTUwOGFiM2QtOWMxYS00MjU2LThmZDMtZDM2MWMzNzllNjdhXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_.jpg" alt = 'In Bruges ' />
                 </div>
