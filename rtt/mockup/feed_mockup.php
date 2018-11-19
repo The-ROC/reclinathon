@@ -11,10 +11,12 @@
 <title>Reclinathon Tracking Technology</title>
 <link rel="stylesheet" type="text/css" href="mockup.css" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script src="date.format.js"></script>
+<link rel="stylesheet" href="flickity.css" media="screen">
 </HEAD>
 
 <BODY bgcolor='white' CLASS='noborder'>
+    <script src="date.format.js"></script>
+    <script src="flickity.pkgd.js"></script>
 
     <script>
         function setCountdownTimer(milliseconds)
@@ -135,26 +137,40 @@ $finishedKillBill = false;
     <BR>
     <BR>
 -->
-
     <div id="stateSummary" class="header">
 
         <?php 
             if($_GET["activity"] === "Scheduled") {
         ?>
-
-        <div id="scheduledReclinathon" class="container" style="padding:15px">
+            
+        <div id="scheduledReclinathon" class="container" style="padding:15px; width:100%">
             <div id="nowPlayingText" class="container"><div class="content"><b>Countdown to Reclinathon!</b></div></div>
             <div id="timeRemaining" class="container"><div id="countdown" class="content"><script>this.displayTimer(2*60*1000); this.setCountdownTimer(2*60*1000);</script></div></div>
             <div id="timeRemaining" class="container" style="height:10px"><div class="content"></div></div>
-            <div id="moviePosters" class="container">
-                <div id="nowPlayingPoster1" class="content" style="text-align:right">
+
+            <div class="main-carousel" data-flickity='{ "cellAlign": "center", "contain": false}' style="width:100%">
+                <div class="carousel-cell">
                     <img border='3' height='150' src="https://m.media-amazon.com/images/M/MV5BMTUwOGFiM2QtOWMxYS00MjU2LThmZDMtZDM2MWMzNzllNjdhXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_.jpg" alt = 'In Bruges ' />
                 </div>
-                <div id="nowPlayingPoster2" class="content" style="text-align:right">
+                <div class="carousel-cell">
+                    <img border='3' height='150' src="https://m.media-amazon.com/images/M/MV5BNzM3NDFhYTAtYmU5Mi00NGRmLTljYjgtMDkyODQ4MjNkMGY2XkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_.jpg" alt = 'Kill Bill: Vol. 1 ' />
+                </div>
+                <div class="carousel-cell">
+                    <img border='3' height='150' src="https://m.media-amazon.com/images/M/MV5BMTUwOGFiM2QtOWMxYS00MjU2LThmZDMtZDM2MWMzNzllNjdhXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_.jpg" alt = 'In Bruges ' />
+                </div>
+                <div class="carousel-cell">
+                    <img border='3' height='150' src="https://m.media-amazon.com/images/M/MV5BNzM3NDFhYTAtYmU5Mi00NGRmLTljYjgtMDkyODQ4MjNkMGY2XkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_.jpg" alt = 'Kill Bill: Vol. 1 ' />
+                </div>
+                <div class="carousel-cell">
+                    <img border='3' height='150' src="https://m.media-amazon.com/images/M/MV5BMTUwOGFiM2QtOWMxYS00MjU2LThmZDMtZDM2MWMzNzllNjdhXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_.jpg" alt = 'In Bruges ' />
+                </div>
+                <div class="carousel-cell">
                     <img border='3' height='150' src="https://m.media-amazon.com/images/M/MV5BNzM3NDFhYTAtYmU5Mi00NGRmLTljYjgtMDkyODQ4MjNkMGY2XkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_.jpg" alt = 'Kill Bill: Vol. 1 ' />
                 </div>
             </div>
+            <div id="timeRemaining" class="container" style="height:25px"><div class="content"></div></div>
         </div>
+
 
         <?php 
             } else if($_GET["activity"] === "Reclining1" || $_GET["activity"] === "join")
