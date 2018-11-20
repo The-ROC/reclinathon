@@ -357,11 +357,11 @@ $finishedKillBill = false;
                 <div class="container" style="margin:auto">
                 <div class="content" style="padding-right:15px">
                     <div class="container">Username</div>
-                    <div class="container"><input type="text" id="username" size="15"></div>
+                    <div class="container"><input type="text" id="username" size="10"></div>
                 </div>
                 <div class="content" style="padding-right:15px">
                     <div class="container">Password</div>
-                    <div class="container"><input type="password" id="password" size="15"></div>
+                    <div class="container"><input type="password" id="password" size="10"></div>
                 </div>
                 <!-- <div class="container" style="width:100%; padding-top:10px"> -->
                 <div class="content">
