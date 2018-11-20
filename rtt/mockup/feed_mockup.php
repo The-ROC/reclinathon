@@ -114,24 +114,44 @@
         {
             var postsParent = document.getElementById("postsParent");
 
-            var newPostHTML = "<div class='container' style='padding:5px'>";
+            var newPostHTML = "<div class='container' style='padding:5px' timestamp='" + timestamp + "'>";
             newPostHTML += "<div class='content'><img src='" + icon + "' height='50' width='50'/></div>";
             newPostHTML += "<div class='content' style='text-align:left; padding-left:15px'>";
             newPostHTML += "<div class='container'>" + message + "</div>";
-            newPostHTML += "<div class='container' style='font-size:50%'>" + getDateFromTimestamp(timestamp) + "</div>";
+            newPostHTML += "<div class='container' style='font-size:50%' date='true'>" + getDateFromTimestamp(timestamp) + "</div>";
             newPostHTML += "</div>";
             newPostHTML += "</div>";
 
             postsParent.innerHTML = newPostHTML + postsParent.innerHTML;
         }
 
+        function updateFeedDates()
+        {
+            var postsParent = document.getElementById("postsParent");
+            var posts = postsParent.childNodes;
+            for(i=0; i<posts.length; i++)
+            {
+                var post = posts[i];
+                var timestamp = post.getAttribute("timestamp");
+                var postChildren = post.getElementsByTagName("div");
+                for(j=0; j<postChildren.length; j++)
+                {
+                    var postChild = postChildren[j];
+                    if(postChild.hasAttribute("date"))
+                        postChild.innerHTML = getDateFromTimestamp(timestamp);
+                }
+            }
+        }
+
         function onPostClick()
         {
             var feedPost = document.getElementById("feedPost");
+            var message = feedPost.value;
+            feedPost.value = "";
             var userId = "dude";
 
             var xhReq = createXMLHttpRequest();
-            xhReq.open("GET", "feedpost.php?user=" + userId + "&feedPost=" + feedPost.value);
+            xhReq.open("GET", "feedpost.php?user=" + userId + "&feedPost=" + message);
             xhReq.onreadystatechange = function() {
                 if (xhReq.readyState != 4) return;
 		
@@ -145,6 +165,7 @@
                     var timestamp = feedEvents[i].getElementsByTagName("Timestamp")[0].childNodes[0].nodeValue;
                     
                     addFeedEvent(icon, message, timestamp);
+                    updateFeedDates();
                 }
             }
             xhReq.send();
@@ -336,11 +357,11 @@ $finishedKillBill = false;
                 <div class="container" style="margin:auto">
                 <div class="content" style="padding-right:15px">
                     <div class="container">Username</div>
-                    <div class="container"><input type="text" id="username"></div>
+                    <div class="container"><input type="text" id="username" size="15"></div>
                 </div>
                 <div class="content" style="padding-right:15px">
                     <div class="container">Password</div>
-                    <div class="container"><input type="password" id="password"></div>
+                    <div class="container"><input type="password" id="password" size="15"></div>
                 </div>
                 <!-- <div class="container" style="width:100%; padding-top:10px"> -->
                 <div class="content">
