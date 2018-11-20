@@ -75,7 +75,6 @@ include '../RECLINATHON_CONTEXT.php';
 
         function getDateFromTimestamp(timestamp)
         {
-            var scriptTag = document.scripts[document.scripts.length - 1].parentNode;
             var postDate = new Date(timestamp*1000);
             var currentDate = new Date();
 
@@ -86,38 +85,113 @@ include '../RECLINATHON_CONTEXT.php';
 
             if(daysDiff == 0)
             {
-                var msAgo = currentDate.getTime() - postDate.getTime();
+                var msAgo = Math.max(0, currentDate.getTime() - postDate.getTime());
                 var hoursAgo = Math.floor(msAgo / (1000*3600));
                 var minutesAgo = Math.floor(msAgo / (1000*60));
                 if(hoursAgo == 0)
                 {
                     if(minutesAgo == 0)
-                        scriptTag.innerHTML += "Just now";
+                        return "Just now";
                     else if(minutesAgo == 1)
-                        scriptTag.innerHTML += minutesAgo + " min";
+                        return minutesAgo + " min";
                     else
-                        scriptTag.innerHTML += minutesAgo + " mins";
+                        return minutesAgo + " mins";
                 }
                 else
                 {
                     if(hoursAgo == 1)
-                        scriptTag.innerHTML += hoursAgo + " hr";
+                        return hoursAgo + " hr";
                     else
-                        scriptTag.innerHTML += hoursAgo + " hrs";
+                        return hoursAgo + " hrs";
                 }
             }
             else if(daysDiff == 1)
             {
-                scriptTag.innerHTML += postDate.format('"Yesterday at" h:MMtt');
+                return postDate.format('"Yesterday at" h:MMtt');
             }
             else if(postDate.getYear() == currentDate.getYear()) 
             {
-                scriptTag.innerHTML += postDate.format('mmmm d "at" h:MMtt');
+                return postDate.format('mmmm d "at" h:MMtt');
             }
             else
             {
-                scriptTag.innerHTML += postDate.format('mmmm d, yyyy "at" h:MMtt');
+                return postDate.format('mmmm d, yyyy "at" h:MMtt');
             }
+        }
+
+        function addFeedEvent(icon, message, timestamp)
+        {
+            var postsParent = document.getElementById("postsParent");
+
+            var newPostHTML = "<div class='container' style='padding:5px' timestamp='" + timestamp + "'>";
+            newPostHTML += "<div class='content'><img src='" + icon + "' height='50' width='50'/></div>";
+            newPostHTML += "<div class='content' style='text-align:left; padding-left:15px'>";
+            newPostHTML += "<div class='container'>" + message + "</div>";
+            newPostHTML += "<div class='container' style='font-size:50%' date='true'>" + getDateFromTimestamp(timestamp) + "</div>";
+            newPostHTML += "</div>";
+            newPostHTML += "</div>";
+
+            postsParent.innerHTML = newPostHTML + postsParent.innerHTML;
+        }
+
+        function updateFeedDates()
+        {
+            var postsParent = document.getElementById("postsParent");
+            var posts = postsParent.childNodes;
+            for(i=0; i<posts.length; i++)
+            {
+                var post = posts[i];
+                var timestamp = post.getAttribute("timestamp");
+                var postChildren = post.getElementsByTagName("div");
+                for(j=0; j<postChildren.length; j++)
+                {
+                    var postChild = postChildren[j];
+                    if(postChild.hasAttribute("date"))
+                        postChild.innerHTML = getDateFromTimestamp(timestamp);
+                }
+            }
+        }
+
+        function onPostClick()
+        {
+            var feedPost = document.getElementById("feedPost");
+            var message = feedPost.value;
+            feedPost.value = "";
+            var userId = "dude";
+
+            var xhReq = createXMLHttpRequest();
+            xhReq.open("GET", "feedpost.php?user=" + userId + "&feedPost=" + message);
+            xhReq.onreadystatechange = function() {
+                if (xhReq.readyState != 4) return;
+		
+                var xml = xhReq.responseXML;
+
+                var feedEvents = xml.getElementsByTagName("FeedEvents");
+                for(var i = 0; i < feedEvents.length; i++)
+                {
+                    var icon = feedEvents[i].getElementsByTagName("Icon")[0].childNodes[0].nodeValue;
+                    var message = feedEvents[i].getElementsByTagName("Message")[0].childNodes[0].nodeValue;
+                    var timestamp = feedEvents[i].getElementsByTagName("Timestamp")[0].childNodes[0].nodeValue;
+                    
+                    addFeedEvent(icon, message, timestamp);
+                    updateFeedDates();
+                }
+            }
+            xhReq.send();
+        }
+
+        function onLoginClick()
+        {
+            document.getElementById("loginPanel").style.display = "none";
+            document.getElementById("postPanel").style.display = "block";
+        }
+
+        function createXMLHttpRequest()
+        {
+	        try { return new XMLHttpRequest(); } catch(e) {}
+	        try { return new ActiveXObject("Msxml2.XMLHTTP"); } catch (e) {}
+	        alert("XMLHttpRequest not supported");
+	        return null;
         }
     </script>
 	
@@ -192,28 +266,40 @@ include '../RECLINATHON_CONTEXT.php';
     Feed section
 -->
     <div id="feed" style="width:100%; text-align:left">
-        <div class="container" style="padding:5px; width:100%; box-sizing: border-box">
-        <form>
-            <div class="content"><img src="images/reclinathon.jpg" height="50" width="50"/></div>
-            <div class="content" style="text-align:left; padding-left:15px; width: 100%; box-sizing: border-box">
-                <div class="container" style="width:100%"><input type="text" name="feedPost" placeholder="Post something!" style="width:100%"></div>
-                <div class="container"><input type="submit" name="submit" value="Post"></div>
+    <div id="postPanel" class="container" style="padding:5px; width:100%; box-sizing: border-box; background-color:#eeeeff; display:none">
+            <div style="padding-bottom: 15px">
+                <div class="content"><img src="images/reclinathon.jpg" height="50" width="50"/></div>
+                <div class="content" style="text-align:left; padding-left:15px; width: 100%; box-sizing: border-box">
+                    <div class="container" style="width:100%"><input type="text" id="feedPost" name="feedPost" placeholder="Post something!" style="width:100%"></div>
+                    <div class="container"><button onclick="onPostClick();">Post</button></div>
+                </div>
             </div>
-        </form>
         </div>
 
-		<?php
+        <div id="loginPanel" class="container" style="padding:5px; width:100%; box-sizing: border-box; background-color:#9999BB">
+            <div style="padding-bottom: 15px; text-align:left;">
+                <div class="container" style="margin:auto">
+                <div class="content" style="padding-right:15px">
+                    <div class="container">Username</div>
+                    <div class="container"><input type="text" id="username" size="12"></div>
+                </div>
+                <div class="content" style="padding-right:15px">
+                    <div class="container">Password</div>
+                    <div class="container"><input type="password" id="password" size="12"></div>
+                </div>
+                <!-- <div class="container" style="width:100%; padding-top:10px"> -->
+                <div class="content">
+                    <div class="container">&nbsp</div>
+                    <div class="container"><button onclick="onLoginClick();">Login</button></div>
+                </div>
+                <!--</div>-->
+                </div>
+            </div>
+        </div>
 
-        if($feedPost)
-        {
-            echo "<div class='container' style='padding:5px'>";
-            echo "<div class='content'><img src='images/reclinathon.jpg' height='50' width='50'/></div>";
-            echo "<div class='content' style='text-align:left; padding-left:15px'>";
-            echo "<div class='container'>" . $feedPost . "</div>";
-            echo "<div class='container' style='font-size:50%'><script>getDateFromTimestamp(" . $postTime . ");</script></div>";
-            echo "</div>";
-            echo "</div>";
-        }
+        <div id='postsParent' class='container'></div>
+
+		<?php
 		
 		if ($finishedKillBill)
 		{
