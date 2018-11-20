@@ -2,10 +2,10 @@
 header("Cache-Control: no-cache, must-revalidate");
 header("Content-Type: text/xml");
 
-    if(isset($_GET["feedPost"]))
+    if(isset($_GET["feedPost"]) && isset ($_GET["username"]))
     {
         $feedPost = $_GET["feedPost"];
-        $icon = "images/reclinathon.jpg";
+        $icon = "images/" . $_GET["username"] . ".png";
         $postTime = time();
 
         echo "<FeedEvents>";

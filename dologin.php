@@ -66,7 +66,7 @@ if($_POST["xml"])
     echo "<Login ";
     if($LoginSuccessful)
     {
-        echo "result='success' username='" . $user . "'";
+        echo "result='success' username='" . $_SESSION["ReclineeID"] . "'";
     }
     else
     {

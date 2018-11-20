@@ -121,7 +121,7 @@ include '../RECLINATHON_CONTEXT.php';
             var postsParent = document.getElementById("postsParent");
 
             var newPostHTML = "<div class='container' style='padding:5px' timestamp='" + timestamp + "'>";
-            newPostHTML += "<div class='content'><img src='" + icon + "' height='50' width='50'/></div>";
+            newPostHTML += "<div class='content'><img src='" + icon + "' width='50'/></div>";
             newPostHTML += "<div class='content' style='text-align:left; padding-left:15px'>";
             newPostHTML += "<div class='container'>" + message + "</div>";
             newPostHTML += "<div class='container' style='font-size:50%' date='true'>" + getDateFromTimestamp(timestamp) + "</div>";
@@ -156,7 +156,7 @@ include '../RECLINATHON_CONTEXT.php';
             feedPost.value = "";
 
             var xhReq = createXMLHttpRequest();
-            xhReq.open("GET", "feedpost.php?user=" + reclineeId + "&feedPost=" + message);
+            xhReq.open("GET", "feedpost.php?username=" + reclineeId + "&feedPost=" + message);
             xhReq.onreadystatechange = function() {
                 if (xhReq.readyState != 4) return;
 		
@@ -203,6 +203,8 @@ include '../RECLINATHON_CONTEXT.php';
         {
             document.getElementById("username").value = "";
             document.getElementById("password").value = "";
+            if(reclineeId != "")
+                document.getElementById("postImage").src = "images/" + reclineeId + ".png";
 
             if(reclineeId)
             {
@@ -299,7 +301,7 @@ include '../RECLINATHON_CONTEXT.php';
     <div id="feed" style="width:100%; text-align:left">
         <div id="postPanel" class="container" style="padding:5px; width:100%; box-sizing: border-box; background-color:#eeeeff; display:none">
             <div style="padding-bottom: 15px">
-                <div class="content"><img src="images/reclinathon.jpg" height="50" width="50"/></div>
+                <div class="content"><img id="postImage" src=<?php echo "images/reclinathon.jpg";?> width="50"/></div>
                 <div class="content" style="text-align:left; padding-left:15px; width: 100%; box-sizing: border-box">
                     <div class="container" style="width:100%"><input type="text" id="feedPost" name="feedPost" placeholder="Post something!" style="width:100%"></div>
                     <div class="container"><button onclick="onPostClick();">Post</button></div>
@@ -402,7 +404,7 @@ include '../RECLINATHON_CONTEXT.php';
             </div>
         </div>
         <div class="container" style="padding:5px">
-            <div class="content"><img src="images/dave.jpg" height="50" width="50"/></div>
+            <div class="content"><img src="images/2.png" width="50"/></div>
             <div class="content" style="text-align:left; padding-left:15px">
                 <div class="container">Mad Max Fury Road just broke the Guinness World Record for longest movie ever, previously held by Logistics.</div>
                 <div class="container" style="font-size:50%">June 17 at 10:30am</div>
