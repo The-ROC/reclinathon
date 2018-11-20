@@ -16,7 +16,9 @@ class QUOTA
 
 class MOVIE_LIST extends RTT_COMMON
 {
+	protected $AllMovies;       // MOVIE list
     protected $PlayedMovies;	// MOVIE list
+	protected $NumMovies;
     protected $NumPlayedMovies;	// INT
     protected $UnplayedMovies;	// MOVIE list
     protected $NumUnplayedMovies;	// INT
@@ -26,6 +28,7 @@ class MOVIE_LIST extends RTT_COMMON
    
     function __construct() 
     {
+		$this->NumMovies = 0;
         $this->NumPlayedMovies = 0;
         $this->NumUnplayedMovies = 0;
         $this->EnteredPrimetime = false;
@@ -69,6 +72,21 @@ class MOVIE_LIST extends RTT_COMMON
                 default: return false;
            }
         }
+		
+		$query = "SELECT * FROM MOVIE_LIST WHERE Name = '$Season' ORDER BY `Order` ASC";
+        $result = $this->query($query);
+
+        while ($row = mysql_fetch_assoc($result))
+        {
+            $movie = new MOVIE();
+            if (!$movie->Load($row["MovieID"]))
+            {
+                echo "Failed to load movie " . $row["MovieID"];
+                return false;
+            }
+			
+			$this->AllMovies[$this->NumMovies++] = $movie;
+		}
 
         return true;
     }
@@ -646,6 +664,14 @@ class MOVIE_LIST extends RTT_COMMON
             echo "<BR>";
         } 
     }  
+	
+	public function DisplayFeedImages()
+	{
+		for ($i=0; $i < $this->NumMovies; $i++)
+        {
+			$this->AllMovies[$i]->DisplayFeedImage();
+		}
+	}
 
 }
 

@@ -17,6 +17,7 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
     protected $OptionalInfo;           	// OPTIONAL_CONTEXT
     protected $Season;                    	// STRING
     protected $Logo;                      	// STRING
+	protected $Pending;
    
     function __construct() 
     {
@@ -31,9 +32,10 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
         $this->OptionalInfo = new OPTIONAL_CONTEXT();
         $this->Season = '';
         $this->Logo = 0;
+		$this->Pending = 0;
     }
 
-    private function DisplayState()
+    public function DisplayState()
     {
         $StateString = "";
         if ($this->RecliningState == "")
@@ -688,7 +690,7 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
             }
         }
         
-        $query = "INSERT INTO RECLINATHON_CONTEXT (TimeStamp, EstimatedDuration, CaptainID, StateID, ModifierID, MovieID, Season, LogoID) VALUES (";
+        $query = "INSERT INTO RECLINATHON_CONTEXT (TimeStamp, EstimatedDuration, CaptainID, StateID, ModifierID, MovieID, Season, LogoID, Pending) VALUES (";
         $query = $query . "'" . $this->TimeStamp . "', ";
         $query = $query . "'" . $this->EstimatedDuration . "', ";
         $query = $query . "'" . $this->Captain->GetID() . "', ";
@@ -696,7 +698,8 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
         $query = $query . "'" . $ModifierID . "', ";
         $query = $query . "'" . $this->Movie->GetID() . "', ";
         $query = $query . "'" . $this->Season . "', ";
-        $query = $query . "'0')";
+        $query = $query . "'0', ";
+		$query = $query . "'" . $this->Pending . "')";
 
         echo $query . "<BR>";
         $result = $this->Query($query);
@@ -955,7 +958,143 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
 
         return true;
 
+    }  
+	
+	public function SetSeason($season)
+	{
+		$this->Season = $season;
+	}
+	
+	public function DisplayFeedMovieList()
+	{
+		$MovieList = new MOVIE_LIST();
+        if (!$MovieList->Load($this->Season))
+        {
+            return false;
+        }
+		
+		$MovieList->DisplayFeedImages();
+	}
+	
+	public function DisplayFeedModule()
+	{
+		if ($this->RecliningState == 'Preseason')
+		{
+			$timeRemaining = $this->GetTimeRemaining() * 1000;
+			
+            echo "<div id='scheduledReclinathon' class='container' style='padding:15px 0; width:100%'>
+			      <div id='nowPlayingText' class='container'><div class='content'><b>Countdown to Reclinathon!</b></div></div>
+				  <div id='timeRemaining' class='container'><div id='countdown' class='content'><script>this.displayTimer($timeRemaining); this.setCountdownTimer($timeRemaining);</script></div></div>
+				  <div id='timeRemaining' class='container' style='height:10px'><div class='content'></div></div>
+				  <div class='main-carousel' data-flickity='{ \"cellAlign\": \"center\", \"contain\": false}' style=\"width:100%;background-image:url('film.png'); background-size: 300px 150px\">";
+
+            $this->DisplayFeedMovieList();
+
+            echo "</div><div id='timeRemaining' class='container' style='height:25px'><div class='content'></div></div></div>";
+        }
+		else if ($this->RecliningState == 'Reclining' || $this->RecliningState == 'Downtime')
+		{
+			$topDivId = ($this->RecliningState == 'Reclining' ? "nowPlaying" : "upNext");
+			$posterDivId = $topDivId + "Poster";
+			$infoDivId = $topDivId + "Info";
+			$textDivId = $topDivId + "Text";
+			$timeRemaining = $this->GetTimeRemaining() * 1000;
+			$state = $this->DisplayState();
+			$movieTitle = $this->GetMovie()->GetTitle();
+			
+			echo "<div id='$topDivId' class='container' style='padding:15px'>
+                  <div id='$posterDivId' class='content' style='text-align:right'>";
+
+            if ($this->HasMovie())
+            {
+                $this->GetMovie()->DisplayFeedImage();
+            }
+
+            echo "</div>
+                  <div class='content' style='width:20px'></div>
+                  <div id='$infoDivId' class='content' style='text-align:left'>
+                  <div id='$textDivId' class='container' style='height:40px'><div class='content'><b>$state</b></div></div>
+                  <div id='movieTitle' class='container' style='height:40px'><div class='content'>$movieTitle</div></div>
+                  <div id='timeRemaining' class='container' style='height:40px'><div id='countdown' class='content'><script>this.displayTimer($timeRemaining); this.setCountdownTimer($timeRemaining);</script></div></div>
+				  <div id='timeRemaining' class='container' style='height:10px'><div class='content'></div></div>
+                  </div>
+                  </div>";
+		}
+	}
+	
+	public function LoadCurrentNonPending($Season)
+    {
+        $query = "SELECT ContextID FROM RECLINATHON_CONTEXT WHERE Season = '$Season' AND Pending='0' ORDER BY ContextID DESC";
+        $result = $this->query($query);
+        if (!$result)
+        {
+            return false;
+        }
+        $row = mysql_fetch_assoc($result);
+        if (!$row)
+        {
+            return false;
+        }
+        $ContextID = $row["ContextID"];
+        
+        return $this->Load($ContextID);
     }
+	
+    public function Advance()
+	{
+        $query = "SELECT ContextID FROM RECLINATHON_CONTEXT WHERE Season = '$this->Season' AND ContextId > '$this->ContextID' ORDER BY ContextID LIMIT 1";
+        $result = $this->query($query);
+		if (!$result)
+        {
+            return false;
+        }
+		
+		
+		if (mysql_num_rows($result) == 0)
+		{
+			$query = "UPDATE current_remote_reclinathon SET RemoteReclinathonId = '' WHERE RemoteReclinathonId = '$this->Season'";
+            $result = $this->query($query);
+			return $result;
+		}
+		
+        $row = mysql_fetch_assoc($result);
+        if (!$row)
+        {
+            return false;
+        }
+        $ContextID = $row["ContextID"];
+		
+		$query = "UPDATE RECLINATHON_CONTEXT SET TimeStamp = UNIX_TIMESTAMP(), Pending = '0' WHERE ContextID = '$ContextID'";
+        $result = $this->query($query);
+		
+		return $result;
+	}
+	
+	public function CreateDowntime($season, $movieId, $timeStamp, $duration)
+	{
+        $this->TimeStamp = $timeStamp;
+        $this->EstimatedDuration = $duration;
+        $this->Captain->Load(1);
+        $this->RecliningState = "Downtime";
+        $this->Movie->Load($movieId);
+        $this->Season = $season;
+		$this->Pending = 1;
+		
+		return $this->Insert();
+	}
+	
+	public function CreateMovieContext($season, $movieId, $timeStamp, $duration)
+	{
+        $this->TimeStamp = $timeStamp;
+        $this->EstimatedDuration = $duration;
+        $this->Captain->Load(1);
+        $this->RecliningState = "Reclining";
+        $this->Movie->Load($movieId);
+        $this->Season = $season;
+		$this->Pending = 1;
+		
+		return $this->Insert();
+	}
 
     public function __tostring()
     {

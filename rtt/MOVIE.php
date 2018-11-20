@@ -292,6 +292,11 @@ class MOVIE extends RTT_COMMON
     {
 	return "<IMG BORDER='3' WIDTH='200' SRC = '" . str_replace("'", "%27", $this->Image) . "' alt = '$this->Title' >";
     }
+	
+	public function DisplayFeedImage()
+	{
+		echo "<div class='carousel-cell'><img border='3' height='150px' width='99px' src='$this->Image' alt = '$this->Title' /></div>";
+	}
 
     public function DisplayGenres()
     {
@@ -874,6 +879,44 @@ class MOVIE extends RTT_COMMON
             $movie->Load($MovieID);
             $movie->DisplayModule();
         }
+    }
+	
+	public function SetMovieId($id)
+	{
+		$this->MovieID = $id;
+	}
+	
+	public function CreateReclinathonInsert()
+    {
+        $query = "INSERT INTO MOVIE (Title, RunTime, TrailerLink, IMDBLink, Freshness, Image, Metascore, Director, Year, Synopsis) VALUES (";
+        $query = $query . "'" . $this->Title . "', ";
+        $query = $query . "'" . $this->RunTime . "', ";
+        $query = $query . "'" . $this->TrailerLink . "', ";
+        $query = $query . "'" . $this->IMDBLink . "', ";
+        $query = $query . "'" . $this->Freshness . "', ";
+        $query = $query . "'" . $this->Image . "', ";
+        $query = $query . "'" . $this->Metascore . "', ";
+        $query = $query . "'" . $this->Director . "', ";
+        $query = $query . "'" . $this->Year . "', ";
+		$query = $query . "'" . $this->Synopsis . "')";
+
+        //echo $query . "<BR>";
+        $result = $this->Query($query);
+        if (!$result)
+        {
+            return FALSE;
+        }
+
+        $query = "SELECT LAST_INSERT_ID() AS MovieID";
+        $result = $this->Query($query);
+        if (!$result)
+        {
+            return FALSE;
+        }
+        $row = mysql_fetch_assoc($result);
+        $this->MovieID = $row["MovieID"]; 
+        
+        return $this->Update();
     }
 
 }
