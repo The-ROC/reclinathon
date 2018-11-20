@@ -70,7 +70,7 @@
 
             if(daysDiff == 0)
             {
-                var msAgo = currentDate.getTime() - postDate.getTime();
+                var msAgo = Math.max(0, currentDate.getTime() - postDate.getTime());
                 var hoursAgo = Math.floor(msAgo / (1000*3600));
                 var minutesAgo = Math.floor(msAgo / (1000*60));
                 if(hoursAgo == 0)
