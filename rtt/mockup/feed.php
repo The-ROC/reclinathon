@@ -1,15 +1,10 @@
 <?php
+session_start();
 
 header("Cache-Control: no-cache, must-revalidate");
 header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
 
 include '../RECLINATHON_CONTEXT.php';
-
-    if(isset($_GET["feedPost"]))
-    {
-        $feedPost = $_GET["feedPost"];
-        $postTime = time();
-    }
 ?>
 
 <HTML>
@@ -25,6 +20,8 @@ include '../RECLINATHON_CONTEXT.php';
     <script src="flickity.pkgd.js"></script>
 
     <script>
+        var reclineeId = <?php echo '"' . $_SESSION['ReclineeID'] . '";'; ?>
+
         function setCountdownTimer(milliseconds)
         {
             this.countdownToTime(new Date().getTime() + milliseconds);
@@ -157,10 +154,9 @@ include '../RECLINATHON_CONTEXT.php';
             var feedPost = document.getElementById("feedPost");
             var message = feedPost.value;
             feedPost.value = "";
-            var userId = "dude";
 
             var xhReq = createXMLHttpRequest();
-            xhReq.open("GET", "feedpost.php?user=" + userId + "&feedPost=" + message);
+            xhReq.open("GET", "feedpost.php?user=" + reclineeId + "&feedPost=" + message);
             xhReq.onreadystatechange = function() {
                 if (xhReq.readyState != 4) return;
 		
@@ -182,8 +178,42 @@ include '../RECLINATHON_CONTEXT.php';
 
         function onLoginClick()
         {
-            document.getElementById("loginPanel").style.display = "none";
-            document.getElementById("postPanel").style.display = "block";
+            var username = document.getElementById("username").value;
+            var password = document.getElementById("password").value;
+
+            var xhReq = createXMLHttpRequest();
+            xhReq.open("POST", "../../dologin.php", true);
+            xhReq.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhReq.onreadystatechange = function() {
+                if (xhReq.readyState != 4) return;
+
+                var xml = xhReq.responseXML;
+                var login = xml.getElementsByTagName("Login")[0];
+                var result = login.getAttribute("result");
+                if(result == "success")
+                {
+                    reclineeId = login.getAttribute("username");
+                }
+                onLoginChange();
+            }
+            xhReq.send("username=" + username + "&password=" + password + "&xml=true");
+        }
+
+        function onLoginChange()
+        {
+            document.getElementById("username").value = "";
+            document.getElementById("password").value = "";
+
+            if(reclineeId)
+            {
+                document.getElementById("loginPanel").style.display = "none";
+                document.getElementById("postPanel").style.display = "block";
+            }
+            else
+            {
+                document.getElementById("loginPanel").style.display = "block";
+                document.getElementById("postPanel").style.display = "none";
+            }
         }
 
         function createXMLHttpRequest()
@@ -267,7 +297,7 @@ include '../RECLINATHON_CONTEXT.php';
     Feed section
 -->
     <div id="feed" style="width:100%; text-align:left">
-    <div id="postPanel" class="container" style="padding:5px; width:100%; box-sizing: border-box; background-color:#eeeeff; display:none">
+        <div id="postPanel" class="container" style="padding:5px; width:100%; box-sizing: border-box; background-color:#eeeeff; display:none">
             <div style="padding-bottom: 15px">
                 <div class="content"><img src="images/reclinathon.jpg" height="50" width="50"/></div>
                 <div class="content" style="text-align:left; padding-left:15px; width: 100%; box-sizing: border-box">
@@ -277,7 +307,7 @@ include '../RECLINATHON_CONTEXT.php';
             </div>
         </div>
 
-        <div id="loginPanel" class="container" style="padding:5px; width:100%; box-sizing: border-box; background-color:#9999BB">
+        <div id="loginPanel" class="container" style="padding:5px; width:100%; box-sizing: border-box; background-color:#9999BB; display:none">
             <div style="padding-bottom: 15px; text-align:left;">
                 <div class="container" style="margin:auto">
                 <div class="content" style="padding-right:15px">
@@ -288,15 +318,15 @@ include '../RECLINATHON_CONTEXT.php';
                     <div class="container">Password</div>
                     <div class="container"><input type="password" id="password" size="12"></div>
                 </div>
-                <!-- <div class="container" style="width:100%; padding-top:10px"> -->
                 <div class="content">
                     <div class="container">&nbsp</div>
                     <div class="container"><button onclick="onLoginClick();">Login</button></div>
                 </div>
-                <!--</div>-->
                 </div>
             </div>
         </div>
+
+        <script>onLoginChange();</script>
 
         <div id='postsParent' class='container'></div>
 
