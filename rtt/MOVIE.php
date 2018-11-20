@@ -295,7 +295,7 @@ class MOVIE extends RTT_COMMON
 	
 	public function DisplayFeedImage()
 	{
-		echo "<div class='carousel-cell'><img border='3' height='150px' width='99px' src='$this->Image' alt = '$this->Title' /></div>";
+		echo "<div class='carousel-cell'><img border='3' height='150px' style='min-width: 100px' src='$this->Image' alt = '$this->Title' /></div>";
 	}
 
     public function DisplayGenres()
