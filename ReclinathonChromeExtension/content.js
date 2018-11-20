@@ -13,7 +13,7 @@ function createXMLHttpRequest()
 function GetNextDestination(url)
 {
 	var xhReq = createXMLHttpRequest();
-	var apiUrl = "https://reclinathon.com/rtt/extensiondemo.php?sourceUrl=" + url;
+	var apiUrl = "https://reclinathon.com/rtt/mockup/extensiondata.php?sourceUrl=" + url;
 
 	xhReq.open("GET", apiUrl, true);
 	xhReq.onreadystatechange = function() {
@@ -40,14 +40,14 @@ function ProcessCurrentUrl()
 	if (sidebarUrl != "")
 	{
 	    var width = window.getComputedStyle(document.body, null).getPropertyValue("width");
-	    var newWidth = width - 350;
+	    var newWidth = width - 450;
 	    document.body.style.width = newWidth + "px";
 	
 	    var div = document.createElement('div');
 	    div.style.position = 'fixed';
 	    div.style.top = 0;
 	    div.style.right = 0;
-	    div.style.width = "300px";
+	    div.style.width = "400px";
 	    div.style.height = "100%";
 	    div.style.zIndex = 999999;
 	

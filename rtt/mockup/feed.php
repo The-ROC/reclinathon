@@ -200,6 +200,7 @@ include '../RECLINATHON_CONTEXT.php';
 
     <?php
 
+	echo $_GET["refreshTime"] . "<br>";
     $remoteReclinathon = new REMOTE_RECLINATHON();
     $currentReclinathonId = $remoteReclinathon->GetCurrentRemoteReclinathonId();
     $remoteReclinathonScheduled = $currentReclinathonId != "";

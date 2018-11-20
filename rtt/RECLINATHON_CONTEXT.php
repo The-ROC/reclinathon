@@ -34,6 +34,11 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
         $this->Logo = 0;
 		$this->Pending = 0;
     }
+	
+	public function GetRecliningState()
+	{
+		return $this->RecliningState;
+	}
 
     public function DisplayState()
     {

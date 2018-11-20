@@ -29,7 +29,10 @@ class REMOTE_RECLINATHON extends RTT_COMMON
 			else
 			{
 				$row = mysql_fetch_assoc($result);
-				$movieNetflix->SetMovieId($row["MovieID"]);
+				$url = $movieNetflix->GetUrl();
+				$movieNetflix->Load($row["MovieID"]);
+				$movieNetflix->SetUrl($url);
+				$movieNetflix->Update();
 			}
 			
 			if ($movieNetflix->GetID() != 0)

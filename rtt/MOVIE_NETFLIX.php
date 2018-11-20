@@ -12,7 +12,8 @@ class MOVIE_NETFLIX extends MOVIE
         $this->Image = urldecode($object["image"]);
 
         $this->NetflixId = $object["netflixId"];
-        $this->NetflixURL = $object["netflixURL"];
+        $this->NetflixURL = urldecode($object["netflixURL"]);
+		$this->Url = urldecode($object["netflixURL"]);
     }
 
     public function GetNetflixId()
