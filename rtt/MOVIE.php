@@ -825,6 +825,22 @@ class MOVIE extends RTT_COMMON
         
         return TRUE;
     }
+	
+	public function UpdateUrl()
+    {
+		$movieId = $this->MovieID;
+		$url = $this->Url;
+        $query = "UPDATE MOVIE SET Url = '$url' WHERE MovieID = '$movieId'";
+
+        //echo "<BR>$query<BR>";
+        $result = $this->Query($query);
+        if (!$result)
+        {
+            return FALSE;
+        }
+        
+        return TRUE;
+    }
 
     public function ProcessForm()
     {

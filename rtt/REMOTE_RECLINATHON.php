@@ -32,7 +32,7 @@ class REMOTE_RECLINATHON extends RTT_COMMON
 				$url = $movieNetflix->GetUrl();
 				$movieNetflix->Load($row["MovieID"]);
 				$movieNetflix->SetUrl($url);
-				$movieNetflix->Update();
+				$movieNetflix->UpdateUrl();
 			}
 			
 			if ($movieNetflix->GetID() != 0)
