@@ -771,7 +771,7 @@ class MOVIE extends RTT_COMMON
 		$query = $query . ", Synopsis = '" . $this->Synopsis . "'";
 		$query = $query . ", Url = '" . $this->Url . "' WHERE MovieID = '" . $this->MovieID . "'";
 
-        //echo $query . "<BR>";
+        //echo "<BR>$query<BR>";
         $result = $this->Query($query);
         if (!$result)
         {
@@ -908,7 +908,7 @@ class MOVIE extends RTT_COMMON
 	
 	public function CreateReclinathonInsert()
     {
-        $query = "INSERT INTO MOVIE (Title, RunTime, TrailerLink, IMDBLink, Freshness, Image, Metascore, Director, Year, Synopsis) VALUES (";
+        $query = "INSERT INTO MOVIE (Title, RunTime, TrailerLink, IMDBLink, Freshness, Image, Metascore, Director, Year, Synopsis, Url) VALUES (";
         $query = $query . "'" . $this->Title . "', ";
         $query = $query . "'" . $this->RunTime . "', ";
         $query = $query . "'" . $this->TrailerLink . "', ";
@@ -921,7 +921,7 @@ class MOVIE extends RTT_COMMON
 		$query = $query . "'" . $this->Synopsis . "', ";
 		$query = $query . "'" . $this->Url . "')";
 
-        //echo $query . "<BR>";
+        //echo "<BR>$query<BR>";
         $result = $this->Query($query);
         if (!$result)
         {
