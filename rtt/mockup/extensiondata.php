@@ -27,7 +27,7 @@ else if ($contextFound && strpos($sourceUrl, "/rtt/mockup/feed.php") !== false)
 {
 	if ($rcx->GetRecliningState() == "Downtime")
 	{
-	    echo "<next url='https://hangouts.google.com/call/styow2upujcp3hvhninl64l5uee' time='1000' sidebar='' />";
+	    echo "<next url='https://hangouts.google.com/call/styow2upujcp3hvhninl64l5uee' time='0' sidebar='' />";
 	}
 	else if ($rcx->GetRecliningState() == "Reclining")
 	{
@@ -35,7 +35,7 @@ else if ($contextFound && strpos($sourceUrl, "/rtt/mockup/feed.php") !== false)
 		$timeRemaining = $rcx->GetTimeRemaining();
 		$timeCode = $runTime - $timeRemaining;
 		$url = $rcx->GetMovie()->GetUrl() . "?t=$timeCode";
-	    echo "<next url='$url' time='5000' sidebar='' />";
+	    echo "<next url='$url' time='0' sidebar='' />";
 	}
 }
 else if ($contextFound && strpos($sourceUrl, $rcx->GetMovie()->GetUrl()) !== false)
@@ -47,7 +47,7 @@ else if ($contextFound && strpos($sourceUrl, "hangouts.google.com/call/styow2upu
 {
 	$timeRemaining = $rcx->GetTimeRemaining() * 1000;
 	$url = $rcx->GetMovie()->GetUrl() . "?t=1";
-	echo "<next url='$url' time='$timeRemaining' sidebar='https://reclinathon.com/rtt/mockup/feed.php?refreshTime=$url' />";
+	echo "<next url='$url' time='$timeRemaining' sidebar='https://reclinathon.com/rtt/mockup/feed.php' />";
 }
 else
 {

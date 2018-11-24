@@ -35,6 +35,11 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
 		$this->Pending = 0;
     }
 	
+	public function GetContextId()
+	{
+		return $this->ContextID;
+	}
+	
 	public function GetRecliningState()
 	{
 		return $this->RecliningState;
@@ -1047,13 +1052,12 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
 	
     public function Advance()
 	{
-        $query = "SELECT ContextID FROM RECLINATHON_CONTEXT WHERE Season = '$this->Season' AND ContextId > '$this->ContextID' ORDER BY ContextID LIMIT 1";
+        $query = "SELECT ContextID, Pending FROM RECLINATHON_CONTEXT WHERE Season = '$this->Season' AND ContextId > '$this->ContextID' ORDER BY ContextID LIMIT 1";
         $result = $this->query($query);
 		if (!$result)
         {
             return false;
-        }
-		
+        }		
 		
 		if (mysql_num_rows($result) == 0)
 		{
@@ -1068,6 +1072,12 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
             return false;
         }
         $ContextID = $row["ContextID"];
+		$pending = $row["Pending"];
+		
+		if ($pending != "1")
+		{
+			return false;
+		}
 		
 		$query = "UPDATE RECLINATHON_CONTEXT SET TimeStamp = UNIX_TIMESTAMP(), Pending = '0' WHERE ContextID = '$ContextID'";
         $result = $this->query($query);

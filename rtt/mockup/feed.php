@@ -39,7 +39,7 @@ include '../RECLINATHON_CONTEXT.php';
                 if(distance < 0) {
                     clearInterval(x);
                     countdownDiv.innerHTML = "Merry Reclinathon!";
-					window.location.href = "feed.php?advance=1";
+					advance();
                 }
             }, 200);
         }
@@ -217,6 +217,25 @@ include '../RECLINATHON_CONTEXT.php';
                 document.getElementById("postPanel").style.display = "none";
             }
         }
+		
+		function advance()
+        {
+			var contextId = document.getElementById("currentContextId").value;
+			
+			if (contextId == "" || contextId == "0")
+			{
+				return;
+			}
+			
+            var xhReq = createXMLHttpRequest();
+            xhReq.open("GET", "advanceReclinathon.php?contextId=" + contextId);
+            xhReq.onreadystatechange = function() {
+                if (xhReq.readyState != 4) return;
+		
+                window.location.reload(true);
+            }
+            xhReq.send();
+        }
 
         function createXMLHttpRequest()
         {
@@ -237,6 +256,7 @@ include '../RECLINATHON_CONTEXT.php';
     $currentReclinathonId = $remoteReclinathon->GetCurrentRemoteReclinathonId();
     $remoteReclinathonScheduled = $currentReclinathonId != "";
 	$rcx = new RECLINATHON_CONTEXT();
+	$currentContextId = 0;
 
 	if ($remoteReclinathonScheduled)
 	{
@@ -255,19 +275,11 @@ include '../RECLINATHON_CONTEXT.php';
 				echo "Context $contextId not found. <br>";
 			}
 		}
-	}
-
-	if ($_GET["advance"] == 1)
-	{
-		$rcx->Advance();
-		$currentReclinathonId = $remoteReclinathon->GetCurrentRemoteReclinathonId();
-        $remoteReclinathonScheduled = $currentReclinathonId != "";
 		
-		if ($remoteReclinathonScheduled)
-	    {
-		    $rcx->LoadCurrentNonPending($currentReclinathonId);
-		}
+		$currentContextId = $rcx->GetContextId();
 	}
+	
+	echo "<input type='hidden' id='currentContextId' name='currentContextId' value='$currentContextId' />";
 
 	if ($remoteReclinathonScheduled)
 	{
@@ -278,7 +290,7 @@ include '../RECLINATHON_CONTEXT.php';
 			  <div class='container' style='height:10px'>&nbsp;</div>
 			  </div>";
 			  
-		echo "<button class='button' onclick=\"window.location.href = 'feed.php?advance=1';\">Advance</button>";
+		echo "<button class='button' onclick=\"advance();\">Advance</button>";
 	}			
 	else
 	{
