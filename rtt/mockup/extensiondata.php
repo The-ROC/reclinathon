@@ -47,7 +47,8 @@ else if ($contextFound && strpos($sourceUrl, "hangouts.google.com/call/styow2upu
 {
 	$timeRemaining = $rcx->GetTimeRemaining() * 1000;
 	$url = $rcx->GetMovie()->GetUrl() . "?t=1";
-	echo "<next url='$url' time='$timeRemaining' sidebar='https://reclinathon.com/rtt/mockup/feed.php' />";
+	$sidebarUrl = ($rcx->IsDevMode() ? "http://localhost/rtt/mockup/feed.php" : "https://reclinathon.com/rtt/mockup/feed.php");
+	echo "<next url='$url' time='$timeRemaining' sidebar='$sidebarUrl' />";
 }
 else
 {

@@ -3,6 +3,11 @@
 abstract class RTT_COMMON
 {   
     protected static $Database = NULL;
+	
+	public function IsDevMode()
+	{
+		return file_exists($_SERVER['DOCUMENT_ROOT']."\include\localdb") || file_exists($_SERVER['DOCUMENT_ROOT']."/include/localdb");
+	}
 
     private function DumpLine($Indent, $String)
     {
