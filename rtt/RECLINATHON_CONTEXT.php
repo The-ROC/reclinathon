@@ -1110,6 +1110,24 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
 		
 		return $this->Insert();
 	}
+	
+	public function GetUrl()
+	{
+		if ($this->GetRecliningState() == "Downtime")
+	    {
+	        return "https://hangouts.google.com/call/styow2upujcp3hvhninl64l5uee";
+	    }
+	    else if ($this->GetRecliningState() == "Reclining")
+	    {
+		    $runTime = $this->GetMovie()->GetRunTime() * 60;
+		    $timeRemaining = $this->GetTimeRemaining();
+		    $timeCode = $runTime - $timeRemaining;
+		    $url = $this->GetMovie()->GetUrl() . "?t=$timeCode";
+	        return $url;
+	    }
+		
+		return "";
+	}
 
     public function __tostring()
     {

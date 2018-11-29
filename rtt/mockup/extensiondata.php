@@ -25,18 +25,8 @@ if (strpos($sourceUrl, "hugh") !== false && strpos($sourceUrl, "grant") !== fals
 }
 else if ($contextFound && strpos($sourceUrl, "/rtt/mockup/feed.php") !== false)
 {
-	if ($rcx->GetRecliningState() == "Downtime")
-	{
-	    echo "<next url='https://hangouts.google.com/call/styow2upujcp3hvhninl64l5uee' time='0' sidebar='' />";
-	}
-	else if ($rcx->GetRecliningState() == "Reclining")
-	{
-		$runTime = $rcx->GetMovie()->GetRunTime() * 60;
-		$timeRemaining = $rcx->GetTimeRemaining();
-		$timeCode = $runTime - $timeRemaining;
-		$url = $rcx->GetMovie()->GetUrl() . "?t=$timeCode";
-	    echo "<next url='$url' time='0' sidebar='' />";
-	}
+	$url = $rcx->GetUrl();
+	echo "<next url='$url' time='0' sidebar='' />";
 }
 else if ($contextFound && strpos($sourceUrl, $rcx->GetMovie()->GetUrl()) !== false)
 {

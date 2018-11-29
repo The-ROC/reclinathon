@@ -236,6 +236,58 @@ include '../RECLINATHON_CONTEXT.php';
             }
             xhReq.send();
         }
+		
+		function getReclinathonState(callback)
+		{
+			var xhReq = createXMLHttpRequest();
+            xhReq.open("GET", "getReclinathonState.php");
+            xhReq.onreadystatechange = function() {
+                    if (xhReq.readyState != 4) return;
+					
+					var result = {};
+					result.contextId = 0;
+			        result.url = "";
+			
+		            var xml = xhReq.responseXML;
+					
+					var contextIdNodes = xml.getElementsByTagName("Context");
+			        if (contextIdNodes.length > 0)
+			        {
+				        result.contextId = contextIdNodes[0].getAttribute("id");
+				        result.url = contextIdNodes[0].getAttribute("url");
+			        }
+					
+					callback(result);
+			    }
+            xhReq.send();
+		}
+		
+		function checkForReclinathonContextChange()
+        {
+			var callback = function(result) {
+			    var localContextId = document.getElementById("currentContextId").value;
+		        var actualContextId = result.contextId;
+			
+			    if (actualContextId != "" && actualContextId != "0" && localContextId != actualContextId)
+			    {
+				    window.location.reload(true);
+			    }
+			};
+			
+			getReclinathonState(callback);
+        }
+		
+		function joinReclinathon()
+		{
+			var callback = function(result) {		
+			    if (result.url != "")
+			    {
+			        window.location.href = result.url;
+			    }
+			};
+			
+			getReclinathonState(callback);
+		}
 
         function createXMLHttpRequest()
         {
@@ -285,10 +337,14 @@ include '../RECLINATHON_CONTEXT.php';
 	{
 		$rcx->DisplayFeedModule();
 		
-		echo "<div class='container' style='text-align:center'>
-			  <button class='button' onclick=\"window.location.href = 'https://www.netflix.com/watch/70083111?t=52';\">Join the Reclinathon</button>
-			  <div class='container' style='height:10px'>&nbsp;</div>
-			  </div>";
+		$url = $rcx->GetUrl();
+		if ($url != "")
+		{
+		    echo "<div class='container' style='text-align:center'>
+			      <button class='button' onclick=\"joinReclinathon();\">Join the Reclinathon</button>
+			      <div class='container' style='height:10px'>&nbsp;</div>
+			      </div>";
+		}
 			  
 		echo "<button class='button' onclick=\"advance();\">Advance</button>";
 	}			
