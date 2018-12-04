@@ -21,6 +21,7 @@ include '../RECLINATHON_CONTEXT.php';
 
     <script>
         var reclineeId = <?php echo '"' . $_SESSION['ReclineeID'] . '";'; ?>
+        var lastEventId = 0;
 
         function setCountdownTimer(milliseconds)
         {
@@ -155,25 +156,61 @@ include '../RECLINATHON_CONTEXT.php';
             var message = feedPost.value;
             feedPost.value = "";
 
+            this.updateFeedEvents(message);
+        }
+
+        function updateFeedEvents(message)
+        {
             var xhReq = createXMLHttpRequest();
-            xhReq.open("GET", "feedpost.php?username=" + reclineeId + "&feedPost=" + message);
+            var params = "";
+
+            if(message !== undefined)
+            {
+                xhReq.open("POST", "feedpost.php?lastEventID=" + lastEventId);
+                params = "reclineeID=" + reclineeId + "&feedPost=" + encodeURIComponent(message);
+                xhReq.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+            }
+            else
+            {
+                xhReq.open("GET", "feedpost.php?lastEventID=" + lastEventId);
+            }
+
             xhReq.onreadystatechange = function() {
                 if (xhReq.readyState != 4) return;
 		
                 var xml = xhReq.responseXML;
 
-                var feedEvents = xml.getElementsByTagName("FeedEvents");
+                var feedEvents = xml.getElementsByTagName("FeedEvent");
                 for(var i = 0; i < feedEvents.length; i++)
                 {
                     var icon = feedEvents[i].getElementsByTagName("Icon")[0].childNodes[0].nodeValue;
                     var message = feedEvents[i].getElementsByTagName("Message")[0].childNodes[0].nodeValue;
                     var timestamp = feedEvents[i].getElementsByTagName("Timestamp")[0].childNodes[0].nodeValue;
-                    
+                    var eventId = parseInt(feedEvents[i].getElementsByTagName("EventID")[0].childNodes[0].nodeValue);
+
+                    if(eventId > lastEventId)
+                        lastEventId = eventId;
+                        
                     addFeedEvent(icon, message, timestamp);
                     updateFeedDates();
                 }
             }
-            xhReq.send();
+            xhReq.send(params);
+        }
+
+        function init()
+        {
+            // Start event polling loop
+            this.updateFeedEvents();
+            setInterval(this.updateFeedEvents, 3000);
+
+            // Add an enter key event listener to the text input field
+            document.getElementById("feedPost").addEventListener("keyup", function(event) {
+                event.preventDefault();
+                if(event.keyCode === 13) {
+                    document.getElementById("postButton").click();
+                }
+            });
         }
 
         function onLoginClick()
@@ -372,7 +409,7 @@ include '../RECLINATHON_CONTEXT.php';
                 <div class="content"><img id="postImage" src=<?php echo "images/reclinathon.jpg";?> width="50"/></div>
                 <div class="content" style="text-align:left; padding-left:15px; width: 100%; box-sizing: border-box">
                     <div class="container" style="width:100%"><input type="text" id="feedPost" name="feedPost" placeholder="Post something!" style="width:100%"></div>
-                    <div class="container"><button onclick="onPostClick();">Post</button></div>
+                    <div class="container"><button id="postButton" onclick="onPostClick();">Post</button></div>
                 </div>
             </div>
         </div>
@@ -396,7 +433,10 @@ include '../RECLINATHON_CONTEXT.php';
             </div>
         </div>
 
-        <script>onLoginChange();</script>
+        <script>
+            this.init();
+            this.onLoginChange();
+        </script>
 
         <div id='postsParent' class='container'></div>
 

@@ -64,6 +64,16 @@ class DATABASE
         return $result;
     }
 
+    public function GetEscapeString($str)
+    {
+        if(!$this->Connect())
+        {
+            return FALSE;
+        }
+
+        return mysql_real_escape_string($str);
+    }
+
     public function Error()
     {
         return $this->error;

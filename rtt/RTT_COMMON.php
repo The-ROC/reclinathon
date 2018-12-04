@@ -60,14 +60,18 @@ abstract class RTT_COMMON
         print "</" . get_class($this) . ">\n";
     }
 
-    public function Query($query)
+    public function GetDatabase()
     {
         if (self::$Database == NULL)
         {
             self::$Database = new DATABASE();
         }
+        return self::$Database;
+    }
 
-        return self::$Database->Query($query);
+    public function Query($query)
+    {
+        return $this->GetDatabase()->Query($query);
     }
 
     public function GetCurrentSeason()
