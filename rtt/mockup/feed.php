@@ -175,6 +175,7 @@ include '../RECLINATHON_CONTEXT.php';
                 xhReq.open("GET", "feedpost.php?lastEventID=" + lastEventId);
             }
 
+            xhReq.overrideMimeType('text/xml');
             xhReq.onreadystatechange = function() {
                 if (xhReq.readyState != 4) return;
 		
