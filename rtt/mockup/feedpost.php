@@ -1,6 +1,6 @@
 <?php
 
-require_once('../FEED_EVENTS.php');
+require_once('../RECLINATHON_CONTEXT.php');
 
 header("Cache-Control: no-cache, must-revalidate");
 header("Content-Type: text/xml");

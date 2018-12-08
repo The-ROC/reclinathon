@@ -1,7 +1,5 @@
 <?php
 
-include 'RTTHeader.php';
-
 class FEED_EVENTS extends RTT_COMMON
 {
     protected $FeedEvents;      // Array of FEED_EVENT
@@ -20,7 +18,8 @@ class FEED_EVENTS extends RTT_COMMON
         {
             while($row = mysql_fetch_assoc($result))
             {
-                $feedEvent = (new FEED_EVENT())->LoadFromRow($row);
+				$feedEvent = new FEED_EVENT();
+                $feedEvent->LoadFromRow($row);
                 array_push($this->FeedEvents, $feedEvent);
             }
         }
@@ -45,7 +44,10 @@ class FEED_EVENTS extends RTT_COMMON
         $result = $this->Query($query);
         if(!$result)
             return FALSE;
-        return (new FEED_EVENT())->LoadFromArgs(mysql_insert_id(), $reclineeID, $text, $timestamp, $image);
+		
+		$feedEvent = new FEED_EVENT();
+		$feedEvent->LoadFromArgs(mysql_insert_id(), $reclineeID, $text, $timestamp, $image);
+        return $feedEvent;
     }
 
     function FormatAJAXResponse()

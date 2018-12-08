@@ -121,6 +121,10 @@ class REMOTE_RECLINATHON extends RTT_COMMON
 			return;
 		}
 		
+		// Post an event to the feed that a Reclinathon was created.
+		$feedEvents = new FEED_EVENTS();
+		$feedEvents->PostSystemEvent("Created a Reclinathon!", time(), "images/play.png");	
+		
 		$this->succeeded = true;
     }
 

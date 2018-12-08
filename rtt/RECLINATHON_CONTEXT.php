@@ -1052,6 +1052,7 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
 	
     public function Advance()
 	{
+		// Find the next pending context for this Reclinathon.
         $query = "SELECT ContextID, Pending FROM RECLINATHON_CONTEXT WHERE Season = '$this->Season' AND ContextId > '$this->ContextID' ORDER BY ContextID LIMIT 1";
         $result = $this->query($query);
 		if (!$result)
@@ -1059,13 +1060,42 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
             return false;
         }		
 		
+		// If there are no remaining pending contexts, the Reclinathon is over :-(
 		if (mysql_num_rows($result) == 0)
 		{
+			// Check to see if someone has already ended the Reclinathon.
+			$query = "SELECT * FROM current_remote_reclinathon WHERE RemoteReclinathonId = '$this->Season'";
+			$result = $this->Query($query);
+			
+			if (mysql_num_rows($result) == 0)
+			{
+				return true;
+			}
+			
+			// We've won the race and are responsible for ending the Reclinathon.  Do so now.
+			
 			$query = "UPDATE current_remote_reclinathon SET RemoteReclinathonId = '' WHERE RemoteReclinathonId = '$this->Season'";
-            $result = $this->query($query);
+            $result = $this->Query($query);
+			if (!$result)
+			{
+				return false;
+			}
+			
+			// Log a system event for the final movie ending and for the Reclinathon ending.
+			$feedEvents = new FEED_EVENTS();
+			
+			if ($this->GetRecliningState() == "Reclining" && $this->GetMovie()->GetID() != 0)
+		    { 
+			    $title = $this->GetMovie()->GetTitle();   
+			    $feedEvents->PostSystemEvent("Finished $title", time(), "images/downtime.png");				
+		    }
+			
+			$feedEvents->PostSystemEvent("Completed the Reclinathon!", time(), "images/finish.png");	
+			
 			return $result;
 		}
 		
+		// Fetch details about the next pending context.
         $row = mysql_fetch_assoc($result);
         if (!$row)
         {
@@ -1074,13 +1104,42 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
         $ContextID = $row["ContextID"];
 		$pending = $row["Pending"];
 		
+		// Only the first advance request for this context should take effect.  If someone has already advanced the state, exit.
 		if ($pending != "1")
 		{
 			return false;
 		}
 		
+		// We've won the race and are responsible for advancing the state.  Do so now.
 		$query = "UPDATE RECLINATHON_CONTEXT SET TimeStamp = UNIX_TIMESTAMP(), Pending = '0' WHERE ContextID = '$ContextID'";
         $result = $this->query($query);
+		
+		// Post a system event for this advancement.
+		$message = "";
+		$timeStamp = time();
+		$image = "";
+		
+		if ($this->GetRecliningState() == "Reclining" && $this->GetMovie()->GetID() != 0)
+		{
+			// If we've just advanced and the current state is 'Reclining', log a system event that a movie has ended. 
+			$title = $this->GetMovie()->GetTitle();
+			$message = "Finished $title";
+            $image = "images/downtime.png";			
+		}
+		else if (($this->GetRecliningState() == "Downtime" || ($this->RecliningState == 'Preseason' && $this->RecliningStateModifier == 'Final Countdown')) && 
+		          $this->GetMovie()->GetID() != 0)
+		{
+			// If we've just advanced and the current state is 'Downtime' or the 'Final Countdown', log a system event that a new movie is starting. 
+			$title = $this->GetMovie()->GetTitle();
+			$message = "Started $title";
+            $image = $this->GetMovie()->GetImage();	
+		}	
+		
+		if ($message != "" && $image != "")
+		{
+			$feedEvents = new FEED_EVENTS();
+			$feedEvents->PostSystemEvent($message, $timeStamp, $image);
+		}
 		
 		return $result;
 	}

@@ -922,6 +922,11 @@ class MOVIE extends RTT_COMMON
 		$this->Url = $url;
 	}
 	
+	public function GetImage()
+	{
+		return $this->Image;
+	}
+	
 	public function CreateReclinathonInsert()
     {
         $query = "INSERT INTO MOVIE (Title, RunTime, TrailerLink, IMDBLink, Freshness, Image, Metascore, Director, Year, Synopsis, Url) VALUES (";
