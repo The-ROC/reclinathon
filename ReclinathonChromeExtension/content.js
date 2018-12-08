@@ -1,6 +1,7 @@
 var destinationUrl = "";
 var refreshTime = "";
 var sidebarUrl = "";
+var isFeedPage = false;
 
 function createXMLHttpRequest() 
 {
@@ -22,7 +23,6 @@ async function GetNextDestination(url)
 	// If the last feed page navigation was from reclinathon.com, we're not in dev mode.  This allows the same extension to use a
 	// local database or the official Reclinathon data, as necessary.
 	//
-	var isFeedPage = false;
 	var isLocalHost = false;
 	
 	if (url.includes("rtt/mockup/feed.php"))
@@ -89,6 +89,15 @@ async function GetNextDestination(url)
 
 function ProcessCurrentUrl()
 {
+	if (isFeedPage)
+	{
+		var extensionActiveInput = document.getElementById("extensionActiveInput");
+		if (extensionActiveInput != null)
+		{
+			extensionActiveInput.value = "true";
+		}
+	}
+	
 	if (sidebarUrl != "")
 	{
 	    var width = window.getComputedStyle(document.body, null).getPropertyValue("width");

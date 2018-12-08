@@ -336,11 +336,13 @@ include '../RECLINATHON_CONTEXT.php';
         }
     </script>
 	
+	<input type='hidden' name='extensionActiveInput' id='extensionActiveInput' value='false' />
+	
 	<CENTER>
     <div id="stateSummary" class="header">
 
     <?php
-
+	
     $remoteReclinathon = new REMOTE_RECLINATHON();
     $currentReclinathonId = $remoteReclinathon->GetCurrentRemoteReclinathonId();
     $remoteReclinathonScheduled = $currentReclinathonId != "";
@@ -374,16 +376,22 @@ include '../RECLINATHON_CONTEXT.php';
 	{
 		$rcx->DisplayFeedModule();
 		
-		$url = $rcx->GetUrl();
-		if ($url != "")
+		$url = $rcx->GetUrl();	
+		$joined = isset($_GET["joined"]) ? $_GET["joined"] : "0";
+
+		if ($url != "" && $joined != "1")
 		{
 		    echo "<div class='container' style='text-align:center'>
 			      <button class='button' onclick=\"joinReclinathon();\">Join the Reclinathon</button>
 			      <div class='container' style='height:10px'>&nbsp;</div>
 			      </div>";
 		}
-			  
-		echo "<button class='button' onclick=\"advance();\">Advance</button>";
+		
+        $adminMode = isset($_GET["admin"]) ? $_GET["admin"] : "0";
+		if ($adminMode == "1")
+		{
+		    echo "<button class='button' onclick=\"advance();\">Advance</button>";
+		}
 	}			
 	else
 	{

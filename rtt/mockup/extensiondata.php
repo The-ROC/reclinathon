@@ -13,6 +13,7 @@ $currentReclinathonId = $remoteReclinathon->GetCurrentRemoteReclinathonId();
 $remoteReclinathonScheduled = $currentReclinathonId != "";
 $rcx = new RECLINATHON_CONTEXT();
 $contextFound = false;
+$feedSidebarUrl = ($rcx->IsDevMode() ? "http://localhost/rtt/mockup/feed.php?joined=1" : "https://reclinathon.com/rtt/mockup/feed.php?joined=1");
 
 if ($remoteReclinathonScheduled)
 {
@@ -23,22 +24,23 @@ if (strpos($sourceUrl, "hugh") !== false && strpos($sourceUrl, "grant") !== fals
 {
 	echo "<next url='https://reclinathon.com' time='5000' sidebar='' />";
 }
-else if ($contextFound && strpos($sourceUrl, "/rtt/mockup/feed.php") !== false)
-{
-	$url = $rcx->GetUrl();
-	echo "<next url='$url' time='0' sidebar='' />";
-}
 else if ($contextFound && strpos($sourceUrl, $rcx->GetMovie()->GetUrl()) !== false)
 {
 	$timeRemaining = $rcx->GetTimeRemaining() * 1000;
-	echo "<next url='https://hangouts.google.com/call/styow2upujcp3hvhninl64l5uee' time='$timeRemaining' sidebar='' />";
+	echo "<next url='https://hangouts.google.com/call/styow2upujcp3hvhninl64l5uee' time='$timeRemaining' sidebar='$feedSidebarUrl' />";
 }
-else if ($contextFound && strpos($sourceUrl, "hangouts.google.com/call/styow2upujcp3hvhninl64l5uee") !== false)
+else if (strpos($sourceUrl, "hangouts.google.com/call/styow2upujcp3hvhninl64l5uee") !== false)
 {
-	$timeRemaining = $rcx->GetTimeRemaining() * 1000;
-	$url = $rcx->GetMovie()->GetUrl() . "?t=1";
-	$sidebarUrl = ($rcx->IsDevMode() ? "http://localhost/rtt/mockup/feed.php" : "https://reclinathon.com/rtt/mockup/feed.php");
-	echo "<next url='$url' time='$timeRemaining' sidebar='$sidebarUrl' />";
+	$timeRemaining = 0;
+	$url = "";
+	
+	if ($contextFound)
+	{
+	    $timeRemaining = $rcx->GetTimeRemaining() * 1000;
+	    $url = $rcx->GetMovie()->GetUrl() . "?t=1";
+	}
+	
+	echo "<next url='$url' time='$timeRemaining' sidebar='$feedSidebarUrl' />";
 }
 else
 {
