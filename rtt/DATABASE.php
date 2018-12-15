@@ -11,7 +11,7 @@ class DATABASE
 
     private function Connect()
     {
-        $TEST_SERVER = file_exists($_SERVER['DOCUMENT_ROOT']."\include\localdb") || file_exists("../include/localdb");
+        $TEST_SERVER = file_exists($_SERVER['DOCUMENT_ROOT']."\include\localdb") || file_exists($_SERVER['DOCUMENT_ROOT']."/include/localdb");
         if ($TEST_SERVER)
         {
             $this->server = 'localhost';
@@ -62,6 +62,16 @@ class DATABASE
         }
 
         return $result;
+    }
+
+    public function GetEscapeString($str)
+    {
+        if(!$this->Connect())
+        {
+            return FALSE;
+        }
+
+        return mysql_real_escape_string($str);
     }
 
     public function Error()

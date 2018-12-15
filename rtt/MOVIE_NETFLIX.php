@@ -8,11 +8,12 @@ class MOVIE_NETFLIX extends MOVIE
     public function LoadFromObject($object)
     {
         $this->Title = $object["title"];
-        $this->RunTime = $object["runtime"];
-        $this->Image = $object["image"];
+        $this->RunTime = ($object["runtime"] / 60);
+        $this->Image = urldecode($object["image"]);
 
         $this->NetflixId = $object["netflixId"];
-        $this->NetflixURL = $object["netflixURL"];
+        $this->NetflixURL = urldecode($object["netflixURL"]);
+		$this->Url = urldecode($object["netflixURL"]);
     }
 
     public function GetNetflixId()

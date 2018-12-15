@@ -1,18 +1,14 @@
-<!--
-Feed ideas.
- - There is no reclinathon, start one.
- - Join relcinathon button.
- - Get extension state.
--->
-
 <HTML>
 <HEAD>
 <title>Reclinathon Tracking Technology</title>
 <link rel="stylesheet" type="text/css" href="mockup.css" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="stylesheet" href="flickity.css" media="screen">
 </HEAD>
 
 <BODY bgcolor='white' CLASS='noborder'>
+    <script src="date.format.js"></script>
+    <script src="flickity.pkgd.js"></script>
 
     <script>
         function setCountdownTimer(milliseconds)
@@ -61,6 +57,133 @@ Feed ideas.
                 s = "0" + s;
             return s;
         }
+
+        function getDateFromTimestamp(timestamp)
+        {
+            var postDate = new Date(timestamp*1000);
+            var currentDate = new Date();
+
+            var postDay = new Date(postDate.format('mm/dd/yyyy'));
+            var currentDay = new Date(currentDate.format('mm/dd/yyyy'));
+            var timeDiff = currentDay.getTime() - postDay.getTime();
+            var daysDiff = Math.floor(timeDiff / (1000*3600*24));
+
+            if(daysDiff == 0)
+            {
+                var msAgo = Math.max(0, currentDate.getTime() - postDate.getTime());
+                var hoursAgo = Math.floor(msAgo / (1000*3600));
+                var minutesAgo = Math.floor(msAgo / (1000*60));
+                if(hoursAgo == 0)
+                {
+                    if(minutesAgo == 0)
+                        return "Just now";
+                    else if(minutesAgo == 1)
+                        return minutesAgo + " min";
+                    else
+                        return minutesAgo + " mins";
+                }
+                else
+                {
+                    if(hoursAgo == 1)
+                        return hoursAgo + " hr";
+                    else
+                        return hoursAgo + " hrs";
+                }
+            }
+            else if(daysDiff == 1)
+            {
+                return postDate.format('"Yesterday at" h:MMtt');
+            }
+            else if(postDate.getYear() == currentDate.getYear()) 
+            {
+                return postDate.format('mmmm d "at" h:MMtt');
+            }
+            else
+            {
+                return postDate.format('mmmm d, yyyy "at" h:MMtt');
+            }
+        }
+
+        function updateScriptDateFromTimestamp(timestamp)
+        {
+            var scriptTag = document.scripts[document.scripts.length - 1].parentNode;
+            scriptTag.innerHTML += getDateFromTimestamp(timestamp);
+        }
+
+        function addFeedEvent(icon, message, timestamp)
+        {
+            var postsParent = document.getElementById("postsParent");
+
+            var newPostHTML = "<div class='container' style='padding:5px' timestamp='" + timestamp + "'>";
+            newPostHTML += "<div class='content'><img src='" + icon + "' height='50' width='50'/></div>";
+            newPostHTML += "<div class='content' style='text-align:left; padding-left:15px'>";
+            newPostHTML += "<div class='container'>" + message + "</div>";
+            newPostHTML += "<div class='container' style='font-size:50%' date='true'>" + getDateFromTimestamp(timestamp) + "</div>";
+            newPostHTML += "</div>";
+            newPostHTML += "</div>";
+
+            postsParent.innerHTML = newPostHTML + postsParent.innerHTML;
+        }
+
+        function updateFeedDates()
+        {
+            var postsParent = document.getElementById("postsParent");
+            var posts = postsParent.childNodes;
+            for(i=0; i<posts.length; i++)
+            {
+                var post = posts[i];
+                var timestamp = post.getAttribute("timestamp");
+                var postChildren = post.getElementsByTagName("div");
+                for(j=0; j<postChildren.length; j++)
+                {
+                    var postChild = postChildren[j];
+                    if(postChild.hasAttribute("date"))
+                        postChild.innerHTML = getDateFromTimestamp(timestamp);
+                }
+            }
+        }
+
+        function onPostClick()
+        {
+            var feedPost = document.getElementById("feedPost");
+            var message = feedPost.value;
+            feedPost.value = "";
+            var userId = "dude";
+
+            var xhReq = createXMLHttpRequest();
+            xhReq.open("GET", "feedpost.php?user=" + userId + "&feedPost=" + message);
+            xhReq.onreadystatechange = function() {
+                if (xhReq.readyState != 4) return;
+		
+                var xml = xhReq.responseXML;
+
+                var feedEvents = xml.getElementsByTagName("FeedEvents");
+                for(var i = 0; i < feedEvents.length; i++)
+                {
+                    var icon = feedEvents[i].getElementsByTagName("Icon")[0].childNodes[0].nodeValue;
+                    var message = feedEvents[i].getElementsByTagName("Message")[0].childNodes[0].nodeValue;
+                    var timestamp = feedEvents[i].getElementsByTagName("Timestamp")[0].childNodes[0].nodeValue;
+                    
+                    addFeedEvent(icon, message, timestamp);
+                    updateFeedDates();
+                }
+            }
+            xhReq.send();
+        }
+
+        function onLoginClick()
+        {
+            document.getElementById("loginPanel").style.display = "none";
+            document.getElementById("postPanel").style.display = "block";
+        }
+
+        function createXMLHttpRequest()
+        {
+	        try { return new XMLHttpRequest(); } catch(e) {}
+	        try { return new ActiveXObject("Msxml2.XMLHTTP"); } catch (e) {}
+	        alert("XMLHttpRequest not supported");
+	        return null;
+        }
     </script>
 
 <?php
@@ -86,26 +209,40 @@ $finishedKillBill = false;
     <BR>
     <BR>
 -->
-
     <div id="stateSummary" class="header">
 
         <?php 
             if($_GET["activity"] === "Scheduled") {
         ?>
-
-        <div id="scheduledReclinathon" class="container" style="padding:15px">
+            
+        <div id="scheduledReclinathon" class="container" style="padding:15px 0; width:100%">
             <div id="nowPlayingText" class="container"><div class="content"><b>Countdown to Reclinathon!</b></div></div>
             <div id="timeRemaining" class="container"><div id="countdown" class="content"><script>this.displayTimer(2*60*1000); this.setCountdownTimer(2*60*1000);</script></div></div>
             <div id="timeRemaining" class="container" style="height:10px"><div class="content"></div></div>
-            <div id="moviePosters" class="container">
-                <div id="nowPlayingPoster1" class="content" style="text-align:right">
+
+            <div class="main-carousel" data-flickity='{ "cellAlign": "center", "contain": false}' style="width:100%;background-image:url('film.png'); background-size: 300px 150px">
+                <div class="carousel-cell">
                     <img border='3' height='150' src="https://m.media-amazon.com/images/M/MV5BMTUwOGFiM2QtOWMxYS00MjU2LThmZDMtZDM2MWMzNzllNjdhXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_.jpg" alt = 'In Bruges ' />
                 </div>
-                <div id="nowPlayingPoster2" class="content" style="text-align:right">
+                <div class="carousel-cell">
+                    <img border='3' height='150' src="https://m.media-amazon.com/images/M/MV5BNzM3NDFhYTAtYmU5Mi00NGRmLTljYjgtMDkyODQ4MjNkMGY2XkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_.jpg" alt = 'Kill Bill: Vol. 1 ' />
+                </div>
+                <div class="carousel-cell">
+                    <img border='3' height='150' src="https://m.media-amazon.com/images/M/MV5BMTUwOGFiM2QtOWMxYS00MjU2LThmZDMtZDM2MWMzNzllNjdhXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_.jpg" alt = 'In Bruges ' />
+                </div>
+                <div class="carousel-cell">
+                    <img border='3' height='150' src="https://m.media-amazon.com/images/M/MV5BNzM3NDFhYTAtYmU5Mi00NGRmLTljYjgtMDkyODQ4MjNkMGY2XkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_.jpg" alt = 'Kill Bill: Vol. 1 ' />
+                </div>
+                <div class="carousel-cell">
+                    <img border='3' height='150' src="https://m.media-amazon.com/images/M/MV5BMTUwOGFiM2QtOWMxYS00MjU2LThmZDMtZDM2MWMzNzllNjdhXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_.jpg" alt = 'In Bruges ' />
+                </div>
+                <div class="carousel-cell">
                     <img border='3' height='150' src="https://m.media-amazon.com/images/M/MV5BNzM3NDFhYTAtYmU5Mi00NGRmLTljYjgtMDkyODQ4MjNkMGY2XkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_.jpg" alt = 'Kill Bill: Vol. 1 ' />
                 </div>
             </div>
+            <div id="timeRemaining" class="container" style="height:25px"><div class="content"></div></div>
         </div>
+
 
         <?php 
             } else if($_GET["activity"] === "Reclining1" || $_GET["activity"] === "join")
@@ -204,17 +341,52 @@ $finishedKillBill = false;
     </div>
 -->
     <div id="feed" style="width:100%; text-align:left">
-        <div class="container" style="padding:5px; width:100%; box-sizing: border-box">
-        <form>
-            <div class="content"><img src="images/reclinathon.jpg" height="50" width="50"/></div>
-            <div class="content" style="text-align:left; padding-left:15px; width: 100%; box-sizing: border-box">
-                <div class="container" style="width:100%"><input type="text" name="feedPost" value="Post something!" style="width:100%"></div>
-                <div class="container"><input type="submit" name="submit" value="Post"></div>
+
+        <div id="postPanel" class="container" style="padding:5px; width:100%; box-sizing: border-box; background-color:#eeeeff; display:none">
+            <div style="padding-bottom: 15px">
+                <div class="content"><img src="images/reclinathon.jpg" height="50" width="50"/></div>
+                <div class="content" style="text-align:left; padding-left:15px; width: 100%; box-sizing: border-box">
+                    <div class="container" style="width:100%"><input type="text" id="feedPost" name="feedPost" placeholder="Post something!" style="width:100%"></div>
+                    <div class="container"><button onclick="onPostClick();">Post</button></div>
+                </div>
             </div>
-        </form>
         </div>
 
+        <div id="loginPanel" class="container" style="padding:5px; width:100%; box-sizing: border-box; background-color:#9999BB">
+            <div style="padding-bottom: 15px; text-align:left;">
+                <div class="container" style="margin:auto">
+                <div class="content" style="padding-right:15px">
+                    <div class="container">Username</div>
+                    <div class="container"><input type="text" id="username" size="12"></div>
+                </div>
+                <div class="content" style="padding-right:15px">
+                    <div class="container">Password</div>
+                    <div class="container"><input type="password" id="password" size="12"></div>
+                </div>
+                <!-- <div class="container" style="width:100%; padding-top:10px"> -->
+                <div class="content">
+                    <div class="container">&nbsp</div>
+                    <div class="container"><button onclick="onLoginClick();">Login</button></div>
+                </div>
+                <!--</div>-->
+                </div>
+            </div>
+        </div>
+
+        <div id='postsParent' class='container'></div>
+
 		<?php
+
+        if($feedPost)
+        {
+            echo "<div class='container' style='padding:5px'>";
+            echo "<div class='content'><img src='images/reclinathon.jpg' height='50' width='50'/></div>";
+            echo "<div class='content' style='text-align:left; padding-left:15px'>";
+            echo "<div class='container'>" . $feedPost . "</div>";
+            echo "<div class='container' style='font-size:50%'><script>updateScriptDateFromTimestamp(" . $postTime . ");</script></div>";
+            echo "</div>";
+            echo "</div>";
+        }
 		
 		if ($finishedKillBill)
 		{

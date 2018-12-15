@@ -38,6 +38,7 @@ class MOVIE extends RTT_COMMON
 	protected $SpecialEvent; // BOOL
 	protected $ShowVoting; // BOOL
 	protected $Synopsis; //STRING
+	protected $Url; //STRING
    
     function __construct() 
     {
@@ -58,6 +59,7 @@ class MOVIE extends RTT_COMMON
 		$this->SpecialEvent = false;
 		$this->ShowVoting = true;
 		$this->Synopsis = '';
+		$this->Url = '';
     }
 	
 	public function HideVotingInfo()
@@ -96,6 +98,7 @@ class MOVIE extends RTT_COMMON
         $this->Metascore = $row["Metascore"];
         $this->Director = $row["Director"];
 		$this->Synopsis = $row["Synopsis"];
+		$this->Url = $row["Url"];
 
         $this->NumGenres = 0;
         $query = "SELECT g.GenreID as GenreID, g.Name as Name, g.Canonical as Canonical FROM GENRE g JOIN MOVIE_GENRE mg ON g.GenreID = mg.GenreID WHERE mg.MovieID = " . $MovieID;
@@ -264,6 +267,11 @@ class MOVIE extends RTT_COMMON
         {
             $this->Synopsis = $movie["Synopsis"];
         }
+		
+		if ($movie["Url"] != "")
+        {
+            $this->Url = $movie["Url"];
+        }
 
         return TRUE;
     }
@@ -292,6 +300,11 @@ class MOVIE extends RTT_COMMON
     {
 	return "<IMG BORDER='3' WIDTH='200' SRC = '" . str_replace("'", "%27", $this->Image) . "' alt = '$this->Title' >";
     }
+	
+	public function DisplayFeedImage()
+	{
+		echo "<div class='carousel-cell'><img border='3' height='150px' style='min-width: 100px' src='$this->Image' alt = '$this->Title' /></div>";
+	}
 
     public function DisplayGenres()
     {
@@ -601,20 +614,44 @@ class MOVIE extends RTT_COMMON
             }
         }
 		
-        echo "<BR>Total Run Time:  " . ((int)($TotalRunTime / 60)) . " hours " . $TotalRunTime % 60 . " min<BR>";
+        echo "<BR>Total Run Time:  " . $this->FormatRunTime($TotalRunTime) . "<BR>";
 
         $query = "SELECT * FROM GENRE";
         $result = $this->query($query);
         while ($row = mysql_fetch_assoc($result))
         {
-            echo "<BR>" . $row["Name"];
-            if ($row["Canonical"] == 1)
+            $genreRunTime = $GenreRunTimes[$row["GenreID"]];
+            if($genreRunTime > 0)
             {
-                echo "*";
-            }
-            echo ":  " . $GenreRunTimes[$row["GenreID"]] . " min";
+                echo "<BR>" . $row["Name"];
+                if ($row["Canonical"] == 1)
+                {
+                    echo "*";
+                }
+                echo ":  " . $this->FormatRunTime($genreRunTime);
+            }   
         }
 
+    }
+
+    private function FormatRunTime($runTimeMinutes)
+    {
+        $hours = (int)($runTimeMinutes / 60);
+        $minutes = $runTimeMinutes % 60;
+        $result = "";
+        if($hours > 0)
+        {
+            $result .= $hours . "h";
+        }
+        if($minutes > 0)
+        {
+            if(strlen($result) > 0)
+            {
+                $result .= " ";
+            }
+            $result .= $minutes . "m";
+        }
+        return $result;
     }
 
     public function DisplayForm()
@@ -680,7 +717,7 @@ class MOVIE extends RTT_COMMON
 
     public function Insert()
     {
-        $query = "INSERT INTO MOVIE (Title, RunTime, TrailerLink, IMDBLink, Freshness, Image, Metascore, Director, Year, Synopsis) VALUES (";
+        $query = "INSERT INTO MOVIE (Title, RunTime, TrailerLink, IMDBLink, Freshness, Image, Metascore, Director, Year, Synopsis, Url) VALUES (";
         $query = $query . "'" . $this->Title . "', ";
         $query = $query . "'" . $this->RunTime . "', ";
         $query = $query . "'" . $this->TrailerLink . "', ";
@@ -690,7 +727,8 @@ class MOVIE extends RTT_COMMON
         $query = $query . "'" . $this->Metascore . "', ";
         $query = $query . "'" . $this->Director . "', ";
         $query = $query . "'" . $this->Year . "', ";
-		$query = $query . "'" . $this->Synopsis . "')";
+		$query = $query . "'" . $this->Synopsis . "', ";
+		$query = $query . "'" . $this->Url . "')";
 
         //echo $query . "<BR>";
         $result = $this->Query($query);
@@ -730,9 +768,10 @@ class MOVIE extends RTT_COMMON
         $query = $query . ", Metascore = '" . $this->Metascore . "'";
         $query = $query . ", Director = '" . $this->Director . "'";
         $query = $query . ", Year = '" . $this->Year . "'";
-		$query = $query . ", Synopsis = '" . $this->Synopsis . "' WHERE MovieID = '" . $this->MovieID . "'";
+		$query = $query . ", Synopsis = '" . $this->Synopsis . "'";
+		$query = $query . ", Url = '" . $this->Url . "' WHERE MovieID = '" . $this->MovieID . "'";
 
-        //echo $query . "<BR>";
+        //echo "<BR>$query<BR>";
         $result = $this->Query($query);
         if (!$result)
         {
@@ -782,6 +821,22 @@ class MOVIE extends RTT_COMMON
             {
                 return FALSE;
             }
+        }
+        
+        return TRUE;
+    }
+	
+	public function UpdateUrl()
+    {
+		$movieId = $this->MovieID;
+		$url = $this->Url;
+        $query = "UPDATE MOVIE SET Url = '$url' WHERE MovieID = '$movieId'";
+
+        //echo "<BR>$query<BR>";
+        $result = $this->Query($query);
+        if (!$result)
+        {
+            return FALSE;
         }
         
         return TRUE;
@@ -850,6 +905,60 @@ class MOVIE extends RTT_COMMON
             $movie->Load($MovieID);
             $movie->DisplayModule();
         }
+    }
+	
+	public function SetMovieId($id)
+	{
+		$this->MovieID = $id;
+	}
+	
+	public function GetUrl()
+	{
+		return $this->Url;
+	}
+	
+	public function SetUrl($url)
+	{
+		$this->Url = $url;
+	}
+	
+	public function GetImage()
+	{
+		return $this->Image;
+	}
+	
+	public function CreateReclinathonInsert()
+    {
+        $query = "INSERT INTO MOVIE (Title, RunTime, TrailerLink, IMDBLink, Freshness, Image, Metascore, Director, Year, Synopsis, Url) VALUES (";
+        $query = $query . "'" . $this->Title . "', ";
+        $query = $query . "'" . $this->RunTime . "', ";
+        $query = $query . "'" . $this->TrailerLink . "', ";
+        $query = $query . "'" . $this->IMDBLink . "', ";
+        $query = $query . "'" . $this->Freshness . "', ";
+        $query = $query . "'" . $this->Image . "', ";
+        $query = $query . "'" . $this->Metascore . "', ";
+        $query = $query . "'" . $this->Director . "', ";
+        $query = $query . "'" . $this->Year . "', ";
+		$query = $query . "'" . $this->Synopsis . "', ";
+		$query = $query . "'" . $this->Url . "')";
+
+        //echo "<BR>$query<BR>";
+        $result = $this->Query($query);
+        if (!$result)
+        {
+            return FALSE;
+        }
+
+        $query = "SELECT LAST_INSERT_ID() AS MovieID";
+        $result = $this->Query($query);
+        if (!$result)
+        {
+            return FALSE;
+        }
+        $row = mysql_fetch_assoc($result);
+        $this->MovieID = $row["MovieID"]; 
+        
+        return $this->Update();
     }
 
 }

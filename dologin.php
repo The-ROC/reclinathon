@@ -1,5 +1,4 @@
 <?php
-
 session_start();
 $_SESSION = array();
 
@@ -59,24 +58,42 @@ else
     }
 }
 
-if (!$LoginSuccessful)
+if($_POST["xml"])
 {
-    $URL = "http://" . $_SERVER['SERVER_NAME'] . "/login.php?username=" . $user . "&message=" . $message;
-    //header ("Location: $URL");
-    //exit();
+    header("Cache-Control: no-cache, must-revalidate");
+    header("Content-Type: text/xml");
+
+    echo "<Login ";
+    if($LoginSuccessful)
+    {
+        echo "result='success' username='" . $_SESSION["ReclineeID"] . "'";
+    }
+    else
+    {
+        echo "result='fail'";
+    }
+    echo " />";
 }
 else
-{ 
-    $URL = "http://" . $_SERVER['SERVER_NAME'] . "/rtt/ControlCenter.php";
+{
+    if (!$LoginSuccessful)
+    {
+        $URL = "http://" . $_SERVER['SERVER_NAME'] . "/login.php?username=" . $user . "&message=" . $message;
+        //header ("Location: $URL");
+        //exit();
+    }
+    else
+    { 
+        $URL = "http://" . $_SERVER['SERVER_NAME'] . "/rtt/ControlCenter.php";
+    }
+    
+    //echo "URL: " . $URL;
+    //echo "ReclineeID: " . $_SESSION["ReclineeID"];
+    
+    
+    session_write_close();
+    header ("Location: $URL");
+    //echo session_id();
+    //echo "<meta http-equiv='refresh' content=\"2;url=" . $URL . "\" />";
+    //echo "<FORM action='$URL' method='post'><INPUT type='submit' value='continue' /><INPUT type='hidden' name='ReclineeID' value='$ReclineeID' /></FORM>";    
 }
-
-//echo "URL: " . $URL;
-//echo "ReclineeID: " . $_SESSION["ReclineeID"];
-
-
-session_write_close();
-header ("Location: $URL");
-//echo session_id();
-//echo "<meta http-equiv='refresh' content=\"2;url=" . $URL . "\" />";
-//echo "<FORM action='$URL' method='post'><INPUT type='submit' value='continue' /><INPUT type='hidden' name='ReclineeID' value='$ReclineeID' /></FORM>";
-
