@@ -563,8 +563,8 @@ class MOVIE extends RTT_COMMON
 		
 		if (count($ThemeMovies) > 0)
 		{
-		    echo "<BR><H2>Special Election: Reclinathon Theme Movies<BR><BR><I><U>'The end of the World as we know it (and I feel fine...)'</I></U></H2>";
-			echo "Given the kind of year we've had, a celebration of \"Dudliness\" might seem a bit...exclusive...no?  But fear not!  We here at Reclinathon believe everyone has the power to be a Dude, not just the tough guys and cool cats.<BR>Therefore, this year we're giving props to some of the the kick-ass women who have graced the silver screen by being tough, smart, and just generally awesome.<BR><BR>Hats off to you, Ladies...you're what being a Dude is all about!<BR><BR>";
+		    echo "<BR><H2>Special Election: Reclinathon Theme Movies<BR><BR><I><U>'Apocalypse?...Now?!?'</I></U></H2>";
+			echo "You know that old saying \"May you live in interesting times\"?  Sure seems like we're in pretty interesting times now, doesn't it?  Climate Change. Financial Crisis. Displaced Masses.  And the guys in charge?...yeah...let's not talk about the guys in charge.  But, if the movies have taught us anything about the complex nuances of geo-political hegemony coupled with unchecked anarcho-capitalism and the perils of a dyspeptic underclass (...and I think they <i>have</i>), it's that things could be worse...a LOT worse.  Therefore, to help take your mind off of all the bad-dude stuff in the world, this year your friends at Reclinathon are showcasing some of the very best examples of humanity at its very worst: Apocalypse films!  You think you've got problems?  Well, not nearly as bad as these people.  Because, sure, the stock market may be crashing...but at least it isn't crashing into a GIANT KILLER ASTEROID!!!!!  So, while it may very well be The End of the World (as we know it)...*I* feel fine...and after watching some of these movies, we hope you will, too!";
 		    foreach ($ThemeMovies as &$movie)
 		    {			
                 $movie->DisplayModule();
