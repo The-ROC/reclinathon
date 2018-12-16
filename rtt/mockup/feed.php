@@ -12,7 +12,7 @@ include '../RECLINATHON_CONTEXT.php';
 <title>Reclinathon Tracking Technology</title>
 <link rel="stylesheet" type="text/css" href="mockup.css" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="stylesheet" href="flickity.css" media="screen">
+<link rel="stylesheet" href="flickity.css" media="screen" />
 </HEAD>
 
 <BODY bgcolor='white' CLASS='noborder'>
@@ -154,6 +154,10 @@ include '../RECLINATHON_CONTEXT.php';
         {
             var feedPost = document.getElementById("feedPost");
             var message = feedPost.value;
+            // Filter out any fancy quotes that break the character encoding
+            message = message
+                .replace(/[\u2018\u2019]/g, "'")
+                .replace(/[\u201C\u201D]/g, '"');
             feedPost.value = "";
 
             this.updateFeedEvents(message);
