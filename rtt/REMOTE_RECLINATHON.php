@@ -9,7 +9,7 @@ class REMOTE_RECLINATHON extends RTT_COMMON
     public function LoadFromForm()
     {
 		$this->succeeded = false;
-        $this->StartTime = $_POST["startTime"];
+        $this->StartTime = strtotime($_POST["startTime"]);
         $this->Movies = array();
 		
 		// Create or fetch each movie.
@@ -76,8 +76,16 @@ class REMOTE_RECLINATHON extends RTT_COMMON
 				
 		// Create the initial countdown context
 		$timeStamp = time();
+		
+		if ($timeStamp > $this->StartTime)
+		{
+			echo "Cannot create a Reclinathon in the past yet...the scientists are working on that.<br>";
+			return;
+		}
+		
+		$duration = $this->StartTime - $timeStamp;
 		$initialMovieId = $this->Movies[0]->GetID();
-		$query = "INSERT INTO RECLINATHON_CONTEXT (`TimeStamp`, `EstimatedDuration`, `CaptainID`, `StateID`, `ModifierID`, `MovieID`, `Season`, `LogoID`, `Pending`) VALUES ('$timeStamp', '100000', '1', '3', '9', '$initialMovieId', 'demo', '0', '0')";
+		$query = "INSERT INTO RECLINATHON_CONTEXT (`TimeStamp`, `EstimatedDuration`, `CaptainID`, `StateID`, `ModifierID`, `MovieID`, `Season`, `LogoID`, `Pending`) VALUES ('$timeStamp', '$duration', '1', '3', '9', '$initialMovieId', 'demo', '0', '0')";
 		$result = mysql_query($query);	
 		if (!$result)
 		{
