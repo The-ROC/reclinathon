@@ -425,68 +425,66 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
     {
         return $this->DisplayHistoryModuleInternal("index.php");
     }
+	
+	public function DisplayCaptainDowntimeModule()
+	{
+		echo "<TABLE>";
+        echo "<TR cellspacing='0'><TH colspan='2'>Downtime Entertainment Manager</TH></TR>";
+		
+		$query = "SELECT * FROM VideoClips WHERE Played = '" . $this->ContextID . "' ORDER BY Ordering";
+        $result = $this->query($query);
+		
+		while ($row = mysql_fetch_assoc($result))
+        {
+			$clipId = $row["VCID"];
+            $clipCaption = $row["Caption"];
+            echo "<TR ID='ClipCaption$i'><TD width='10px'><BUTTON onclick='RemoveClip($clipId);'>x</BUTTON></TD><TD width='90%'>$clipCaption</TD></TR>";
+        }
+		
+		echo "<TR><TD><SELECT id='videoClipToAdd' name='videoClipToAdd' style='width: 100%'>";
+		
+		$query = "SELECT * FROM VideoClips WHERE Played != '" . $this->ContextID . "'";
+        $result = $this->query($query);
+		
+		while ($row = mysql_fetch_assoc($result))
+        {
+			$clipId = $row["VCID"];
+			$clipCaption = $row["Caption"];
+			echo "<OPTION value='$clipId'>$clipCaption</OPTION>";
+		}
+		
+		echo "</TD><TD><BUTTON onclick='AddClip($this->ContextID);'>add</BUTTON></TD></TR>";
+		echo "</TABLE>";
+	}
 
     public function DisplayDowntimeModule($ShowDowntime)
     {
-        $question = "";
-        $asnwer = "";
-        $refresh = 20;
-        $ShowDowntimeClip = false;
-
-        $query = "SELECT * FROM VideoClips WHERE Played = '" . $this->ContextID . "'";
-        $result = $this->query($query);
-        if ($row = mysql_fetch_assoc($result))
-        {
-            $query = "SELECT * FROM VideoClips WHERE Played = 0 AND Ordering = '" . $row["Ordering"] . "'";
-            $result = $this->query($query);
-            if (mysql_num_rows($result) > 0)
-            {
-                $ShowDowntimeClip = true;
-            }
-        }
-        else
-        {
-            $query = "SELECT * FROM VideoClips WHERE Played = 0";
-            $result = $this->query($query);
-            if (mysql_num_rows($result) > 0)
-            {
-                $ShowDowntimeClip = true;
-            }
-        }
-
-        //if($this->ShowDowntime == false)
-        //{
-        //    $ShowDowntimeClip = false;
-        //}
-
-        if($this->RecliningState != 'Downtime' || !$ShowDowntimeClip) 
-        {
-            $query = "SELECT MAX(TID) AS LargestID FROM Trivia";
-            $result = $this->query($query);
-            $row = mysql_fetch_assoc($result);
-            $RandID = mt_rand(1, $row["LargestID"]);
-            $query = "SELECT * FROM Trivia WHERE TID >= '" . $RandID . "' ORDER BY TID LIMIT 1";
-            $result = $this->query($query);
-            $row = mysql_fetch_assoc($result);
-            $question = $row["Question"];
-            $answer = $row["Answer"];
-        }
-        else 
-        {
-            $query = "SELECT * FROM VideoClips WHERE Played = 0 ORDER BY Ordering LIMIT 1";
-            $result = $this->query($query);
-            $row = mysql_fetch_assoc($result);
-            $question = $row["URL"];
-            $answer = $row["Caption"];
-            $refresh = $row["Refresh"];
-            $query = "UPDATE VideoClips SET Played = '" . $this->ContextID . "' WHERE VCID = '" . $row["VCID"] . "' LIMIT 1";
-            $result = $this->query($query);
-        }
-
         echo "<TABLE>";
         echo "<TR cellspacing='0'><TH>Entertainment</TH></TR>";
+		
+        $query = "SELECT * FROM VideoClips WHERE Played = '" . $this->ContextID . "'";
+        $result = $this->query($query);
+		$numClips = mysql_num_rows($result);
+		
+		echo "<INPUT type='hidden' name='numClips' id='numClips' value='$numClips' />";
+		
+		$i = 0;
+        while ($row = mysql_fetch_assoc($result))
+        {
+			$clipUrl = $row["URL"];
+            $clipCaption = $row["Caption"];
+            echo "<TR ID='ClipUrl$i'><TD>$clipUrl</TD></TR>";
+            echo "<TR ID='ClipCaption$i'><TD>$clipCaption</TD></TR>";
+			$i++;
+        }
+
         echo "<TR><TD ID='TriviaQuestion'></TD></TR>";
         echo "<TR><TD ID='TriviaAnswer'></TD></TR>";
+		
+		if ($numClips > 0)
+		{
+			echo "<TR><TD><BUTTON onclick='PreviousEntertainmentItem()'>&larr;</BUTTON><BUTTON onclick='NextEntertainmentItem()'>&rarr;</BUTTON></TD></TR>";
+		}
         echo "</TABLE>";
     }
 

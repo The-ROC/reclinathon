@@ -56,6 +56,7 @@ var  timerinterval = 200;
 var  answerToNewQuestionInterval = 5000;
 var  questionToAnswerInterval = 5000;
 var  triviaAnswer = "";
+var entertainmentItemIndex = 0;
 
 function createXMLHttpRequest() 
 {
@@ -63,6 +64,96 @@ function createXMLHttpRequest()
 	try { return new ActiveXObject("Msxml2.XMLHTTP"); } catch (e) {}
 	alert("XMLHttpRequest not supported");
 	return null;
+}
+
+function UpdateEntertainmentTable()
+{
+	var numClips = document.getElementById('numClips').value;
+	
+	if (numClips > 0)
+	{
+		document.getElementById('TriviaQuestion').style.display = "none";
+		document.getElementById('TriviaAnswer').style.display = "none";
+		
+		for (i = 1; i < numClips; i++)
+		{
+			var clipUrlRow = "ClipUrl" + i;
+			var clipCaptionUrl = "ClipCaption" + i;
+			
+			document.getElementById(clipUrlRow).style.display = "none";
+			document.getElementById(clipCaptionUrl).style.display = "none";
+		}
+	}
+}
+
+function HideEntertainmentItem()
+{
+	var numClips = document.getElementById('numClips').value;
+	
+	if (entertainmentItemIndex != numClips)
+	{
+	    var currentUrlRow = "ClipUrl" + entertainmentItemIndex;
+	    var currentCaptionRow = "ClipCaption" + entertainmentItemIndex;
+		
+		document.getElementById(currentUrlRow).style.display = "none";
+		document.getElementById(currentCaptionRow).style.display = "none";
+	}
+	else
+	{
+		document.getElementById('TriviaQuestion').style.display = "none";
+		document.getElementById('TriviaAnswer').style.display = "none";
+	}
+}
+
+function ShowEntertainmentItem()
+{
+	var numClips = document.getElementById('numClips').value;
+	
+	if (entertainmentItemIndex == numClips)
+	{
+		document.getElementById('TriviaQuestion').style.display = "";
+		document.getElementById('TriviaAnswer').style.display = "";
+	}
+	else
+	{	
+	    var newClipUrlRow = "ClipUrl" + entertainmentItemIndex;
+	    var newClipCaptionRow = "ClipCaption" + entertainmentItemIndex;
+
+		document.getElementById(newClipUrlRow).style.display = "";
+		document.getElementById(newClipCaptionRow).style.display = "";
+	}
+}
+
+function PreviousEntertainmentItem()
+{
+	var numClips = document.getElementById('numClips').value;
+	
+	HideEntertainmentItem();
+	
+	entertainmentItemIndex--;
+	
+	if (entertainmentItemIndex < 0)
+	{
+		entertainmentItemIndex = numClips;
+	}
+	
+	ShowEntertainmentItem();
+}
+
+function NextEntertainmentItem()
+{
+	var numClips = document.getElementById('numClips').value;
+	
+	HideEntertainmentItem();
+	
+	entertainmentItemIndex++;
+	
+	if (entertainmentItemIndex > numClips)
+	{
+		entertainmentItemIndex = 0;
+	}
+		
+	ShowEntertainmentItem();
 }
 	
 function GetTriviaContent()
@@ -189,7 +280,7 @@ function DownRepeat() {
 </script>
 
 </HEAD>
-<BODY bgcolor='white' onload='Down();GetTriviaContent();' CLASS='noborder'>
+<BODY bgcolor='white' onload='Down();GetTriviaContent();UpdateEntertainmentTable();' CLASS='noborder'>
 
 <?php
 //----------------

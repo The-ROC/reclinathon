@@ -193,6 +193,41 @@ function DownRepeat() {
 	setTimeout("DownRepeat()", timerinterval); 	
 }
 
+function createXMLHttpRequest() 
+{
+	try { return new XMLHttpRequest(); } catch(e) {}
+	try { return new ActiveXObject("Msxml2.XMLHTTP"); } catch (e) {}
+	alert("XMLHttpRequest not supported");
+	return null;
+}
+
+function RemoveClip(clipId)
+{
+	var xhReq = createXMLHttpRequest();
+	xhReq.open("GET", "RemoveVideoClip.php?vcid="+clipId, true);
+	xhReq.onreadystatechange = function() {
+		if (xhReq.readyState != 4) { return; }
+		
+		window.location.reload(true);
+	};
+	xhReq.send(null);
+}
+
+function AddClip(contextId)
+{
+	var clipToAdd = document.getElementById("videoClipToAdd");
+	var clipId = clipToAdd.value;
+	var xhReq = createXMLHttpRequest();
+
+	xhReq.open("GET", "AddVideoClip.php?vcid="+clipId+"&contextId="+contextId, true);
+	xhReq.onreadystatechange = function() {
+		if (xhReq.readyState != 4) { return; }
+		
+		window.location.reload(true);
+	};
+	xhReq.send(null);
+}
+
 // End -->
 </script>
 
@@ -225,8 +260,8 @@ echo "<TR>";
   echo "<TD CLASS='RttFrame'>";
     $rcx->DisplayCaptainModule();
   echo "</TD>";
-  echo "<TD CLASS='RttFrameRight'>";
-    $rcx->DisplayCaptainHistoryModule();
+  echo "<TD CLASS='RttFrameRight'><br />";
+    $rcx->DisplayCaptainDowntimeModule(true);
   echo "</TD>";
 echo "</TR>";
 echo "<TR>";
@@ -245,7 +280,7 @@ echo "<TR>";
     }
   echo "</TD>";
   echo "<TD CLASS='RttFrameRight'>";
-    $rcx->DisplayDowntimeModule(true);
+	$rcx->DisplayCaptainHistoryModule();
   echo "</TD>";
 echo "</TR>";
 echo "</TABLE></CENTER>";
