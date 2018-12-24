@@ -10,7 +10,7 @@ $context = new RECLINATHON_CONTEXT();
 
 $vcid = $_GET["vcid"];
 
-$query = "UPDATE VIDEOCLIPS SET Played = '0' WHERE VCID = '$vcid'";
+$query = "UPDATE VideoClips SET Played = '0' WHERE VCID = '$vcid'";
 $result = $context->Query($query);
 if ($result)
 {

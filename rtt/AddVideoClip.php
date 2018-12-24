@@ -11,7 +11,7 @@ $context = new RECLINATHON_CONTEXT();
 $vcid = $_GET["vcid"];
 $contextId = $_GET["contextId"];
 
-$query = "UPDATE VIDEOCLIPS SET Played = '$contextId' WHERE VCID = '$vcid'";
+$query = "UPDATE VideoClips SET Played = '$contextId' WHERE VCID = '$vcid'";
 $result = $context->Query($query);
 if ($result)
 {
