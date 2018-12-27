@@ -829,6 +829,11 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
 
         return $status;
     }
+	
+	public function FinishProcessForm()
+	{
+		return;
+	}
 
     public function ProcessAutomationCommand()
     {
