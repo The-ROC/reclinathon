@@ -443,7 +443,7 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
 		
 		echo "<TR><TD><SELECT id='videoClipToAdd' name='videoClipToAdd' style='width: 100%'>";
 		
-		$query = "SELECT * FROM VideoClips WHERE Played != '" . $this->ContextID . "'";
+		$query = "SELECT * FROM VideoClips WHERE Played != '" . $this->ContextID . "' ORDER BY Caption";
         $result = $this->query($query);
 		
 		while ($row = mysql_fetch_assoc($result))
