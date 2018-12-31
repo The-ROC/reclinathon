@@ -237,7 +237,7 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
         $NextMovie = $MovieList->GetNextMovie(time(), $END_OF_REGULATION);
 
         $TRANSITION_TABLE["Reclining"]["Pause"] = array("State" => "Emergency Maintenance", "Modifier" => "", "Movie" => $this->Movie, "Duration" => "600");
-        $TRANSITION_TABLE["Reclining"]["Stop"] = array("State" => "Downtime", "Modifier" => "", "Movie" => $NextMovie, "Duration" => "300");
+        $TRANSITION_TABLE["Reclining"]["Stop"] = array("State" => "Downtime", "Modifier" => "", "Movie" => $NextMovie, "Duration" => "600");
         $TRANSITION_TABLE["Downtime"]["Play"] = array("State" => "Reclining", "Modifier" => "", "Movie" => $this->Movie, "Duration" => ($this->Movie->GetRunTime() * 60));
         $TRANSITION_TABLE["Emergency Maintenance"]["Play"] = array("State" => "Reclining", "Modifier" => "", "Movie" => $this->Movie, "Duration" => $this->GetTimeRemaining());
         $TRANSITION_TABLE["Preseason"]["Play"] = array("State" => "Reclining", "Modifier" => "", "Movie" => $this->Movie, "Duration" => ($this->Movie->GetRunTime() * 60));
