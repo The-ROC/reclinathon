@@ -7,13 +7,14 @@ header("Content-Type: text/xml");
 include '../RECLINATHON_CONTEXT.php';
 
 $sourceUrl = strtolower($_GET["sourceUrl"]);
+$baseUrl = $_GET["baseUrl"];
 
 $remoteReclinathon = new REMOTE_RECLINATHON();
 $currentReclinathonId = $remoteReclinathon->GetCurrentRemoteReclinathonId();
 $remoteReclinathonScheduled = $currentReclinathonId != "";
 $rcx = new RECLINATHON_CONTEXT();
 $contextFound = false;
-$feedSidebarUrl = ($rcx->IsDevMode() ? "http://localhost/rtt/mockup/feed.php?joined=1" : "https://reclinathon.com/rtt/mockup/feed.php?joined=1");
+$feedSidebarUrl = $baseUrl . "/rtt/mockup/feed.php?joined=1";
 
 if ($remoteReclinathonScheduled)
 {

@@ -2,6 +2,7 @@ var destinationUrl = "";
 var refreshTime = "";
 var sidebarUrl = "";
 var isFeedPage = false;
+var storageCount = 0;
 
 function createXMLHttpRequest() 
 {
@@ -24,6 +25,7 @@ async function GetNextDestination(url)
 	// local database or the official Reclinathon data, as necessary.
 	//
 	var isLocalHost = false;
+	var localPrefix = "http://localhost";
 	
 	if (url.includes("rtt/mockup/feed.php"))
 	{
@@ -34,32 +36,38 @@ async function GetNextDestination(url)
 		if (url.includes("local"))
 		{
 			console.log("feed page is localhost");
+			// Split url up to /rtt/ and save as variable for apiUrl prefix
 			isLocalHost = true;
+			localPrefix = url.split("/rtt")[0];
 		}
 	}
 	
-	var storageComplete = false;
+	storageCount = 0;
 	
 	if (!isFeedPage)
 	{
 		console.log("Load isLocalHost from storage.");
-		chrome.storage.local.get(['localhostmode'], function(result) { isLocalHost = result.localhostmode; storageComplete = true;});
+		chrome.storage.local.get(['localhostmode'], function(result) { isLocalHost = result.localhostmode; storageCount++;});
+		chrome.storage.local.get(['localPrefix'], function(result) { localPrefix = result.localPrefix; storageCount++;});
 	}
 	else
 	{
 		console.log("Save isLocalHost to storage.");
-		chrome.storage.local.set({'localhostmode': isLocalHost}, function() { storageComplete = true;});
+		chrome.storage.local.set({'localhostmode': isLocalHost}, function() { storageCount++;});
+		chrome.storage.local.set({'localPrefix': localPrefix}, function() { storageCount++;});
 	}
 	
-	while (!storageComplete)
+	while (!storageComplete())
 	{
 		await sleep(10);
 	}
 	
 	console.log('localhostmode is ' + isLocalHost);
+	console.log('local prefix is ' + localPrefix);
 	
 	var xhReq = createXMLHttpRequest();
-	var apiUrl = (isLocalHost ? "http://localhost/rtt/mockup/extensiondata.php?sourceUrl=" : "https://reclinathon.com/rtt/mockup/extensiondata.php?sourceUrl=") + url;
+	var baseUrl = isLocalHost ? localPrefix : "https://reclinathon.com";
+	var apiUrl = baseUrl + "/rtt/mockup/extensiondata.php?sourceUrl=" + url + "&baseUrl=" + baseUrl;
 	
 	console.log("API URL is " + apiUrl);
 
@@ -85,6 +93,11 @@ async function GetNextDestination(url)
 		}
 	};
 	xhReq.send(null);
+}
+
+function storageComplete()
+{
+	return storageCount == 2;
 }
 
 function ProcessCurrentUrl()
