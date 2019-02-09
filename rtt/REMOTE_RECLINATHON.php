@@ -9,8 +9,13 @@ class REMOTE_RECLINATHON extends RTT_COMMON
     public function LoadFromForm()
     {
 		$this->succeeded = false;
-        $this->StartTime = strtotime($_POST["startTime"]);
         $this->Movies = array();
+		
+		$localStartTime = $_POST["startTime"];
+		$localTimezoneOffset = $_POST["timezoneOffset"] * 60;
+		$serverStartTime = strtotime($localStartTime);
+		$serverTimezoneOffset = date('Z') * -1;
+		$this->StartTime = $serverStartTime + ($localTimezoneOffset - $serverTimezoneOffset);
 		
 		// Create or fetch each movie.
         foreach((array)$_POST["movies"] as $movie)

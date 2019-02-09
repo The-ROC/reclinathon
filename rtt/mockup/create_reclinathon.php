@@ -43,7 +43,7 @@ if(isset($_GET['img'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
 
-<body class="noborder">
+<body class="noborder" onload="populateTimezoneOffset()">
     <div style="text-align:center">
         <img src="images/sign.png" width=360/><br />
         <br />
@@ -60,6 +60,7 @@ if(isset($_GET['img'])) {
             </div>
             <div id="hiddenInputs">
                 <input type="hidden" name="class" value="REMOTE_RECLINATHON" />
+				<input type="hidden" name="timezoneOffset" id="timezoneOffset" />
             </div>
             <br />
             <br />
@@ -178,6 +179,11 @@ function createXMLHttpRequest() {
 	try { return new ActiveXObject("Msxml2.XMLHTTP"); } catch (e) {}
 	alert("XMLHttpRequest not supported");
 	return null;
+}
+
+function populateTimezoneOffset() {
+	var d = new Date();
+	document.getElementById('timezoneOffset').value = d.getTimezoneOffset();
 }
 
 window.onclick = function(event) {
