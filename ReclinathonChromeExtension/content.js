@@ -84,7 +84,7 @@ async function GetNextDestination(url)
 			{
 				destinationUrl = result[0].getAttribute("url");
 				console.log('destinationUrl: ' + destinationUrl);
-				refreshTime = parseInt(result[0].getAttribute("time"));
+				refreshTime = parseInt(result[0].getAttribute("time")) + 2000;	// 10ms delay to prevent refresh loop
 				console.log('refreshTime: ' + refreshTime);
 				sidebarUrl = result[0].getAttribute("sidebar");
 				console.log('sidebarUrl: ' + sidebarUrl);
