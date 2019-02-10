@@ -90,6 +90,10 @@ div
   min-height: 1px;
 }
 
+img {
+  max-width:315px;
+}
+
 DIV.timeRemaining
 {
   background-color: #595959;
