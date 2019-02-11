@@ -3,6 +3,8 @@ var refreshTime = "";
 var sidebarUrl = "";
 var isFeedPage = false;
 var storageCount = 0;
+var baseUrl = "https://reclinathon.com";
+var mode = 'subtitle';
 
 function createXMLHttpRequest() 
 {
@@ -66,7 +68,7 @@ async function GetNextDestination(url)
 	console.log('local prefix is ' + localPrefix);
 	
 	var xhReq = createXMLHttpRequest();
-	var baseUrl = isLocalHost ? localPrefix : "https://reclinathon.com";
+	baseUrl = isLocalHost ? localPrefix : "https://reclinathon.com";
 	var apiUrl = baseUrl + "/rtt/mockup/extensiondata.php?sourceUrl=" + url + "&baseUrl=" + baseUrl;
 	
 	console.log("API URL is " + apiUrl);
@@ -113,31 +115,130 @@ function ProcessCurrentUrl()
 	
 	if (sidebarUrl != "")
 	{
-	    var width = window.getComputedStyle(document.body, null).getPropertyValue("width");
-	    var newWidth = width - 450;
-	    document.body.style.width = newWidth + "px";
-	
-	    var div = document.createElement('div');
-	    div.style.position = 'fixed';
-	    div.style.top = 0;
-	    div.style.right = 0;
-	    div.style.width = "400px";
-	    div.style.height = "100%";
-	    div.style.zIndex = 999999;
-	
-	    var iframe = document.createElement('iframe');
-	    iframe.src = sidebarUrl;
-	    iframe.style.width = "100%";
-	    iframe.style.height = "100%";
-	    div.appendChild(iframe);
-	
-	    document.body.appendChild(div);
+			// Sidebar mode
+			if(mode == 'sidebar') {
+				var width = window.getComputedStyle(document.body, null).getPropertyValue("width");
+				var newWidth = width - 450;
+				document.body.style.width = newWidth + "px";
+		
+				var div = document.createElement('div');
+				div.style.position = 'fixed';
+				div.style.top = 0;
+				div.style.right = 0;
+				div.style.width = "400px";
+				div.style.height = "100%";
+				div.style.zIndex = 999999;
+		
+				var iframe = document.createElement('iframe');
+				iframe.src = sidebarUrl;
+				iframe.style.width = "100%";
+				iframe.style.height = "100%";
+				div.appendChild(iframe);
+		
+				document.body.appendChild(div);
+
+			// Subtitle mode
+			} else if(mode == 'subtitle') {
+				var div = document.createElement('div');
+				div.style.position = 'fixed';
+				div.style.bottom = '25px';
+				div.style.width = '100%';
+				//div.style.border = '1px solid white';
+				div.style['text-align'] = 'center';
+				div.style.zIndex = 999999;
+				div.style.color = 'white';
+				div.style['text-shadow'] = '-2px 0 black, 0 2px black, 2px 0 black, 0 -2px black';
+				div.style['font-family'] = 'Arial, Verdana, Sans-serif';
+				div.style['font-size'] = '40px';
+
+				chatDiv = document.createElement('div');
+				chatDiv.style.position = 'relative';
+				chatDiv.style.width = '60%';
+				chatDiv.style.margin = 'auto';
+				//chatDiv.style.border = '1px solid white';
+				chatDiv.style['text-align'] = 'center';
+				chatDiv.style.zIndex = 9999999;
+				chatDiv.style.color = 'white';
+				chatDiv.style['text-shadow'] = '-2px 0 black, 0 2px black, 2px 0 black, 0 -2px black';
+				chatDiv.style['font-family'] = 'Arial, Verdana, Sans-serif';
+				chatDiv.style['font-size'] = '40px';
+
+				document.body.appendChild(div);
+				div.appendChild(chatDiv);
+
+				//chatDiv.innerHTML = "Schmidt: How many times are we going to watch this stupid Meridian movie? Oh hi, Mark!";
+
+				this.initSubtitleChat();
+				setInterval(this.updateSubtitleChat, 3000);
+			}
 	}
-	
+
 	if (destinationUrl != "")
 	{	
 		setTimeout(function(){ window.location.href = destinationUrl; }, refreshTime);
 	}
+}
+
+var lastEventId = 0;
+var currentChat = null;
+var chatQueue = [];
+var chatDiv;
+function addSubtitleChat(chat)
+{
+	chatQueue.push(chat);
+	if(currentChat == null)
+		showSubtitleChat();
+}
+
+function showSubtitleChat()
+{
+	currentChat = chatQueue.shift();
+	chatDiv.innerHTML = "Dude: " + currentChat.message;
+	setTimeout(hideSubtitleChat, 3000);
+}
+
+function hideSubtitleChat()
+{
+	chatDiv.innerHTML = "";
+	currentChat = null;
+	if(chatQueue.length)
+		showSubtitleChat();
+}
+
+function initSubtitleChat()
+{
+	updateSubtitleChat(true);
+}
+
+function updateSubtitleChat(init=false)
+{
+		var xhReq = createXMLHttpRequest();
+		var params = "";
+
+		xhReq.open("GET", baseUrl + "/rtt/mockup/feedpost.php?lastEventID=" + lastEventId);
+		xhReq.overrideMimeType('text/xml');
+		xhReq.onreadystatechange = function() {
+				if (xhReq.readyState != 4) return;
+
+				var xml = xhReq.responseXML;
+
+				var feedEvents = xml.getElementsByTagName("FeedEvent");
+				for(var i = 0; i < feedEvents.length; i++)
+				{
+						var icon = feedEvents[i].getElementsByTagName("Icon")[0].childNodes[0].nodeValue;
+						var message = feedEvents[i].getElementsByTagName("Message")[0].childNodes[0].nodeValue;
+						var timestamp = feedEvents[i].getElementsByTagName("Timestamp")[0].childNodes[0].nodeValue;
+						var eventId = parseInt(feedEvents[i].getElementsByTagName("EventID")[0].childNodes[0].nodeValue);
+
+						if(eventId > lastEventId)
+								lastEventId = eventId;
+								
+						if(!init) {
+							addSubtitleChat({icon: icon, message: message, timestamp: timestamp});
+						}
+				}
+		}
+		xhReq.send(params);
 }
 
 (function()
