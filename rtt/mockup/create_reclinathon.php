@@ -53,9 +53,11 @@ if(isset($_GET['img'])) {
             Start time<br />
             <input type="datetime-local" name="startTime" /><br />
             <br />
-            <div id="moviesHeader" style="width:360px; margin:0 auto">Movies<br /></div>
+            <div id="moviesHeader" style="width:360px; margin:0 auto">Netflix<br /></div>
             <div id="moviesInput" class="dropdown">
             <input type="text" id="movieInput" name="movieInput" style="width:360px" oninput="getSearchResults(this.value)" onclick="" />
+			<br /><br />Youtube<br />
+			<input type="text" id="youtubeInput" name="youtubeInput" style="width:360px"><button type="button" onclick="searchYoutube();">Search</button>
                 <div id="moviesDropdown" class="dropdown-content"></div>
             </div>
             <div id="hiddenInputs">
@@ -105,6 +107,8 @@ function getSearchResults(s) {
                     movieDatas[i].runtime = runtime;
                     movieDatas[i].movieName = movieList[i].summary.value.name;
                     movieDatas[i].json = myArr;
+					movieDatas[i].image = artUrl;
+					movieDatas[i].url = getMovieUrl(movieId);
                     movieDatas[i].clickHandler = function(event) {
                         addSelectedMovie(this);
                         clearMovieInput();
@@ -129,10 +133,90 @@ function getSearchResults(s) {
     xhReq.send();
 }
 
+function searchYoutube() {
+	var searchUrl = "https://www.googleapis.com/youtube/v3/search?part=snippet&key=AIzaSyD6IrfOEpeFdcQLxGYtjhZ3KTqTW8kuymo&type=video&q=" + document.getElementById("youtubeInput").value;
+
+    var xhReq = createXMLHttpRequest();
+    xhReq.open("GET", searchUrl);
+    xhReq.onreadystatechange = function() {
+        if (xhReq.readyState != 4) { return; }
+
+        var myArr = JSON.parse(this.responseText);
+
+        var dropdown = document.getElementById('moviesDropdown');
+        if(!dropdown.classList.contains("show"))
+            dropdown.classList.toggle("show");
+
+        dropdown.innerHTML = "";
+
+        if('items' in myArr) {
+
+            var movieList = getYoutubeVideoList(myArr);
+            var movieDatas = [];
+
+            var i = 0;
+			myArr.items.forEach(function(entry) {
+				if(i < 6)
+				{
+					var movieId = entry.id.videoId;
+					var artUrl = entry.snippet.thumbnails.high.url;
+					var runtime = 300;
+					var title = entry.snippet.title;
+					
+					dropdown.innerHTML += "<div id='dropdownElement-" + i + "' class='movielist-element'>" +
+							"<img style='float:left' src='create_reclinathon.php?img=" + encodeURIComponent(artUrl) + 
+							"' height=50/>" + title + "</div>";
+					
+					movieDatas[i] = {};
+					movieDatas[i].movieId = movieId;
+					movieDatas[i].runtime = runtime;
+					movieDatas[i].movieName = title;
+					movieDatas[i].json = myArr;
+					movieDatas[i].image = artUrl;
+					movieDatas[i].url = "https://www.youtube.com/watch?v=" + movieId;
+					movieDatas[i].clickHandler = function(event) {
+						getYoutubeClipDurationAndAddSelectedMovie(this);
+						clearMovieInput();
+					};
+
+					i++;
+                }
+            });
+
+            var movieDivs = Array.from(dropdown.childNodes);
+            i = 0;
+            movieDivs.forEach(function(movieDiv) {
+                if(movieDiv.id.includes("dropdownElement")) {
+                    movieDiv.onclick = movieDatas[i].clickHandler.bind(movieDatas[i]);
+                    i++;
+                }
+            });
+        }
+    };
+    xhReq.send();
+}
+
+function getYoutubeClipDurationAndAddSelectedMovie(movieData) {
+	var url = "https://www.googleapis.com/youtube/v3/videos?part=contentDetails&key=AIzaSyD6IrfOEpeFdcQLxGYtjhZ3KTqTW8kuymo&id=" + movieData.movieId;
+    var xhReq = createXMLHttpRequest();
+    xhReq.open("GET", url);
+    xhReq.onreadystatechange = function() {
+        if (xhReq.readyState != 4) { return; }
+
+        var myArr = JSON.parse(this.responseText);
+
+        var duration = myArr.items[0].contentDetails.duration;
+		var durationSeconds = eval(duration.replace('PT','').replace('H','*3600+').replace('M','*60+').replace('S', '+').slice(0, -1));
+		movieData.runtime = durationSeconds;
+		addSelectedMovie(movieData);
+    };
+    xhReq.send();
+}
+
 var selectedMovieCount = 0;
 function addSelectedMovie(movieData) {
     var moviesHeader = document.getElementById("moviesHeader");
-    var artUrl = getBoxArtUrl(movieData.movieId, movieData.json);
+    var artUrl = movieData.image;
     moviesHeader.innerHTML += "<div class='movielist-element'><img style='float:left' src='create_reclinathon.php?img=" + encodeURIComponent(artUrl) + 
         "' height=50/>" + movieData.movieName + "</div>";
 
@@ -143,7 +227,7 @@ function addSelectedMovie(movieData) {
     hiddenInputs.innerHTML += "<input type='hidden' name='movies[" + selectedMovieCount + "][runtime]' value='" + movieData.runtime + "' />";
     hiddenInputs.innerHTML += "<input type='hidden' name='movies[" + selectedMovieCount + "][image]' value='" + encodeURIComponent(artUrl) + "' />";
     hiddenInputs.innerHTML += "<input type='hidden' name='movies[" + selectedMovieCount + "][netflixId]' value='" + movieData.movieId + "' />";
-    hiddenInputs.innerHTML += "<input type='hidden' name='movies[" + selectedMovieCount + "][netflixURL]' value='" + getMovieUrl(movieData.movieId) + "' />";
+    hiddenInputs.innerHTML += "<input type='hidden' name='movies[" + selectedMovieCount + "][netflixURL]' value='" + movieData.url + "' />";
 
     selectedMovieCount++;
 }
@@ -156,6 +240,12 @@ function getMovieList(json) {
     var ref = json.jsonGraph.search.byReference;
     var refKey = Object.keys(ref)[0];
     return ref[refKey];
+}
+
+function getYoutubeVideoList(json) {
+	var ref = json.items;
+	var refKey = Object.keys(ref)[0];
+	return ref[refKey];
 }
 
 function getMovieId(i, movieList) {

@@ -24,7 +24,7 @@ if (strpos($sourceUrl, "hugh") !== false && strpos($sourceUrl, "grant") !== fals
 {
 	echo "<next url='https://reclinathon.com' time='5000' sidebar='' />";
 }
-else if ($contextFound && strpos($sourceUrl, $rcx->GetMovie()->GetUrl()) !== false)
+else if ($contextFound && strpos(strtolower($sourceUrl), strtolower($rcx->GetMovie()->GetUrl())) !== false)
 {
 	$timeRemaining = $rcx->GetTimeRemaining() * 1000;
 	echo "<next url='https://hangouts.google.com/call/styow2upujcp3hvhninl64l5uee' time='$timeRemaining' sidebar='$feedSidebarUrl' />";

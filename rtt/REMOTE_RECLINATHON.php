@@ -35,9 +35,12 @@ class REMOTE_RECLINATHON extends RTT_COMMON
 			{
 				$row = mysql_fetch_assoc($result);
 				$url = $movieNetflix->GetUrl();
+				$runtime = $movieNetflix->GetRunTime();
 				$movieNetflix->Load($row["MovieID"]);
 				$movieNetflix->SetUrl($url);
+				$movieNetflix->SetRuntime($runtime);
 				$movieNetflix->UpdateUrl();
+				$movieNetflix->UpdateRuntime();
 			}
 			
 			if ($movieNetflix->GetID() != 0)
@@ -106,12 +109,12 @@ class REMOTE_RECLINATHON extends RTT_COMMON
 			{
 				// Insert downtime
 				$downtimeContext = new RECLINATHON_CONTEXT();
-				if (!$downtimeContext->CreateDowntime("demo", $this->Movies[$i]->GetID(), $timeStamp, 300))
+				if (!$downtimeContext->CreateDowntime("demo", $this->Movies[$i]->GetID(), $timeStamp, 60))
 				{
 					echo "Failed to insert downtime context %i<br>";
 					return;
 				}
-				$timeStamp += 300;
+				$timeStamp += 60;
 			}
 			
 			// Insert downtime

@@ -1184,7 +1184,18 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
 		    $runTime = $this->GetMovie()->GetRunTime() * 60;
 		    $timeRemaining = $this->GetTimeRemaining();
 		    $timeCode = $runTime - $timeRemaining;
-		    $url = $this->GetMovie()->GetUrl() . "?t=$timeCode";
+
+		    $url = $this->GetMovie()->GetUrl();
+			
+			if (strpos($this->GetMovie()->GetUrl(), "?") === false)
+			{
+				$url = $url . "?t=$timeCode";
+			}
+			else
+			{
+				$url = $url . "&amp;t=$timeCode";
+			}
+			
 	        return $url;
 	    }
 		

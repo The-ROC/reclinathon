@@ -841,6 +841,22 @@ class MOVIE extends RTT_COMMON
         
         return TRUE;
     }
+	
+	public function UpdateRuntime()
+    {
+		$movieId = $this->MovieID;
+		$runtime = $this->RunTime;
+        $query = "UPDATE MOVIE SET RunTime = '$runtime' WHERE MovieID = '$movieId'";
+
+        //echo "<BR>$query<BR>";
+        $result = $this->Query($query);
+        if (!$result)
+        {
+            return FALSE;
+        }
+        
+        return TRUE;
+    }
 
     public function ProcessForm()
     {
@@ -920,6 +936,11 @@ class MOVIE extends RTT_COMMON
 	public function SetUrl($url)
 	{
 		$this->Url = $url;
+	}
+	
+	public function SetRuntime($runtime)
+	{
+		$this->RunTime = $runtime;
 	}
 	
 	public function GetImage()
