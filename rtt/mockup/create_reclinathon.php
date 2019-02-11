@@ -97,26 +97,29 @@ function getSearchResults(s) {
                     var movieId = getMovieId(i, movieList);
                     var artUrl = getBoxArtUrl(movieId, myArr);
                     var runtime = getRuntime(movieId, myArr);
-                    dropdown.innerHTML += "<div id='dropdownElement-" + i + "' class='movielist-element'>" +
-                        "<img style='float:left' src='create_reclinathon.php?img=" + encodeURIComponent(artUrl) + 
-                        "' height=50/>" + movieList[i].summary.value.name + "</div>";
+
+                    if(getMovieType(movieId, myArr) == 'movie') {
+                        dropdown.innerHTML += "<div id='dropdownElement-" + i + "' class='movielist-element'>" +
+                            "<img style='float:left' src='create_reclinathon.php?img=" + encodeURIComponent(artUrl) + 
+                            "' height=50/>" + movieList[i].summary.value.name + "</div>";
 
 
-                    movieDatas[i] = {};
-                    movieDatas[i].movieId = movieId;
-                    movieDatas[i].runtime = runtime;
-                    movieDatas[i].movieName = movieList[i].summary.value.name;
-                    movieDatas[i].json = myArr;
-					movieDatas[i].image = artUrl;
-					movieDatas[i].url = getMovieUrl(movieId);
-                    movieDatas[i].clickHandler = function(event) {
-                        addSelectedMovie(this);
-                        clearMovieInput();
-                    };
+                        movieDatas[count] = {};
+                        movieDatas[count].movieId = movieId;
+                        movieDatas[count].runtime = runtime;
+                        movieDatas[count].movieName = movieList[i].summary.value.name;
+                        movieDatas[count].json = myArr;
+						movieDatas[count].image = artUrl;
+					    movieDatas[count].url = getMovieUrl(movieId);
+                        movieDatas[count].clickHandler = function(event) {
+                            addSelectedMovie(this);
+                            clearMovieInput();
+                        };
 
-                    count++;
-                    if(count >= 6)
-                        break;
+                        count++;
+                        if(count >= 6)
+                            break;
+                    }
                 }
             }
 
@@ -250,6 +253,10 @@ function getYoutubeVideoList(json) {
 
 function getMovieId(i, movieList) {
     return movieList[i].summary.value.id;
+}
+
+function getMovieType(movieId, json) {
+    return json.jsonGraph.videos[movieId] ? json.jsonGraph.videos[movieId].summary.value.type : "";
 }
 
 function getRuntime(i, json) {

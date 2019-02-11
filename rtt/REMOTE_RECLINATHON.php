@@ -109,12 +109,12 @@ class REMOTE_RECLINATHON extends RTT_COMMON
 			{
 				// Insert downtime
 				$downtimeContext = new RECLINATHON_CONTEXT();
-				if (!$downtimeContext->CreateDowntime("demo", $this->Movies[$i]->GetID(), $timeStamp, 60))
+				if (!$downtimeContext->CreateDowntime("demo", $this->Movies[$i]->GetID(), $timeStamp, 300))
 				{
 					echo "Failed to insert downtime context %i<br>";
 					return;
 				}
-				$timeStamp += 60;
+				$timeStamp += 300;
 			}
 			
 			// Insert downtime

@@ -122,7 +122,7 @@ include '../RECLINATHON_CONTEXT.php';
             var postsParent = document.getElementById("postsParent");
 
             var newPostHTML = "<div class='container' style='padding:5px' timestamp='" + timestamp + "'>";
-            newPostHTML += "<div class='content'><img src='" + icon + "' width='50'/></div>";
+            newPostHTML += "<div class='content'><img src='" + icon + "' width='50px'/></div>";
             newPostHTML += "<div class='content' style='text-align:left; padding-left:15px'>";
             newPostHTML += "<div class='container'>" + message + "</div>";
             newPostHTML += "<div class='container' style='font-size:50%' date='true'>" + getDateFromTimestamp(timestamp) + "</div>";
