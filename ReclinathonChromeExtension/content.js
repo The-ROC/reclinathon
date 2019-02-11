@@ -115,6 +115,22 @@ function ProcessCurrentUrl()
 	
 	if (sidebarUrl != "")
 	{
+		if(document.getElementById('subtitle'))
+			document.getElementById('subtitle').remove();
+		if(document.getElementById('sidebar'))
+			document.getElementById('sidebar').remove();
+		if(document.getElementById('toggle'))
+			document.getElementById('toggle').remove();
+
+			var switchDiv = document.createElement('div');
+			switchDiv.id = 'toggle';
+			switchDiv.style.position = 'fixed';
+			switchDiv.style.zIndex = 9999999;
+			switchDiv.style.height = '100%';
+			switchDiv.style.width = '25px';
+			//switchDiv.style.border = '1px solid white';
+			switchDiv.onclick = toggleChatMode;
+
 			// Sidebar mode
 			if(mode == 'sidebar') {
 				var width = window.getComputedStyle(document.body, null).getPropertyValue("width");
@@ -122,6 +138,7 @@ function ProcessCurrentUrl()
 				document.body.style.width = newWidth + "px";
 		
 				var div = document.createElement('div');
+				div.id = 'sidebar';
 				div.style.position = 'fixed';
 				div.style.top = 0;
 				div.style.right = 0;
@@ -137,9 +154,12 @@ function ProcessCurrentUrl()
 		
 				document.body.appendChild(div);
 
+				switchDiv.style.right = '375px';
+
 			// Subtitle mode
 			} else if(mode == 'subtitle') {
 				var div = document.createElement('div');
+				div.id = 'subtitle';
 				div.style.position = 'fixed';
 				div.style.bottom = '25px';
 				div.style.width = '100%';
@@ -170,13 +190,27 @@ function ProcessCurrentUrl()
 
 				this.initSubtitleChat();
 				setInterval(this.updateSubtitleChat, 3000);
+
+				switchDiv.style.right = 0;
 			}
 	}
+
+	document.body.appendChild(switchDiv);
 
 	if (destinationUrl != "")
 	{	
 		setTimeout(function(){ window.location.href = destinationUrl; }, refreshTime);
 	}
+}
+
+function toggleChatMode()
+{
+	if(mode == 'sidebar') {
+		mode = 'subtitle';
+	} else {
+		mode = 'sidebar';
+	}
+	ProcessCurrentUrl();
 }
 
 var lastEventId = 0;
@@ -193,7 +227,7 @@ function addSubtitleChat(chat)
 function showSubtitleChat()
 {
 	currentChat = chatQueue.shift();
-	chatDiv.innerHTML = "Dude: " + currentChat.message;
+	chatDiv.innerHTML = currentChat.displayName + ": " + currentChat.message;
 	setTimeout(hideSubtitleChat, 3000);
 }
 
@@ -226,6 +260,7 @@ function updateSubtitleChat(init=false)
 				for(var i = 0; i < feedEvents.length; i++)
 				{
 						var icon = feedEvents[i].getElementsByTagName("Icon")[0].childNodes[0].nodeValue;
+						var displayName = feedEvents[i].getElementsByTagName("DisplayName")[0].childNodes[0].nodeValue;
 						var message = feedEvents[i].getElementsByTagName("Message")[0].childNodes[0].nodeValue;
 						var timestamp = feedEvents[i].getElementsByTagName("Timestamp")[0].childNodes[0].nodeValue;
 						var eventId = parseInt(feedEvents[i].getElementsByTagName("EventID")[0].childNodes[0].nodeValue);
@@ -234,7 +269,7 @@ function updateSubtitleChat(init=false)
 								lastEventId = eventId;
 								
 						if(!init) {
-							addSubtitleChat({icon: icon, message: message, timestamp: timestamp});
+							addSubtitleChat({icon: icon, message: message, displayName: displayName});
 						}
 				}
 		}

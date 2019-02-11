@@ -184,6 +184,11 @@ class RECLINEE extends RTT_COMMON
         return $this->ReclineeID;
     }
 
+    public function GetDisplayName()
+    {
+        return $this->DisplayName;
+    }
+
     public function HasVoted()
     {
         $CurrentSeason = $this->GetCurrentSeason();
