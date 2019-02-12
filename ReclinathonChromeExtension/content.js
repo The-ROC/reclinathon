@@ -84,6 +84,12 @@ async function GetNextDestination(url)
 			var result = xml.getElementsByTagName("next");
 			if (result.length > 0)
 			{
+				if(window.location.href.includes('hangouts.google.com')) {
+					mode = 'sidebar';
+				} else {
+					mode = 'subtitle';
+				}
+
 				destinationUrl = result[0].getAttribute("url");
 				console.log('destinationUrl: ' + destinationUrl);
 				refreshTime = parseInt(result[0].getAttribute("time")) + 2000;	// 10ms delay to prevent refresh loop
