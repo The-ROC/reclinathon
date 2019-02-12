@@ -228,7 +228,7 @@ function showSubtitleChat()
 {
 	currentChat = chatQueue.shift();
 	chatDiv.innerHTML = currentChat.displayName + ": " + currentChat.message;
-	setTimeout(hideSubtitleChat, 3000);
+	setTimeout(hideSubtitleChat, 10000);
 }
 
 function hideSubtitleChat()
