@@ -22,6 +22,7 @@ include '../RECLINATHON_CONTEXT.php';
     <script>
         var reclineeId = <?php echo '"' . $_SESSION['ReclineeID'] . '";'; ?>
         var lastEventId = 0;
+        var oldFeedEvents;
 
         function setCountdownTimer(milliseconds)
         {
@@ -117,7 +118,7 @@ include '../RECLINATHON_CONTEXT.php';
             }
         }
 
-        function addFeedEvent(icon, message, timestamp)
+        function addFeedEvent(icon, message, timestamp, position='top')
         {
             var postsParent = document.getElementById("postsParent");
 
@@ -129,7 +130,19 @@ include '../RECLINATHON_CONTEXT.php';
             newPostHTML += "</div>";
             newPostHTML += "</div>";
 
-            postsParent.innerHTML = newPostHTML + postsParent.innerHTML;
+            if(position == 'top')
+                postsParent.innerHTML = newPostHTML + postsParent.innerHTML;
+            else if(position == 'bottom')
+                postsParent.innerHTML += newPostHTML;
+        }
+
+        function addFeedEventFromXML(feedEvent, position)
+        {
+            var icon = feedEvent.getElementsByTagName("Icon")[0].childNodes[0].nodeValue;
+            var message = feedEvent.getElementsByTagName("Message")[0].childNodes[0].nodeValue;
+            var timestamp = feedEvent.getElementsByTagName("Timestamp")[0].childNodes[0].nodeValue;
+
+            addFeedEvent(icon, message, timestamp, position);
         }
 
         function updateFeedDates()
@@ -146,6 +159,31 @@ include '../RECLINATHON_CONTEXT.php';
                     var postChild = postChildren[j];
                     if(postChild.hasAttribute("date"))
                         postChild.innerHTML = getDateFromTimestamp(timestamp);
+                }
+            }
+        }
+
+        function showMoreButton()
+        {
+            var showMoreButtonHTML = "<a id='showMore' onclick='showMoreEvents()'>Show More</a>";
+            var postsParent = document.getElementById('postsParent');
+            postsParent.innerHTML += showMoreButtonHTML;
+        }
+
+        function showMoreEvents()
+        {
+            if(document.getElementById('showMore')) {
+                document.getElementById('showMore').remove();
+            }
+            if(oldFeedEvents) {
+                var numEvents = Math.min(oldFeedEvents.length, 10);
+                var eventsToShow = oldFeedEvents.slice(oldFeedEvents.length-numEvents);
+                oldFeedEvents = oldFeedEvents.slice(0, oldFeedEvents.length-numEvents);
+                for(var i = eventsToShow.length-1; i >= 0; i--) {
+                    addFeedEventFromXML(eventsToShow[i], 'bottom');
+                }
+                if(oldFeedEvents.length) {
+                    showMoreButton();
                 }
             }
         }
@@ -186,6 +224,13 @@ include '../RECLINATHON_CONTEXT.php';
                 var xml = xhReq.responseXML;
 
                 var feedEvents = xml.getElementsByTagName("FeedEvent");
+                var feedEvents = Array.prototype.slice.call(feedEvents);    // Convert NodeList to Array.
+                var oldEvents;
+                if(lastEventId == 0 && feedEvents.length > 23) {
+                    oldEvents = feedEvents.slice(0, feedEvents.length-23);
+                    feedEvents = feedEvents.slice(feedEvents.length-23);
+                }
+
                 for(var i = 0; i < feedEvents.length; i++)
                 {
                     var icon = feedEvents[i].getElementsByTagName("Icon")[0].childNodes[0].nodeValue;
@@ -198,6 +243,11 @@ include '../RECLINATHON_CONTEXT.php';
                         
                     addFeedEvent(icon, message, timestamp);
                     updateFeedDates();
+                }
+
+                if(oldEvents) {
+                    oldFeedEvents = oldEvents;
+                    showMoreButton();
                 }
             }
             xhReq.send(params);
