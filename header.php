@@ -91,7 +91,10 @@ require_once("config.php");
     $commandCenterText = $_SESSION["ReclineeName"] . "'s command center";
   }
 
-  $root = "http://" . $_SERVER["SERVER_NAME"] . "/";
+
+  $url = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
+  $root = substr($url, 0, strrpos($url, "/")) . "/";
+
   $leftAligned = array(array("name"=>"home", "url"=>$root . "index.php"),
 		       array("name"=>"about", "url"=>$root . "about.php"),
 		       array("name"=>"register", "url"=>$root . "register.php"),
