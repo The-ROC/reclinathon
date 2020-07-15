@@ -1,4 +1,5 @@
 <?php
+// Test
 set_include_path($_SERVER['DOCUMENT_ROOT']);
 require_once "config.php";
 include "include/connect.php";
