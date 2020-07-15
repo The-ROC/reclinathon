@@ -18,6 +18,12 @@
 		'git submodule status',
 	);
 
+	// GET parameter to specify a different branch
+	if (isset($_GET['branch'])) {
+		$checkoutCommand = 'git checkout ' . $_GET['branch'];
+		array_splice($commands, 2, 0, $checkoutCommand);
+	}
+
 	// Run the commands for output
 	$output = '';
 	foreach($commands AS $command){
