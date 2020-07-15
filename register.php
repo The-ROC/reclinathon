@@ -63,8 +63,10 @@ else
 
 if ($FormValid)
 {
-    $query = "SELECT * FROM RECLINEE WHERE FirstName = '" . $FirstName . "' AND LastName = '" . $LastName . "'";
-    $result = mysql_query($query);
+    $query = $db->prepare("SELECT * FROM RECLINEE WHERE FirstName = ? AND LastName = ?");
+    $query->bind_param('ss', $FirstName, $LastName);
+    $query->execute();
+    $result = $query->get_result();
     if (mysql_num_rows($result) > 0)
     {
         echo "You have already registered with the Reclinathon Association of America.  Please log in to your account.";
