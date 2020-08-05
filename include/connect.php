@@ -1,6 +1,9 @@
 <?php 
 
-$TEST_SERVER = file_exists($_SERVER['DOCUMENT_ROOT']."\include\localdb") || file_exists($_SERVER['DOCUMENT_ROOT']."include/localdb");
+$TEST_SERVER = 
+    $_SERVER['SERVER_NAME'] == 'localhost' || 
+    file_exists($_SERVER['DOCUMENT_ROOT']."\include\localdb") || 
+    file_exists($_SERVER['DOCUMENT_ROOT']."include/localdb");
 
 if (!$TEST_SERVER)
 {

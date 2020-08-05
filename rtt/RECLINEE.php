@@ -29,14 +29,15 @@ class RECLINEE extends RTT_COMMON
 
     public function Load($ReclineeID)
     {
-        $query = "SELECT * FROM RECLINEE WHERE ReclineeID = " . $ReclineeID;
+        $query = $this->GetConnection()->prepare("SELECT * FROM RECLINEE WHERE ReclineeID = ?");
+        $query->bind_param('i', $ReclineeID);
         $result = $this->Query($query);
         if (!$result)
         {
             return FALSE;
         }
 
-        $row = mysql_fetch_assoc($result);
+        $row = $result->fetch_assoc();
         if (!$row)
         {
             return FALSE;
@@ -94,12 +95,31 @@ class RECLINEE extends RTT_COMMON
         $query = $query . ", Email = '" . $this->Email . "'";
         $query = $query . ", UserName = '" . $this->UserName . "'";
 
+        $queryPrefix = "UPDATE RECLINEE SET FirstName = ?, LastName = ?, DisplayName = ?, Bio = ?, Email = ?, UserName = ?";
+        $queryPass = ", PasswordHash = ?";
+        $queryWhere = "WHERE ReclineeID = ?";
+
+        $queryString= $queryPrefix;
         if ($this->PasswordHash != "")
         {
-            $query = $query . ", PasswordHash = '" . $this->PasswordHash . "'";
+            $queryString .= $queryPass . $queryWhere;
+            $query = $this->GetConnection()->prepare($queryString);
+            $query->bind_param(
+                'sssssssi',
+                $this->FirstName, $this->LastName, $this->DisplayName, $this->Bio,
+                $this->Email, $this->UserName, $this->PasswordHash, $this->ReclineeID
+            );
         }
-
-        $query = $query . " WHERE ReclineeID = '" . $this->ReclineeID . "'";
+        else
+        {
+            $queryString .= $queryWhere;
+            $query = $this->GetConnection()->prepare($queryString);
+            $query->bind_param(
+                'ssssssi',
+                $this->FirstName, $this->LastName, $this->DisplayName, $this->Bio,
+                $this->Email, $this->UserName, $this->ReclineeID
+            );
+        }
 
         $result = $this->Query($query);
 
@@ -140,12 +160,13 @@ class RECLINEE extends RTT_COMMON
 
     public function DisplayReclineeList($ShowRocMembers)
     {
-        $query = "SELECT ReclineeID, DisplayName FROM RECLINEE";
+        $queryString = "SELECT ReclineeID, DisplayName FROM RECLINEE";
         if ($ShowRocMembers)
         {
-            $query .= " WHERE RocMember = 1";
+            $queryString .= " WHERE RocMember = 1";
         }
-        $query .= " ORDER BY DisplayName";
+        $queryString .= " ORDER BY DisplayName";
+        $query = $this->GetConnection()->prepare($queryString);
         $result = $this->query($query);
         if (!$result)
         {
@@ -154,7 +175,7 @@ class RECLINEE extends RTT_COMMON
 
         echo "<SELECT NAME='ReclineeID'>";
 
-        while($row = mysql_fetch_assoc($result))
+        while($row = $result->fetch_assoc())
         {
             echo "<OPTION VALUE='" . $row["ReclineeID"] . "'";
             if ($this->ReclineeID == $row["ReclineeID"])
@@ -193,10 +214,11 @@ class RECLINEE extends RTT_COMMON
     {
         $CurrentSeason = $this->GetCurrentSeason();
 
-        $query = "SELECT * FROM VOTE WHERE Season = '" . $CurrentSeason . "' AND ReclineeID = '" . $this->ReclineeID . "'";
+        $query = $this->GetConnection()->prepare("SELECT * FROM VOTE WHERE Season = ? AND ReclineeID = ?");
+        $query->bind_param('si', $CurrentSeason, $this->ReclineeID);
         $result = $this->query($query);
 
-        if (!$result || mysql_num_rows($result) == 0)
+        if (!$result || $result->num_rows == 0)
         {
             return false;
         }
@@ -209,7 +231,10 @@ class RECLINEE extends RTT_COMMON
         $LatestQuestionOrder = 0;
         $LastQuestionOrder = 0;
 
-        $query = "SELECT MAX(q.Ordering) AS LatestQuestionOrder FROM QUIZ_ANSWERS a JOIN QUIZ_QUESTION q ON q.QuestionID = a.QuestionID WHERE q.Season = '" . $quizName. "' AND a.ReclineeID = '" . $this->ReclineeID . "'";
+        $query = $this->GetConnection()->prepare(
+            "SELECT MAX(q.Ordering) AS LatestQuestionOrder FROM QUIZ_ANSWERS a JOIN QUIZ_QUESTION q ON q.QuestionID = a.QuestionID WHERE q.Season = ? AND a.ReclineeID = ?"
+        );
+        $query->bind_param('si', $quizName, $this->ReclineeID);
         $result = $this->query($query);
 
         if (!$result)
@@ -217,14 +242,17 @@ class RECLINEE extends RTT_COMMON
             return false;
         }
 
-        $row = mysql_fetch_assoc($result);
+        $row = $result->fetch_assoc();
 
         if ($row["LatestQuestionOrder"] != "")
         {
             $LatestQuestionOrder = $row["LatestQuestionOrder"]; 
         }
 
-        $query = "SELECT MAX(Ordering) AS LastQuestionOrder FROM QUIZ_QUESTION WHERE Season = '" . $quizName. "'";
+        $query = $this->GetConnection()->prepare(
+            "SELECT MAX(Ordering) AS LastQuestionOrder FROM QUIZ_QUESTION WHERE Season = ?"
+        );
+        $query->bind_param('s', $quizName);
         $result = $this->query($query);
 
         if (!$result)
@@ -232,7 +260,7 @@ class RECLINEE extends RTT_COMMON
             return false;
         }
 
-        $row = mysql_fetch_assoc($result);
+        $row = $result->fetch_assoc();
 
         if (!$row || $row["LastQuestionOrder"] == "")
         {

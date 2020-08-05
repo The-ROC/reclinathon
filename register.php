@@ -67,7 +67,7 @@ if ($FormValid)
     $query->bind_param('ss', $FirstName, $LastName);
     $query->execute();
     $result = $query->get_result();
-    if ($query->num_rows() > 0)
+    if ($query->num_rows > 0)
     {
         echo "You have already registered with the Reclinathon Association of America.  Please log in to your account.";
         $UserAvailable = FALSE;
@@ -79,7 +79,7 @@ if ($FormValid)
         $query->bind_param('s', $UserName);
         $query->execute();
         $result = $query->get_result();
-        if ($query->num_rows() > 0)
+        if ($query->num_rows > 0)
         {
             echo "The UserName you specified has already been registered.  Please choose a new UserName and try again.";
             $UserAvailable = FALSE;

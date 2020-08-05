@@ -11,7 +11,10 @@ class DATABASE
 
     private function Connect()
     {
-        $TEST_SERVER = file_exists($_SERVER['DOCUMENT_ROOT']."\include\localdb") || file_exists($_SERVER['DOCUMENT_ROOT']."/include/localdb");
+        $TEST_SERVER = 
+            $_SERVER['SERVER_NAME'] == 'localhost' ||
+            file_exists($_SERVER['DOCUMENT_ROOT']."\include\localdb") || 
+            file_exists($_SERVER['DOCUMENT_ROOT']."/include/localdb");
         if ($TEST_SERVER)
         {
             $this->server = 'localhost';
@@ -23,16 +26,10 @@ class DATABASE
             return TRUE;
         }
 
-        $this->connection = mysql_connect($this->server, $this->username, $this->password);
+        $this->connection = mysqli_connect($this->server, $this->username, $this->password, $this->db);
         if (!$this->connection)
         {
             $error = 'Error connecting to database server: ' . mysql_error();
-            return FALSE;
-        }
-
-        if (!mysql_select_db($this->db, $this->connection))
-        {
-            $error = 'Error selecting database: ' . mysql_error();
             return FALSE;
         }
 
@@ -43,9 +40,19 @@ class DATABASE
     {
         if ($this->connection)
         {
-            mysql_close($this->connection);
+            mysqli_close($this->connection);
             $this->connection = FALSE;
         }
+    }
+
+    public function GetConnection()
+    {
+        if (!$this->Connect())
+        {
+            return FALSE;
+        }
+
+        return $this->connection;
     }
 
     public function Query($query)
@@ -55,10 +62,17 @@ class DATABASE
             return FALSE;
         }
         
-        $result = mysql_query($query, $this->connection);
+        $result = $query->execute();
         if (!$result)
         {
             $error = 'Error executing query: ' . mysql_error();
+        }
+        else
+        {
+            $selectResult = $query->get_result();
+            if ($selectResult) {
+                $result = $selectResult;
+            } 
         }
 
         return $result;
@@ -71,7 +85,7 @@ class DATABASE
             return FALSE;
         }
 
-        return mysql_real_escape_string($str);
+        return mysqli_real_escape_string($this->connection, $str);
     }
 
     public function Error()

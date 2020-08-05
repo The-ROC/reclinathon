@@ -17,16 +17,19 @@ class OPTIONAL_CONTEXT extends RTT_COMMON
 
     public function Load($ContextID)
     {
-        $query = "SELECT * FROM OPTIONAL_CONTEXT WHERE ContextID = " . $ContextID;
+        $query = $this->GetConnection()->prepare(
+            "SELECT * FROM OPTIONAL_CONTEXT WHERE ContextID = ?"
+        );
+        $query->bind_param('i', $ContextID);
         $result = $this->Query($query);
         if (!$result)
         {
             return FALSE;
         }
 
-        $this->NumEntries = mysql_num_rows($result);
+        $this->NumEntries = $result->num_rows;
         
-        while ($row = mysql_fetch_assoc($result))
+        while ($row = $result->fetch_assoc())
         {
             $this->OptionalInfoID[] = $row["OptionalInfoID"];
             $this->Key[] = $row["Key"];
