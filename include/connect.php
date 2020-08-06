@@ -20,4 +20,22 @@ if(!$db)
     exit;
 }
 
+function db_query ($db, $query)
+{
+    $result = $query->execute();
+    if (!$result)
+    {
+        $error = 'Error executing query: ' . mysql_error();
+    }
+    else
+    {
+        $selectResult = $query->get_result();
+        if ($selectResult) {
+            $result = $selectResult;
+        } 
+    }
+
+    return $result;
+}
+
 ?>

@@ -94,6 +94,9 @@ require_once("config.php");
 
   $url = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
   $root = substr($url, 0, strrpos($url, "/")) . "/";
+  if (strpos($root, '/rtt')) {
+    $root = substr($root, 0, strpos($root, '/rtt')) . '/';
+  }
 
   $leftAligned = array(array("name"=>"home", "url"=>$root . "index.php"),
 		       array("name"=>"about", "url"=>$root . "about.php"),

@@ -9,9 +9,15 @@ $ReclineeID = $_SESSION["ReclineeID"];
 
 //session_destroy();
 
+// Find url 1 directory above
+$currUrl = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
+$currRoot = substr($currUrl, 0, strrpos($currUrl, '/'));
+$prevRoot = substr($currRoot, 0, strrpos($currRoot, '/')) . '/';
+$currRoot .= '/';
+
 if ($ReclineeID == "")
 {
-    $URL = "http://" . $_SERVER['SERVER_NAME'] . "/login.php?message=You must log in to access the command center.";
+    $URL = $prevRoot . "login.php?message=You must log in to access the command center.";
     header ("Location: $URL");
     //echo "<meta http-equiv='refresh' content=\"0;url=" . $URL . "\" />";
     exit();
@@ -64,9 +70,11 @@ if ($voteActive)
 }
 
 // Get the active quiz metadata.
-$query = "SELECT * FROM QUIZ_METADATA WHERE ACTIVE = '1'";
+$query = $reclinee->GetConnection()->prepare(
+    "SELECT * FROM QUIZ_METADATA WHERE ACTIVE = '1'"
+);
 $result = $reclinee->Query($query);
-$row = mysql_fetch_assoc($result);
+$row = $result->fetch_assoc();
 
 if ($row["QuizName"] != "")
 {
@@ -85,7 +93,7 @@ if ($row["QuizName"] != "")
 }
 
 echo "<tr><td>Log out</td><td>";
-$URL = "http://" . $_SERVER['SERVER_NAME'] . "/logout.php";
+$URL = $prevRoot . "logout.php";
 echo "<form action='$URL' method='post'><input type='submit' value='Go' /></form>";
 echo "</td></tr>";
 

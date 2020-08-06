@@ -6,9 +6,10 @@ $passwordHash = $_GET["password"];
 $message = "";
 $succeeded = true;
 
-$query = "SELECT * FROM TempPasswords WHERE PasswordHash='$passwordHash'";
-$result = mysql_query($query);
-if (!$result || mysql_num_rows($result) == 0)
+$query = $db->prepare("SELECT * FROM TempPasswords WHERE PasswordHash=?");
+$query->bind_param('s', $passwordHash);
+$result = db_query($db, $query);
+if (!$result || $result->num_rows == 0)
 {
     $message = "The temporary password is no longer valid.  Please try the 'forgot your password' form again, or contact roc@reclinathon.com to restore your access to reclinathon.com/<br>";
     $succeeded = false;
@@ -16,11 +17,14 @@ if (!$result || mysql_num_rows($result) == 0)
 
 if ($succeeded)
 {
-    $row = mysql_fetch_assoc($result);
+    $row = $result->fetch_assoc();
     $reclineeID = $row["ReclineeID"];
 
-    $query = "UPDATE RECLINEE SET PasswordHash = '$passwordHash' WHERE ReclineeID = '$reclineeID' LIMIT 1";
-    $result = mysql_query($query);
+    $query = $db->prepare(
+        "UPDATE RECLINEE SET PasswordHash = ? WHERE ReclineeID = ? LIMIT 1"
+    );
+    $query->bind_param('si', $passwordHash, $reclineeID);
+    $result = db_query($db, $query);
     if (!$result)
     {
         $message = "Your request failed.  Please follow up with roc@reclinathon.com to restore your access.";
@@ -30,8 +34,9 @@ if ($succeeded)
 
 if ($succeeded)
 {
-    $query = "DELETE FROM TempPasswords WHERE PasswordHash='$passwordHash'";
-    $result = mysql_query($query);
+    $query = $db->prepare("DELETE FROM TempPasswords WHERE PasswordHash=?");
+    $query->bind_param('s', $passwordHash);
+    $result = db_query($db, $query);
 
     $message = "Your password has been reset.  Please log in to your command center using the information provided by email.";
 }

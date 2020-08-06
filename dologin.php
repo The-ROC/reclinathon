@@ -34,12 +34,15 @@ else
 {
     $message = "Login failed.  Please try again.<br />";
 
-    $query = "SELECT * FROM RECLINEE WHERE UserName = '" . $user . "' and PasswordHash = '" . sha1($password) . "'";
-    $result = mysql_query($query);
-    if ($result && mysql_num_rows($result) > 0)
+    $query = $db->prepare(
+        "SELECT * FROM RECLINEE WHERE UserName = ? and PasswordHash = ?"
+    );
+    $query->bind_param('ss', $user, sha1($password));
+    $result = db_query($db, $query);
+    if ($result && $result->num_rows > 0)
     {
         $LoginSuccessful = TRUE;
-        $row = mysql_fetch_assoc($result);
+        $row = $result->fetch_assoc();
         $_SESSION["ReclineeID"] = $row["ReclineeID"];
         $_SESSION["ReclineeName"] = $row["DisplayName"];
 
@@ -76,15 +79,17 @@ if($_POST["xml"])
 }
 else
 {
+    $currUrl = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
+    $baseUrl = substr($currUrl, 0, strrpos($currUrl, '/')) . '/';
     if (!$LoginSuccessful)
     {
-        $URL = "http://" . $_SERVER['SERVER_NAME'] . "/login.php?username=" . $user . "&message=" . $message;
+        $URL = $baseUrl . "login.php?username=" . $user . "&message=" . $message;
         //header ("Location: $URL");
         //exit();
     }
     else
     { 
-        $URL = "http://" . $_SERVER['SERVER_NAME'] . "/rtt/ControlCenter.php";
+        $URL = $baseUrl . "rtt/ControlCenter.php";
     }
     
     //echo "URL: " . $URL;
