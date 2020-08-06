@@ -2,8 +2,8 @@
 
 include('./connect.php');
 
-$query = "TRUNCATE TABLE PushNotificationChannels";
-$result = mysql_query($query);
+$query = $db->prepare("TRUNCATE TABLE PushNotificationChannels");
+$result = db_query($db, $query);
 if (!$result)
 {
 	echo "Failed to clear existing registrations.";

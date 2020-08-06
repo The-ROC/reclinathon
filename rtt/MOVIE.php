@@ -220,7 +220,7 @@ class MOVIE extends RTT_COMMON
                 }
             }
 
-            $row = mysql_fetch_assoc($result);
+            $row = $result->fetch_assoc();
 			if ($row["Name"] == "Reclinathon Theme")
 			{
 				$this->ThemeMovie = true;
@@ -752,7 +752,7 @@ class MOVIE extends RTT_COMMON
             return FALSE;
         }
 
-        $query = "SELECT LAST_INSERT_ID() AS MovieID";
+        $query = $this->GetConnection()->prepare("SELECT LAST_INSERT_ID() AS MovieID");
         $result = $this->Query($query);
         if (!$result)
         {

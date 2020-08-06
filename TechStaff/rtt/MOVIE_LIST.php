@@ -119,7 +119,7 @@ class MOVIE_LIST extends RTT_COMMON
         }
 
         //Fetch the full pool of movies
-        $query = "SELECT MovieID, Freshness FROM MOVIE";
+        $query = $this->GetConnection()->prepare("SELECT MovieID, Freshness FROM MOVIE");
         $result = $this->Query($query);
         if (!$result)
         {
@@ -127,7 +127,7 @@ class MOVIE_LIST extends RTT_COMMON
         }
 
         //Assign tickets based on freshness
-        while($row = mysql_fetch_assoc($result))
+        while($row = $result->fetch_assoc())
         {
             $TotalMovies++;
             for ($i = 0; $i < $row["Freshness"]; $i++)

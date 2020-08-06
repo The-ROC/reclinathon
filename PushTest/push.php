@@ -43,10 +43,11 @@ else
 }
 
 
-$query = "SELECT * FROM PushNotificationChannels WHERE $currentTime < ExpirationTime";
-$result = mysql_query($query);
+$query = $db->prepare("SELECT * FROM PushNotificationChannels WHERE ? < ExpirationTime");
+$query->bind_param('i', $currentTime);
+$result = db_query($db, $query);
 
-while ($row = mysql_fetch_assoc($result))
+while ($row = $result->fetch_assoc())
 {
 	$channelUri = $row["ChannelUri"];
 	

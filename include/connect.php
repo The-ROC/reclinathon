@@ -25,7 +25,7 @@ function db_query ($db, $query)
     $result = $query->execute();
     if (!$result)
     {
-        $error = 'Error executing query: ' . mysql_error();
+        $error = 'Error executing query: ' . $db->error;
     }
     else
     {

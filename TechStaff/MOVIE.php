@@ -41,14 +41,17 @@ class MOVIE extends RTT_COMMON
 
     public function Load($MovieID)
     {
-        $query = "SELECT * FROM MOVIE WHERE MovieID = " . $MovieID;
+        $query = $this->GetConnection()->prepare(
+            "SELECT * FROM MOVIE WHERE MovieID = ?"
+        );
+        $query->bind_param('i', $MovieID);
         $result = $this->Query($query);
         if (!$result)
         {
             return FALSE;
         }
 
-        $row = mysql_fetch_assoc($result);
+        $row = $result->fetch_assoc();
         if (!$row)
         {
             return FALSE;
@@ -63,14 +66,17 @@ class MOVIE extends RTT_COMMON
         $this->Image = $row["Image"];
 
         $this->NumGenres = 0;
-        $query = "SELECT g.GenreID as GenreID, g.Name as Name, g.Canonical as Canonical FROM GENRE g JOIN MOVIE_GENRE mg ON g.GenreID = mg.GenreID WHERE mg.MovieID = " . $MovieID;
+        $query = $this->GetConnection()->prepare(
+            "SELECT g.GenreID as GenreID, g.Name as Name, g.Canonical as Canonical FROM GENRE g JOIN MOVIE_GENRE mg ON g.GenreID = mg.GenreID WHERE mg.MovieID = ?"
+        );
+        $query->bind_param('i', $MovieID);
         $result = $this->Query($query);
         if (!$result)
         {
             return FALSE;
         }
 
-        while ($row = mysql_fetch_assoc($result))
+        while ($row = $result->fetch_assoc())
         {
             $this->Genres[$this->NumGenres] = new GENRE($row["GenreID"], $row["Name"], $row["Canonical"]);
             $this->NumGenres++;
@@ -86,9 +92,9 @@ class MOVIE extends RTT_COMMON
         $this->RunTime = $_POST["RunTime"];
 
         $this->NumGenres = 0;
-        $query = "SELECT * FROM GENRE";
+        $query = $this->GetConnection()->prepare("SELECT * FROM GENRE");
         $result = $this->query($query);
-        while($row = mysql_fetch_assoc($result))
+        while($row = $result->fetch_assoc())
         {
             if ($_POST["genre" . $row[GenreID]] != "")
             {
@@ -147,7 +153,9 @@ class MOVIE extends RTT_COMMON
         $TotalRunTime = 0;
         $GenreRunTimes;
 
-        $query = "SELECT MovieID FROM MOVIE ORDER BY Freshness DESC";
+        $query = $this->GetConnection()->prepare(
+            "SELECT MovieID FROM MOVIE ORDER BY Freshness DESC"
+        );
         $result = $this->Query($query);
         if (!$result)
         {
@@ -155,7 +163,7 @@ class MOVIE extends RTT_COMMON
         }
 
         echo "<INPUT TYPE='button' VALUE='Hide Details' onclick='HideAll()'><INPUT TYPE='button' VALUE='Show Details' onclick='ShowAll()'><BR>";
-        while($row = mysql_fetch_assoc($result))
+        while($row = $result->etch_assoc())
         {
             $movie = new MOVIE();
             $movie->Load($row["MovieID"]);
@@ -168,9 +176,9 @@ class MOVIE extends RTT_COMMON
         }
         echo "<BR>Total Run Time:  " . ((int)($TotalRunTime / 60)) . " hours " . $TotalRunTime % 60 . " min<BR>";
 
-        $query = "SELECT * FROM GENRE";
+        $query = $this->GetConnection()->prepare("SELECT * FROM GENRE");
         $result = $this->query($query);
-        while ($row = mysql_fetch_assoc($result))
+        while ($row = $result->fetch_assoc())
         {
             echo "<BR>" . $row["Name"];
             if ($row["Canonical"] == 1)
@@ -190,9 +198,9 @@ class MOVIE extends RTT_COMMON
         echo "<TR><TD>RunTime</TD><TD><INPUT TYPE='RunTime' NAME='RunTime' VALUE='" . $this->RunTime ."'></TD></TR>";
         echo "<TR><TD>Genre</TD><TD>(check all that apply)</TD></TR>";
 
-        $query = "SELECT * FROM GENRE";
+        $query = $this->GetConnection()->prepare("SELECT * FROM GENRE");
         $result = $this->query($query);
-        while($row = mysql_fetch_assoc($result))
+        while($row = $result->fetch_assoc())
         {
             echo "<TR><TD>" . $row["Name"];
             if ($row["Canonical"] == 1)
@@ -223,28 +231,29 @@ class MOVIE extends RTT_COMMON
 
     public function Insert()
     {
-        $query = "INSERT INTO MOVIE (Title, RunTime, TrailerLink, IMDBLink, Freshness, Image) VALUES (";
-        $query = $query . "'" . $this->Title . "', ";
-        $query = $query . "'" . $this->RunTime . "', ";
-        $query = $query . "'" . $this->TrailerLink . "', ";
-        $query = $query . "'" . $this->IMDBLink . "', ";
-        $query = $query . "'" . $this->Freshness . "', ";
-        $query = $query . "'" . $this->Image . "')";
+        $query = $this->GetConnection()->prepare(
+            "INSERT INTO MOVIE (Title, RunTime, TrailerLink, IMDBLink, Freshness, Image) VALUES (?, ?, ?, ?, ?, ?)"
+        );
+        $query->bind_param(
+            'sissis',
+            $this->Title, $this->RunTime, $this->TrailerLink,
+            $this->IMDBLink, $this->Freshness, $this->Image
+        );
 
-        echo $query . "<BR>";
+        //echo $query . "<BR>";
         $result = $this->Query($query);
         if (!$result)
         {
             return FALSE;
         }
 
-        $query = "SELECT LAST_INSERT_ID() AS MovieID";
+        $query = $this->GetConnection()->prepare("SELECT LAST_INSERT_ID() AS MovieID");
         $result = $this->Query($query);
         if (!$result)
         {
             return FALSE;
         }
-        $row = mysql_fetch_assoc($result);
+        $row = $result->fetch_assoc();
         $this->MovieID = $row["MovieID"];  
         
         return $this->Update();
@@ -252,38 +261,45 @@ class MOVIE extends RTT_COMMON
 
     public function Update()
     {
-        $query = "UPDATE MOVIE SET ";
-        $query = $query . "Title = '" . $this->Title . "'";
-        $query = $query . ", RunTime = '" . $this->RunTime . "'";
-        $query = $query . ", TrailerLink = '" . $this->TrailerLink . "'";
-        $query = $query . ", IMDBLink = '" . $this->IMDBLink . "'";
-        $query = $query . ", Freshness = '" . $this->Freshness . "'";
-        $query = $query . ", Image = '" . $this->Image . "' WHERE MovieID = '" . $this->MovieID . "'";
+        $query = $this->GetConnection()->prepare(
+            "UPDATE MOVIE SET Title = ?, RunTime = ?, TrailerLink = ?, IMDBLink = ?, Freshness = ?, Image = ?, WHERE MovieID = ?"
+        );
+        $query->bind_param(
+            'sissisi',
+            $this->Title, $this->RunTime, $this->TrailerLink, $this->IMDBLink,
+            $this->Freshness, $this->Image, $this->MovieID
+        );
 
-        echo $query . "<BR>";
+        //echo $query . "<BR>";
         $result = $this->Query($query);
         if (!$result)
         {
             return FALSE;
         }
 
-        $query = "DELETE FROM MOVIE_GENRE WHERE MovieID = '" . $this->MovieID . "'";
+        $query = $this->GetConnection()->prepare(
+            "DELETE FROM MOVIE_GENRE WHERE MovieID = ?"
+        );
+        $query->bind_param('i', $this->MovieID);
         $result = $this->Query($query);
         if(!$result)
         {
             return FALSE;
         }
 
-        $query = "SELECT * FROM GENRE";
+        $query = $this->GetConnection()->prepare("SELECT * FROM GENRE");
         $result = $this->query($query);
-        while($row = mysql_fetch_assoc($result))
+        while($row = $result->fetch_assoc())
         {
             for ($i = 0; $i < $this->NumGenres; $i++)
             {
                 if ($this->Genres[$i]->GenreID == $row["GenreID"])
                 {
-                    $query2 = "INSERT INTO MOVIE_GENRE (MovieID, GenreID) VALUES ('" . $this->MovieID . "', '" . $this->Genres[$i]->GenreID . "')";
-                    echo $query2 . "<BR>";
+                    $query2 = $this->GetConnection()->prepare(
+                        "INSERT INTO MOVIE_GENRE (MovieID, GenreID) VALUES (?, ?)"
+                    );
+                    $query2->bind_param('ii', $this->MovieID, $this->Genres[$i]->GenreID);
+                    //echo $query2 . "<BR>";
                     $result2 = $this->Query($query2);
                     if (!$result2)
                     {
@@ -320,7 +336,7 @@ class MOVIE extends RTT_COMMON
         $Tickets;
         $NumTickets = 0;
         $MovieList;
-        $query = "SELECT MovieID, Freshness FROM MOVIE";
+        $query = $this->GetConnection()->prepare("SELECT MovieID, Freshness FROM MOVIE");
         $result = $this->Query($query);
         if (!$result)
         {
@@ -328,7 +344,7 @@ class MOVIE extends RTT_COMMON
         }
 
         //assign tickets based on freshness
-        while($row = mysql_fetch_assoc($result))
+        while($row = $result->fetch_assoc())
         {
             for ($i = 0; $i < $row["Freshness"]; $i++)
             {

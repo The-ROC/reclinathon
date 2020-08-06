@@ -24,16 +24,19 @@ class REMOTE_RECLINATHON extends RTT_COMMON
             $movieNetflix->LoadFromObject($movie);
 			
 			$title = $movieNetflix->GetTitle();
-			$query = "select * from MOVIE where Title = '$title'";
+			$query = $movieNetflix->GetConnection()->prepare(
+				"select * from MOVIE where Title = ?"
+			);
+			$query->bind_param('s', $title);
 			$result = $movieNetflix->query($query);
 			
-			if (mysql_num_rows($result) == 0)
+			if ($result->num_rows == 0)
 			{
 				$movieNetflix->CreateReclinathonInsert();
 			}
 			else
 			{
-				$row = mysql_fetch_assoc($result);
+				$row = $result->fetch_assoc();
 				$url = $movieNetflix->GetUrl();
 				$runtime = $movieNetflix->GetRunTime();
 				$movieNetflix->Load($row["MovieID"]);
@@ -54,7 +57,9 @@ class REMOTE_RECLINATHON extends RTT_COMMON
 		{
 		    if ($i == 0)
 		    {
-			    $query = "DELETE FROM MOVIE_LIST WHERE Name = 'demo'";
+			    $query = $this->GetConnection()->prepare(
+					"DELETE FROM MOVIE_LIST WHERE Name = 'demo'"
+				);
 			    $result = $this->query($query);
 				if (!$result)
 				{
@@ -64,7 +69,10 @@ class REMOTE_RECLINATHON extends RTT_COMMON
 			}
 			
 			$movieId = $this->Movies[$i]->GetID();
-			$query = "INSERT INTO MOVIE_LIST (`Name`, `MovieID`, `Order`, `Played`, `MoviePath`) VALUES ('demo', '$movieId', '$i', '0', '')";
+			$query = $this->GetConnection()->prepare(
+				"INSERT INTO MOVIE_LIST (`Name`, `MovieID`, `Order`, `Played`, `MoviePath`) VALUES ('demo', ?, ?, '0', '')"
+			);
+			$query->bind_param('ii', $movieId, $i);
 			$result = $this->query($query);
 			if (!$result)
 			{
@@ -74,7 +82,9 @@ class REMOTE_RECLINATHON extends RTT_COMMON
 		}
 		
 		// Delete out any old contexts
-		$query = "DELETE FROM RECLINATHON_CONTEXT WHERE Season = 'demo'";
+		$query = $this->GetConnection()->prepare(
+			"DELETE FROM RECLINATHON_CONTEXT WHERE Season = 'demo'"
+		);
 	    $result = $this->query($query);
 		if (!$result)
 		{
@@ -93,8 +103,11 @@ class REMOTE_RECLINATHON extends RTT_COMMON
 		
 		$duration = $this->StartTime - $timeStamp;
 		$initialMovieId = $this->Movies[0]->GetID();
-		$query = "INSERT INTO RECLINATHON_CONTEXT (`TimeStamp`, `EstimatedDuration`, `CaptainID`, `StateID`, `ModifierID`, `MovieID`, `Season`, `LogoID`, `Pending`) VALUES ('$timeStamp', '$duration', '1', '3', '9', '$initialMovieId', 'demo', '0', '0')";
-		$result = mysql_query($query);	
+		$query = $this->GetConnection()->prepare(
+			"INSERT INTO RECLINATHON_CONTEXT (`TimeStamp`, `EstimatedDuration`, `CaptainID`, `StateID`, `ModifierID`, `MovieID`, `Season`, `LogoID`, `Pending`) VALUES (?, ?, '1', '3', '9', ?, 'demo', '0', '0')"
+		);
+		$query->bind_param('iii', $timeStamp, $duration, $initialMovieId);
+		$result = $this->query($query);	
 		if (!$result)
 		{
 			echo "Failed to create countdown context<br>";
@@ -129,7 +142,9 @@ class REMOTE_RECLINATHON extends RTT_COMMON
 		}
 		
 		// Make the Reclinathon active
-		$query = "UPDATE current_remote_reclinathon SET RemoteReclinathonId = 'demo' WHERE RemoteReclinathonId = ''";
+		$query = $this->GetConnection()->prepare(
+			"UPDATE current_remote_reclinathon SET RemoteReclinathonId = 'demo' WHERE RemoteReclinathonId = ''"
+		);
         $result = $this->query($query);
 		if (!$result)
 		{
@@ -162,12 +177,14 @@ class REMOTE_RECLINATHON extends RTT_COMMON
 	public function GetCurrentRemoteReclinathonId()
     {
 		$id = "";
-        $query = "SELECT * from current_remote_reclinathon limit 1";
+        $query = $this->GetConnection()->prepare(
+			"SELECT * from current_remote_reclinathon limit 1"
+		);
 	    $result = $this->Query($query);
 
-	    if ($result && mysql_num_rows($result) == 1)
+	    if ($result && $result->num_rows == 1)
         {
-            $row = mysql_fetch_assoc($result);
+            $row = $result->fetch_assoc();
 
             if ($row)
             {

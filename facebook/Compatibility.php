@@ -14,7 +14,7 @@ class Compatibility {
 		//else
 		//{
 			$sql = "SELECT * FROM MOVIES";
-			$movieListMember = mysql_query($sql);
+			$movieListMember = mysqli_query($sql);
 		//}
 		
 		return $movieListMember;

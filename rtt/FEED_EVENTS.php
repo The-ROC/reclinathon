@@ -11,12 +11,15 @@ class FEED_EVENTS extends RTT_COMMON
 
     function LoadEventsAfterID($startID)
     {
-        $query = "SELECT * FROM FEED_EVENTS WHERE EventID > '$startID'";
+        $query = $this->GetConnection()->prepare(
+            "SELECT * FROM FEED_EVENTS WHERE EventID > ?"
+        );
+        $query->bind_param('i', $startID);
         $result = $this->Query($query);
         $this->FeedEvents = array();
         if($result)
         {
-            while($row = mysql_fetch_assoc($result))
+            while($row = $result->fetch_assoc())
             {
 				$feedEvent = new FEED_EVENT();
                 $feedEvent->LoadFromRow($row);
@@ -40,13 +43,18 @@ class FEED_EVENTS extends RTT_COMMON
     function PostEvent($reclineeID, $text, $timestamp, $image)
     {
         $_text = $this->GetDatabase()->GetEscapeString($text);
-        $query = "INSERT INTO FEED_EVENTS (ReclineeID, Text, Timestamp, Image) VALUES ('$reclineeID', '$_text', '$timestamp', '$image')";
+        $query = $this->GetConnection()->prepare(
+            "INSERT INTO FEED_EVENTS (ReclineeID, Text, Timestamp, Image) VALUES ('$reclineeID', '$_text', '$timestamp', '$image')"
+        );
+        $query->bind_param('isis', $reclineeID, $_text, date('U'), $image);
         $result = $this->Query($query);
         if(!$result)
             return FALSE;
 		
 		$feedEvent = new FEED_EVENT();
-		$feedEvent->LoadFromArgs(mysql_insert_id(), $reclineeID, $text, $timestamp, $image);
+		$feedEvent->LoadFromArgs(
+            $this->GetConnection()->insert_id, $reclineeID, $text, $timestamp, $image
+        );
         return $feedEvent;
     }
 

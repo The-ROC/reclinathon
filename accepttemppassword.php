@@ -41,7 +41,9 @@ if ($succeeded)
     $message = "Your password has been reset.  Please log in to your command center using the information provided by email.";
 }
 
-$URL = "http://" . $_SERVER['SERVER_NAME'] . "/login.php?message=" . $message;
+$currUrl = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
+$baseUrl = substr($currUrl, 0, strrpos($currUrl, '/')) . '/';
+$URL = $baseUrl . "login.php?message=" . $message;
 header ("Location: $URL");
 
 ?>

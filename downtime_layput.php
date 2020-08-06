@@ -17,9 +17,10 @@ while($GO == 0) {
 
 $RAND = rand(1, $RANDMAX);
 
-$query = "SELECT * FROM Trivia WHERE TID = ".$RAND;
-$result = mysql_query($query);
-$row = mysql_fetch_row($result);
+$query = $db->prepare("SELECT * FROM Trivia WHERE TID = ?");
+$query->bind_param('i', $RAND);
+$result = db_query($db, $query);
+$row = $result->fetch_row();
 ?>
 
 <HTML><HEAD><TITLE>Reclinathon</TITLE>

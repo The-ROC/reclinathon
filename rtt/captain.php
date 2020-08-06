@@ -18,14 +18,17 @@ else if ($_GET["ContextID"] != '')
 }
 else
 {
-    $query = "SELECT ContextID FROM RECLINATHON_CONTEXT WHERE TimeStamp <= '" . date("U") . "' AND Season = '" . $CAPTAIN_SEASON . "' ORDER BY TimeStamp DESC";
+    $query = $rcx->GetConnection()->prepare(
+      "SELECT ContextID FROM RECLINATHON_CONTEXT WHERE TimeStamp <= ? AND Season = ? ORDER BY TimeStamp DESC"
+    );
+    $query->bind_param('is', date('U'), $CAPTAIN_SEASON);
     $result = $rcx->query($query);
     if (!$result)
     {
         echo "ERROR GETTING CONTEXT LIST!";
         exit();
     }
-    $row = mysql_fetch_assoc($result);
+    $row = $result->fetch_assoc();
     $ContextID = $row["ContextID"];
 }
 

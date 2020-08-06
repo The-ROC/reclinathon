@@ -38,14 +38,17 @@ class MOVIE_LIST extends RTT_COMMON
 
     public function Load($Season)
     {
-        $query = "SELECT ml.* FROM MOVIE_LIST ml LEFT JOIN RECLINATHON_CONTEXT rc ON ml.MovieID = rc.MovieID WHERE ml.Name = '" . $Season . "' ORDER BY ml.Played, rc.TimeStamp";
+        $query = $this->GetConnection()->prepare(
+            "SELECT ml.* FROM MOVIE_LIST ml LEFT JOIN RECLINATHON_CONTEXT rc ON ml.MovieID = rc.MovieID WHERE ml.Name = ? ORDER BY ml.Played, rc.TimeStamp"
+        );
+        $query->bind_param('s', $Season);
         $result = $this->query($query);
-        if (!$result || mysql_num_rows($result) == 0)
+        if (!$result || $result->num_rows == 0)
         {
             return false;
         }
 
-        while ($row = mysql_fetch_assoc($result))
+        while ($row = $result->fetch_assoc())
         {
             $movie = new MOVIE();
             if (!$movie->Load($row["MovieID"]))
@@ -73,10 +76,13 @@ class MOVIE_LIST extends RTT_COMMON
            }
         }
 		
-		$query = "SELECT * FROM MOVIE_LIST WHERE Name = '$Season' ORDER BY `Order` ASC";
+		$query = $this->GetConnection()->prepare(
+            "SELECT * FROM MOVIE_LIST WHERE Name = ? ORDER BY `Order` ASC"
+        );
+        $query->bind_param('s', $Season);
         $result = $this->query($query);
 
-        while ($row = mysql_fetch_assoc($result))
+        while ($row = $result->fetch_assoc())
         {
             $movie = new MOVIE();
             if (!$movie->Load($row["MovieID"]))
@@ -93,7 +99,10 @@ class MOVIE_LIST extends RTT_COMMON
 
     public function TogglePlayedUnplayed($Played, $MovieID, $Season)
     {
-        $query = "UPDATE MOVIE_LIST SET Played = '" . $Played . "' WHERE Name = '" . $Season . "' AND MovieID = '" . $MovieID . "'";
+        $query = $this->GetConnection()->prepare(
+            "UPDATE MOVIE_LIST SET Played = '" . $Played . "' WHERE Name = '" . $Season . "' AND MovieID = '" . $MovieID . "'"
+        );
+        $query->bind_param('isi', $Played, $Season, $MovieID);
         $result = $this->query($query);
         if (!$result)
         {
@@ -104,7 +113,10 @@ class MOVIE_LIST extends RTT_COMMON
 
     public function Delete($Season)
     {
-        $query = "DELETE FROM MOVIE_LIST WHERE Name = '" . $Season . "'";
+        $query = $this->GetConnection()->prepare(
+            "DELETE FROM MOVIE_LIST WHERE Name = ?"
+        );
+        $query->bind_param('s', $Season);
         $result = $this->Query($query);
         if(!$result)
         {
@@ -116,7 +128,10 @@ class MOVIE_LIST extends RTT_COMMON
 
     public function Insert($Season)
     {
-        $query = "DELETE FROM MOVIE_LIST WHERE Name = '" . $Season . "'";
+        $query = $this->GetConnection()->prepare(
+            "DELETE FROM MOVIE_LIST WHERE Name = ?"
+        );
+        $query->bind_param('s', $Season);
         $result = $this->Query($query);
         if(!$result)
         {
@@ -125,7 +140,10 @@ class MOVIE_LIST extends RTT_COMMON
 
         for ($i=0; $i < $this->NumUnplayedMovies; $i++)
         {
-            $query = "INSERT INTO MOVIE_LIST (Name, MovieID, Played) VALUES ('" . $Season . "', '" . $this->UnplayedMovies[$i]->GetID() . "', '0')";
+            $query = $this->GetConnection()->prepare(
+                "INSERT INTO MOVIE_LIST (Name, MovieID, Played) VALUES (?, ?, '0')"
+            );
+            $query->bind_param('si', $this->UnplayedMovies[$i]->GetID());
             $result = $this->Query($query);
             if (!$result)
             {
@@ -135,7 +153,10 @@ class MOVIE_LIST extends RTT_COMMON
 
         for ($i=0; $i < $this->NumPlayedMovies; $i++)
         {
-            $query = "INSERT INTO MOVIE_LIST (Name, MovieID, Played) VALUES ('" . $Season . "', '" . $this->PlayedMovies[$i]->GetID() . "', '0')";
+            $query = $this->GetConnection()->prepare(
+                "INSERT INTO MOVIE_LIST (Name, MovieID, Played) VALUES (?, ?, '0')"
+            );
+            $query->bind_param('si', $Season, $this->PlayedMovies[$i]->GetID());
             $result = $this->Query($query);
             if (!$result)
             {
@@ -162,7 +183,10 @@ class MOVIE_LIST extends RTT_COMMON
 
         $CurrentSeason = $this->GetCurrentSeason();
 
-        $query = "SELECT * FROM VOTE WHERE Season = '" . $CurrentSeason . "' AND ReclineeID = '" . $_POST["ReclineeID"] . "'";
+        $query = $this->GetConnection()->prepare(
+            "SELECT * FROM VOTE WHERE Season = ? AND ReclineeID = ?"
+        );
+        $query->bind_param('si', $CurrentSeason, $_POST['ReclineeID']);
         $result = $this->query($query);
 
         if (!$result)
@@ -170,20 +194,20 @@ class MOVIE_LIST extends RTT_COMMON
             return false;
         }
 
-        if (mysql_num_rows($result) > 0)
+        if ($result->num_rows > 0)
         {
             echo "<BR>You have already voted for this season.  If you feel this is an error, please contact reclinathon@gmail.com<BR>";
             return FALSE;
         }
 
-        $query = "SELECT MovieID FROM MOVIE";
+        $query = $this->GetConnection()->prepare("SELECT MovieID FROM MOVIE");
         $result = $this->query($query);
         if (!$result)
         {
             return FALSE;
         }
 
-        while($row = mysql_fetch_assoc($result))
+        while($row = $result->fetch_assoc())
         {
             if ($_POST["vote" . $row["MovieID"]] != '')
             {
@@ -192,7 +216,10 @@ class MOVIE_LIST extends RTT_COMMON
                 {
                     $golden = 1;
                 }
-                $query2 = "INSERT INTO VOTE(Season, ReclineeID, MovieID, Golden) VALUES('" . $CurrentSeason . "', '" . $_POST["ReclineeID"] . "', '" . $row["MovieID"] . "', '" . $golden . "')";
+                $query2 = $this->GetConnection()->prepare(
+                    "INSERT INTO VOTE(Season, ReclineeID, MovieID, Golden) VALUES(?, ?, ?, ?)"
+                );
+                $query2->bind_param('siii', $CurrentSeason, $_POST['ReclineeID'], $row['MovieID'], $golden);
                 $result2 = $this->query($query2);
                 if (!$result2)
                 {
@@ -295,11 +322,14 @@ class MOVIE_LIST extends RTT_COMMON
         {
             echo "<TR>";
             echo "<TD>" . $list[$i] . "</TD><TD>";
-            $voteQuery = "SELECT COUNT(v.VoteID) AS TotalVotes, SUM(v.Golden) AS TotalGoldenVotes FROM VOTE v JOIN MOVIE m ON v.MovieID = m.MovieID WHERE v.MovieID = '" . $list[$i]->GetID() . "' GROUP BY v.MovieID";
+            $voteQuery = $this->GetConnection()->prepare(
+                "SELECT COUNT(v.VoteID) AS TotalVotes, SUM(v.Golden) AS TotalGoldenVotes FROM VOTE v JOIN MOVIE m ON v.MovieID = m.MovieID WHERE v.MovieID = ? GROUP BY v.MovieID"
+            );
+            $voteQuery->bind_param('i', $list[$i]->GetID());
             $voteResult = $this->query($voteQuery);
             if ($voteResult)
             {
-                $voteRow = mysql_fetch_assoc($voteResult);
+                $voteRow = $voteResult->fetch_assoc();
                 if ($voteRow)
 	 	{
 		    echo "(" . $voteRow["TotalVotes"] . " votes, " . $voteRow["TotalGoldenVotes"] . " golden)";
@@ -416,7 +446,10 @@ class MOVIE_LIST extends RTT_COMMON
         $CurrentSeason = $this->GetCurrentSeason();
 
         //Fetch the votes
-        $query = "SELECT m.MovieID, COUNT(v.VoteID) AS TotalVotes, SUM(v.Golden) AS TotalGoldenVotes FROM VOTE v JOIN MOVIE m ON v.MovieID = m.MovieID WHERE v.Season = '" . $CurrentSeason . "' GROUP BY v.MovieID ORDER BY TotalVotes DESC, TotalGoldenVotes DESC";
+        $query = $this->GetConnection()->prepare(
+            "SELECT m.MovieID, COUNT(v.VoteID) AS TotalVotes, SUM(v.Golden) AS TotalGoldenVotes FROM VOTE v JOIN MOVIE m ON v.MovieID = m.MovieID WHERE v.Season = ? GROUP BY v.MovieID ORDER BY TotalVotes DESC, TotalGoldenVotes DESC"
+        );
+        $query->bind_param('s', $CurrentSeason);
         $result = $this->query($query);
         if (!$result)
         {
@@ -424,7 +457,7 @@ class MOVIE_LIST extends RTT_COMMON
         }
 
         //Add tickets for each vote, and auto-approve movies with sufficient votes
-        while($row = mysql_fetch_assoc($result))
+        while($row = $result->fetch_assoc())
         {
 	    if ($row["TotalGoldenVotes"] > 0 || $row["TotalVotes"] >= $VotesPerAutoApprove)
             {
@@ -447,7 +480,9 @@ class MOVIE_LIST extends RTT_COMMON
         $VoteTickets = $NumTickets;
 
         //Fetch the full pool of movies
-        $query = "SELECT m.MovieID, (m.Freshness + m.MetaScore) AS CriticScore FROM MOVIE m JOIN MOVIE_LIST l on l.MovieID = m.MovieID where l.Name = 'Ballot'";
+        $query = $this->GetConnection()->prepare(
+            "SELECT m.MovieID, (m.Freshness + m.MetaScore) AS CriticScore FROM MOVIE m JOIN MOVIE_LIST l on l.MovieID = m.MovieID where l.Name = 'Ballot'"
+        );
         $result = $this->Query($query);
         if (!$result)
         {
@@ -455,7 +490,7 @@ class MOVIE_LIST extends RTT_COMMON
         }
 
         //Assign tickets based on critic score for each non-auto-approved movie
-        while($row = mysql_fetch_assoc($result))
+        while($row = $result->fetch_assoc())
         {
 	    $MovieAutoApproved = FALSE;
 

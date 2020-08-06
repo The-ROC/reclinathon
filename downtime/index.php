@@ -18,15 +18,17 @@ if(!session_is_registered("GO")) {
 //$RAND = rand(1, $RANDMAX);
 
 if($MODE != 1) {
-  $query = "SELECT * FROM Trivia WHERE TID = ".$RAND;
-  $result = mysql_query($query);
-  $row = mysql_fetch_row($result);
+  $query = $db->prepare("SELECT * FROM Trivia WHERE TID = ?");
+  $query->bind_param('i', $RAND);
+  $result = db_query($db, $query);
+  $row = $result->fetch_row();
   $refresh = 15;
 }
 else {
-  $query = "SELECT * FROM VideoClips WHERE VCID = ".$RAND_CLIP;
-  $result = mysql_query($query);
-  $row = mysql_fetch_row($result);
+  $query = $db->prepare("SELECT * FROM VideoClips WHERE VCID = ?");
+  $query->bind_param('i', $RAND_CLIP);
+  $result = db_query($db, $query);
+  $row = $result->fetch_row();
   $refresh = $row[2];
   echo $refresh;
 }

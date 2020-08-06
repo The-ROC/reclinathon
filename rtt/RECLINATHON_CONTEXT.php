@@ -463,7 +463,7 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
         $query->bind_param('i', $this->ContextID);
         $result = $this->query($query);
 		
-		while ($row = mysql_fetch_assoc($result))
+		while ($row = $result->fetch_assoc())
         {
 			$clipId = $row["VCID"];
 			$clipCaption = $row["Caption"];
@@ -590,7 +590,7 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
         $result = $this->query($query);
 
 		$ContextList = array();
-        while($row = mysql_fetch_assoc($result))
+        while($row = $result->fetch_assoc())
         {
             $context = new RECLINATHON_CONTEXT();
             $context->Load($row["ContextID"]);

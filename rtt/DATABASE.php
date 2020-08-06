@@ -29,7 +29,7 @@ class DATABASE
         $this->connection = mysqli_connect($this->server, $this->username, $this->password, $this->db);
         if (!$this->connection)
         {
-            $error = 'Error connecting to database server: ' . mysql_error();
+            $error = 'Error connecting to database server: ' . mysqli_connect_error();
             return FALSE;
         }
 
@@ -65,7 +65,7 @@ class DATABASE
         $result = $query->execute();
         if (!$result)
         {
-            $error = 'Error executing query: ' . mysql_error();
+            $error = 'Error executing query: ' . $this->connection->error;
         }
         else
         {

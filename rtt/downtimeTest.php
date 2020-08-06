@@ -25,7 +25,10 @@ $seasons = array("Winter 2008", "Winter 2009", "Winter 2010", "Winter2011");
 
 $SEASON = "Winter2011";
 
-    $query = "SELECT * FROM RECLINATHON_CONTEXT WHERE Season = '" . $SEASON . "' ORDER BY TimeStamp ASC";
+    $query = $rcx->GetConnection()->prepare(
+		"SELECT * FROM RECLINATHON_CONTEXT WHERE Season = ? ORDER BY TimeStamp ASC"
+	);
+	$query->bind_param('s', $SEASON);
     $result = $rcx->query($query);
     if (!$result)
     {
@@ -35,7 +38,7 @@ $SEASON = "Winter2011";
 	
 
     	$rows = array();
-    	while($row = mysql_fetch_assoc($result)) {
+    	while($row = $result->fetch_assoc()) {
 		$rows[] = $row;
 	}
 	

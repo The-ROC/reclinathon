@@ -37,7 +37,10 @@ class MOVIE_LIST extends RTT_COMMON
             return false;
         }
 
-        $query = "SELECT * FROM VOTE WHERE ReclineeID = '" . $_POST["ReclineeID"] . "'";
+        $query = $this->GetConnection()->prepare(
+            "SELECT * FROM VOTE WHERE ReclineeID = ?"
+        );
+        $query->bind_param('i', $_POST['ReclineeID']);
         $result = $this->query($query);
 
         if (!$result)
@@ -45,24 +48,27 @@ class MOVIE_LIST extends RTT_COMMON
             return false;
         }
 
-        if (mysql_num_rows($result) > 0)
+        if ($result->num_rows > 0)
         {
             echo "<BR>You have already voted for this season.  If you feel this is an error, please contact reclinathon@gmail.com<BR>";
             return FALSE;
         }
 
-        $query = "SELECT MovieID FROM MOVIE";
+        $query = $this->GetConnection()->prepare("SELECT MovieID FROM MOVIE");
         $result = $this->query($query);
         if (!$result)
         {
             return FALSE;
         }
 
-        while($row = mysql_fetch_assoc($result))
+        while($row = $result->fetch_assoc())
         {
             if ($_POST["vote" . $row["MovieID"]] != '')
             {
-                $query2 = "INSERT INTO VOTE(ReclineeID, MovieID) VALUES('" . $_POST["ReclineeID"] . "', '" . $row["MovieID"] . "')";
+                $query2 = $this->GetConnection()->prepare(
+                    "INSERT INTO VOTE(ReclineeID, MovieID) VALUES(?, ?)"
+                );
+                $query2->bind_param('ii', $_POST['ReclineeID'], $row['MovieID']);
                 $result2 = $this->query($query2);
                 if (!$result2)
                 {
@@ -207,7 +213,7 @@ class MOVIE_LIST extends RTT_COMMON
         }
 
         //Fetch the full pool of movies
-        $query = "SELECT MovieID, Freshness FROM MOVIE";
+        $query = $this->GetConnection()->prepare("SELECT MovieID, Freshness FROM MOVIE");
         $result = $this->Query($query);
         if (!$result)
         {
@@ -215,7 +221,7 @@ class MOVIE_LIST extends RTT_COMMON
         }
 
         //Assign tickets based on freshness
-        while($row = mysql_fetch_assoc($result))
+        while($row = $result->fetch_assoc())
         {
             $TotalMovies++;
             for ($i = 0; $i < $row["Freshness"]; $i++)
@@ -227,7 +233,9 @@ class MOVIE_LIST extends RTT_COMMON
         $FreshnessTickets = $this->NumTickets;
 
         //Fetch the votes
-        $query = "SELECT m.MovieID, COUNT(v.VoteID) AS TotalVotes FROM VOTE v JOIN MOVIE m ON v.MovieID = m.MovieID GROUP BY v.MovieID ORDER BY TotalVotes DESC";
+        $query = $this->GetConnection()->prepare(
+            "SELECT m.MovieID, COUNT(v.VoteID) AS TotalVotes FROM VOTE v JOIN MOVIE m ON v.MovieID = m.MovieID GROUP BY v.MovieID ORDER BY TotalVotes DESC"
+        );
         $result = $this->query($query);
         if (!$result)
         {
@@ -235,7 +243,7 @@ class MOVIE_LIST extends RTT_COMMON
         }
 
         //Add extra tickets for each vote, and auto-approve movies with sufficient votes
-        while($row = mysql_fetch_assoc($result))
+        while($row = $result->fetch_assoc())
         {
             if ($row["TotalVotes"] >= $VotesPerAutoApprove)
             {

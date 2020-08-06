@@ -11,9 +11,12 @@ $session = "W2006";
 //FETCH THE LIST OF QUESTIONS FROM THE DB, IF NECESSARY
 if(!session_is_registered("QUESTIONS")) {
   $i = 0;
-  $query = "SELECT * FROM Questions WHERE Session = \"".$session."\" ORDER BY Ordering";
-  $result = mysql_query($query);
-  while($QUESTIONS[$i] = mysql_fetch_row($result)) {
+  $query = $db->prepare(
+    "SELECT * FROM Questions WHERE Session = ? ORDER BY Ordering"
+  );
+  $query->bind_param('s', $session);
+  $result = db_query($db, $query);
+  while($QUESTIONS[$i] = $result->fetch_row()) {
     $i++;
   }
   session_register("QUESTIONS");
@@ -44,10 +47,11 @@ if($answer != "") {
   }
 
   else if($type == "SEL") {
-    $query3 = "SELECT * FROM Choices WHERE QID = '".$qid."' ORDER BY Ordering";
-    $result3 = mysql_query($query3);
-    for($i = 0; $i < mysql_num_rows($result3); $i++) {
-      $row3 = mysql_fetch_row($result3);
+    $query3 = $db->prepare("SELECT * FROM Choices WHERE QID = ? ORDER BY Ordering");
+    $query3->bind_param('i', $qid);
+    $result3 = db_query($db, $query3);
+    for($i = 0; $i < $result3->num_rows; $i++) {
+      $row3 = $result3->fetch_row();
       if($answer[$i] == "1") {
         $SCORE += $row3[4];
       }
@@ -83,12 +87,13 @@ if($CURRENT_QUESTION < $NUM_QUESTIONS) {
 
   //DISPLAY THE LIST OF CHOICES FOR A MC OR SELECTION QUESTION
   else {
-    $query2 = "SELECT * FROM Choices WHERE QID = '".$qid."' ORDER BY Ordering";
-    $result2 = mysql_query($query2);
+    $query2 = $db->prepare("SELECT * FROM Choices WHERE QID = ? ORDER BY Ordering");
+    $query2->bind_param('i', $qid);
+    $result2 = db_query($db, $query2);
     
     echo "<TABLE WIDTH='50%'>";
     $i = 0;
-    while($row2 = mysql_fetch_row($result2)) {
+    while($row2 = $result2->fetch_row()) {
       echo "<TR><TD>";
 
       if($type == "MC") {

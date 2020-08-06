@@ -162,7 +162,10 @@ function DownRepeat() {
 
 <?php
 
-$query = "SELECT ContextID FROM RECLINATHON_CONTEXT WHERE TimeStamp <= '" . date("U") . "' ORDER BY TimeStamp DESC";
+$query = $this->GetConnection()->prepare(
+  "SELECT ContextID FROM RECLINATHON_CONTEXT WHERE TimeStamp <= ? ORDER BY TimeStamp DESC"
+);
+$query->bind_param('i', date('U'));
 
 $rcx = new RECLINATHON_CONTEXT();
 
@@ -173,7 +176,7 @@ if (!$result)
     exit();
 }
 
-$row = mysql_fetch_assoc($result);
+$row = $result->fetch_assoc();
 $ContextID = $row["ContextID"];
 
 if ($ContextID != '')
