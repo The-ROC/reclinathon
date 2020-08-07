@@ -20,6 +20,8 @@ if (property_exists($_SERVER, 'SERVER_NAME')) {
     $serverName = $_SERVER['SERVER_NAME'];
 }
 echo "\nStarting server ($serverName)... \n";
+$cwd = getcwd();
+echo "Working directory ($cwd)\n";
 // Run the server application through the WebSocket protocol on port 8080
 $app = new App($serverName, 8080, '0.0.0.0'); //App(hostname, port, 'whoCanConnectIP', '')
 
