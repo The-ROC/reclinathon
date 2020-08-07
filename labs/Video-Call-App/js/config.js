@@ -15,10 +15,16 @@ for (let i=0; i<splitPath.length; i++) {
     baseUrl += splitPath[i] + '/';
 }
 
+let wsHost = 'ec2-52-91-202-91.compute-1.amazonaws.com';
+if (loc.host.includes('local')) {
+    wsHost = loc.host;
+}
 console.log('host');
 console.log(loc.host);
+console.log('wshost');
+console.log(wsHost);
 
 const appRoot = baseUrl;
-const wsUrl = 'ws://' + loc.host + ':8080';//use wss://localhost:8080/comm for secured connection
+const wsUrl = 'ws://' + wsHost + ':8080';//use wss://localhost:8080/comm for secured connection
 const wsUrl2 = 'ws://10.0.0.235:8080';
 const spinnerClass = 'fa fa-spinner faa-spin animated';
