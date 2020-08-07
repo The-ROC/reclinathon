@@ -28,7 +28,7 @@ class Server
             CURLOPT_HTTPHEADER => ["Content-Type: application/json", "Content-Length: " . strlen($json_data)],
             CURLOPT_POSTFIELDS => $json_data,
             CURLOPT_URL => "https://global.xirsys.net/_turn/Video-Call-App",//Replace 'YOUR-CHANNEL-NAME' with the name of your xirsys channel
-            CURLOPT_USERPWD => "60e13b52-d361-11ea-b87d-0242ac150003",
+            CURLOPT_USERPWD => "antimary:60e13b52-d361-11ea-b87d-0242ac150003",
             CURLOPT_HTTPAUTH => CURLAUTH_BASIC,
             CURLOPT_CUSTOMREQUEST => "PUT",
             CURLOPT_RETURNTRANSFER => 1,
