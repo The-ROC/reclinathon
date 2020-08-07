@@ -16,9 +16,11 @@ use Ratchet\App;
 //$allowed_origins = ['localhost', '127.0.0.1', '10.0.0.194'];
 
 $serverName = 'ec2-52-91-202-91.compute-1.amazonaws.com';
-if (property_exists($_SERVER, 'SERVER_NAME')) {
-    $serverName = $_SERVER['SERVER_NAME'];
+$cwd = getcwd();
+if (strpos($cwd, '/Users/lazdude')) {
+    $serverName = 'localhost';
 }
+
 echo "\nStarting server ($serverName)... \n";
 $cwd = getcwd();
 echo "Working directory ($cwd)\n";
