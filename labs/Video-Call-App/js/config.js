@@ -21,6 +21,6 @@ if (loc.host.includes('local')) {
 }
 
 const appRoot = baseUrl;
-const wsUrl = 'ws://' + wsHost + ':8080';//use wss://localhost:8080/comm for secured connection
+const wsUrl = 'wss://' + wsHost + ':8080';//use wss://localhost:8080/comm for secured connection
 const wsUrl2 = 'ws://10.0.0.235:8080';
 const spinnerClass = 'fa fa-spinner faa-spin animated';
