@@ -17,7 +17,7 @@ use Ratchet\App;
 
 $serverName = 'ec2-52-91-202-91.compute-1.amazonaws.com';
 $cwd = getcwd();
-if (strpos($cwd, '/Users/lazdude')) {
+if (strpos($cwd, '/Users/lazdude') !== FALSE) {
     $serverName = 'localhost';
 }
 
