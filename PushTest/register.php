@@ -70,8 +70,11 @@ if ($expiryTime == "")
 	$expiryTime = 3600;
 }
 
-$query = "INSERT INTO PushNotificationChannels (ChannelUri, ExpirationTime) VALUES ('$channelUri', (UNIX_TIMESTAMP() + $expiryTime))";
-$result = mysql_query($query);
+$query = $db->prepare(
+	"INSERT INTO PushNotificationChannels (ChannelUri, ExpirationTime) VALUES (?, ?)"
+);
+$query->bind_param('si', $channelUri, UNIX_TIMESTAMP() + $expiryTime);
+$result = db_query($db, $query);
 if (!$result)
 {
 	http_response_code(400);

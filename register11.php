@@ -125,9 +125,12 @@ echo $SCORE;
 
 <?php
 
- $query = "insert into Reclinees (FirstName, LastName, Email, Status, Commitment) values (\"".$FNAME."\", \"".$LNAME."\", \"".$EMAIL."\", \"".$STATUS."\", \"".$commitment."\")"; 
+ $query = $db->prepare(
+   "insert into Reclinees (FirstName, LastName, Email, Status, Commitment) values (?, ?, ?, ?, ?)"
+ );
+ $query->bind_param('sssss', $FNAME, $LNAME, $EMAIL, $STATUS, $commitment);
  
-  $result = mysql_query($query);
+  $result = db_query($db, $query);
 
   if ($result != TRUE){ 
       echo "We have a problem.";

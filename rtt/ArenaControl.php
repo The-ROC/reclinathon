@@ -4,140 +4,182 @@ include "connect.php";
 
 if ($_GET["action"] == "Empty")
 {
-  $query = "TRUNCATE TABLE ARENA_CONTROL";
-  $result = mysql_query($query);
+  $query = $db->prepare("TRUNCATE TABLE ARENA_CONTROL");
+  $result = db_query($db, $query);
 } 
 
 if ($_GET["action"] == "Send Command" && is_numeric($_GET["Command"]) && is_numeric($_GET["Param1"]) && is_numeric($_GET["Param2"]))
 {
   $QueueLevel = 0;
-  $query = "SELECT MAX(QueueLevel) FROM ARENA_CONTROL";
-  $result = mysql_query($query);
-  $row = mysql_fetch_row($result);
+  $query = $db->prepare("SELECT MAX(QueueLevel) FROM ARENA_CONTROL");
+  $result = db_query($db, $query);
+  $row = $result->fetch_row();
   if ($row)
   {
     $QueueLevel = $row[0] + 1;
   }
 
-  $query = "INSERT INTO ARENA_CONTROL VALUES('" . $QueueLevel . "', '" . $_GET["Command"] . "', '" . $_GET["Param1"] . "', '" . $_GET["Param2"] . "')";
-  $result = mysql_query($query);
+  $query = $db->prepare(
+    "INSERT INTO ARENA_CONTROL VALUES(?, ?, ?, ?)"
+  );
+  $query->bind_param('iiii', $QueueLevel, $_GET['Command'], $_GET['Param1'], $_GET['Param2']);
+  $result = db_query($db, $query);
 }
 
 if ($_GET["action"] == "TubeTechOn")
 {
   $QueueLevel = 0;
-  $query = "SELECT MAX(QueueLevel) FROM ARENA_CONTROL";
-  $result = mysql_query($query);
-  $row = mysql_fetch_row($result);
+  $query = $db->prepare("SELECT MAX(QueueLevel) FROM ARENA_CONTROL");
+  $result = db_query($db, $query);
+  $row = $result->fetch_row();
   if ($row)
   {
     $QueueLevel = $row[0] + 1;
   }
 
-  $query = "INSERT INTO ARENA_CONTROL VALUES('" . $QueueLevel . "', '1', '6', '100')";
-  $result = mysql_query($query);
+  $query = $db->prepare(
+    "INSERT INTO ARENA_CONTROL VALUES(?, '1', '6', '100')"
+  );
+  $query->bind_param('i', $QueueLevel);
+  $result = db_query($db, $query);
 }
 
 if ($_GET["action"] == "TubeTechOff")
 {
   $QueueLevel = 0;
-  $query = "SELECT MAX(QueueLevel) FROM ARENA_CONTROL";
-  $result = mysql_query($query);
-  $row = mysql_fetch_row($result);
+  $query = $db->prepare("SELECT MAX(QueueLevel) FROM ARENA_CONTROL");
+  $result = db_query($db, $query);
+  $row = $result->fetch_row();
   if ($row)
   {
     $QueueLevel = $row[0] + 1;
   }
 
-  $query = "INSERT INTO ARENA_CONTROL VALUES('" . $QueueLevel . "', '1', '6', '0')";
-  $result = mysql_query($query);
+  $query = $db->prepare(
+    "INSERT INTO ARENA_CONTROL VALUES(?, '1', '6', '0')"
+  );
+  $query->bind_param('i', $QueueLevel);
+  $result = db_query($db, $query);
 }
 
 if ($_GET["action"] == "LightsOn")
 {
   $QueueLevel = 0;
-  $query = "SELECT MAX(QueueLevel) FROM ARENA_CONTROL";
-  $result = mysql_query($query);
-  $row = mysql_fetch_row($result);
+  $query = $db->prepare("SELECT MAX(QueueLevel) FROM ARENA_CONTROL");
+  $result = db_query($db, $query);
+  $row = $result->fetch_row();
   if ($row)
   {
     $QueueLevel = $row[0] + 1;
   }
 
-  $query = "INSERT INTO ARENA_CONTROL VALUES('" . $QueueLevel . "', '1', '1', '100')";
-  $result = mysql_query($query);
-  $query = "INSERT INTO ARENA_CONTROL VALUES('" . ($QueueLevel+1) . "', '1', '2', '100')";
-  $result = mysql_query($query);
-  $query = "INSERT INTO ARENA_CONTROL VALUES('" . ($QueueLevel+2) . "', '1', '3', '100')";
-  $result = mysql_query($query);
+  $query = $db->prepare(
+    "INSERT INTO ARENA_CONTROL VALUES(?, '1', '1', '100')"
+  );
+  $query->bind_param('i', $QueueLevel);
+  $result = db_query($db, $query);
+  $query = $db->prepare(
+    "INSERT INTO ARENA_CONTROL VALUES(?, '1', '2', '100')"
+  );
+  $query->bind_param('i', $QueueLevel+1);
+  $result = db_query($db, $query);
+  $query = $db->prepare(
+    "INSERT INTO ARENA_CONTROL VALUES(?, '1', '3', '100')"
+  );
+  $query->bind_param('i', $QueueLevel+2);
+  $result = db_query($db, $query);
 }
 
 if ($_GET["action"] == "LightsOff")
 {
   $QueueLevel = 0;
-  $query = "SELECT MAX(QueueLevel) FROM ARENA_CONTROL";
-  $result = mysql_query($query);
-  $row = mysql_fetch_row($result);
+  $query = $db->prepare("SELECT MAX(QueueLevel) FROM ARENA_CONTROL");
+  $result = db_query($db, $query);
+  $row = $result->fetch_row();
   if ($row)
   {
     $QueueLevel = $row[0] + 1;
   }
 
-  $query = "INSERT INTO ARENA_CONTROL VALUES('" . $QueueLevel . "', '1', '1', '0')";
-  $result = mysql_query($query);
-  $query = "INSERT INTO ARENA_CONTROL VALUES('" . ($QueueLevel+1) . "', '1', '2', '0')";
-  $result = mysql_query($query);
-  $query = "INSERT INTO ARENA_CONTROL VALUES('" . ($QueueLevel+2) . "', '1', '3', '0')";
-  $result = mysql_query($query);
+  $query = $db->prepare(
+    "INSERT INTO ARENA_CONTROL VALUES(?, '1', '1', '0')"
+  );
+  $query->bind_param('i', $QueueLevel);
+  $result = db_query($db, $query);
+  $query = $db->prepare(
+    "INSERT INTO ARENA_CONTROL VALUES(?, '1', '2', '0')"
+  );
+  $query->bind_param('i', $QueueLevel+1);
+  $result = db_query($db, $query);
+  $query = $db->prepare(
+    "INSERT INTO ARENA_CONTROL VALUES(?, '1', '3', '0')"
+  );
+  $query->bind_param('i', $QueueLevel+2);
+  $result = db_query($db, $query);
 }
 
 if ($_GET["action"] == "LightsDim")
 {
   $QueueLevel = 0;
-  $query = "SELECT MAX(QueueLevel) FROM ARENA_CONTROL";
-  $result = mysql_query($query);
-  $row = mysql_fetch_row($result);
+  $query = $db->prepare("SELECT MAX(QueueLevel) FROM ARENA_CONTROL");
+  $result = db_query($db, $query);
+  $row = $result->fetch_row();
   if ($row)
   {
     $QueueLevel = $row[0] + 1;
   }
 
-  $query = "INSERT INTO ARENA_CONTROL VALUES('" . $QueueLevel . "', '1', '1', '20')";
-  $result = mysql_query($query);
-  $query = "INSERT INTO ARENA_CONTROL VALUES('" . ($QueueLevel+1) . "', '1', '2', '20')";
-  $result = mysql_query($query);
-  $query = "INSERT INTO ARENA_CONTROL VALUES('" . ($QueueLevel+2) . "', '1', '3', '20')";
-  $result = mysql_query($query);
+  $query = $db->prepare(
+    "INSERT INTO ARENA_CONTROL VALUES(?, '1', '1', '20')"
+  );
+  $query->bind_param('i', $QueueLevel);
+  $result = db_query($db, $query);
+  $query = $db->prepare(
+    "INSERT INTO ARENA_CONTROL VALUES(?, '1', '2', '20')"
+  );
+  $query->bind_param('i', $QueueLevel+1);
+  $result = db_query($db, $query);
+  $query = $db->prepare(
+    "INSERT INTO ARENA_CONTROL VALUES(?, '1', '3', '20')"
+  );
+  $query->bind_param('i', $QueueLevel+2);
+  $result = db_query($db, $query);
 }
 
 if ($_GET["action"] == "KitchenLightOn")
 {
   $QueueLevel = 0;
-  $query = "SELECT MAX(QueueLevel) FROM ARENA_CONTROL";
-  $result = mysql_query($query);
-  $row = mysql_fetch_row($result);
+  $query = $db->prepare("SELECT MAX(QueueLevel) FROM ARENA_CONTROL");
+  $result = db_query($db, $query);
+  $row = $result->fetch_row();
   if ($row)
   {
     $QueueLevel = $row[0] + 1;
   }
 
-  $query = "INSERT INTO ARENA_CONTROL VALUES('" . $QueueLevel . "', '1', '4', '100')";
-  $result = mysql_query($query);
+  $query = $db->prepare(
+    "INSERT INTO ARENA_CONTROL VALUES(?, '1', '4', '100')"
+  );
+  $query->bind_param('i', $QueueLevel);
+  $result = db_query($db, $query);
 }
 
 if ($_GET["action"] == "KitchenLightOff")
 {
   $QueueLevel = 0;
-  $query = "SELECT MAX(QueueLevel) FROM ARENA_CONTROL";
-  $result = mysql_query($query);
-  $row = mysql_fetch_row($result);
+  $query = $db->prepare("SELECT MAX(QueueLevel) FROM ARENA_CONTROL");
+  $result = db_query($db, $query);
+  $row = $result->fetch_row();
   if ($row)
   {
     $QueueLevel = $row[0] + 1;
   }
 
-  $query = "INSERT INTO ARENA_CONTROL VALUES('" . $QueueLevel . "', '1', '4', '0')";
-  $result = mysql_query($query);
+  $query = $db->prepare(
+    "INSERT INTO ARENA_CONTROL VALUES(?, '1', '4', '0')"
+  );
+  $query->bind_param('i', $QueueLevel);
+  $result = db_query($db, $query);
 }
 
 ?>
@@ -174,10 +216,10 @@ if ($_GET["action"] == "KitchenLightOff")
 
 <?php
 
-$query = "SELECT * FROM ARENA_CONTROL ORDER BY QueueLevel";
-$result = mysql_query($query);
+$query = $db->prepare("SELECT * FROM ARENA_CONTROL ORDER BY QueueLevel");
+$result = db_query($db, $query);
 
-if (!$result || mysql_num_rows($result) == 0)
+if (!$result || $result->num_rows == 0)
 {
     echo "No Queued Commands.<BR>";
 }
@@ -186,7 +228,7 @@ else
     echo "Queued Commands: <INPUT TYPE='submit' NAME='action' VALUE='Empty'></INPUT> <INPUT TYPE='submit' NAME='action' VALUE='Refresh'></INPUT><BR>";
 }
 
-while ($row = mysql_fetch_row($result))
+while ($row = $result->fetch_row())
 {
     echo $row[1] . " " . $row[2] . " " . $row[3] . "<BR>";
 }

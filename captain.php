@@ -17,10 +17,10 @@ if(!session_is_registered("TIMER")) {
 }
 
 if(!session_is_registered("RANDMAX")) {
-  $query = "SELECT * FROM Trivia";
-  $result = mysql_query($query);
-  $RANDMAX = mysql_num_rows($result);
-  $row = mysql_fetch_row($result);
+  $query = $db->prepare("SELECT * FROM Trivia");
+  $result = db_query($db, $query);
+  $RANDMAX = $result->num_rows;
+  $row = $result->fetch_row();
   session_register("RANDMAX");
 }
 

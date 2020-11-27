@@ -1,14 +1,17 @@
 <?php 
 
-$TEST_SERVER = file_exists($_SERVER['DOCUMENT_ROOT']."\include\localdb") || file_exists($_SERVER['DOCUMENT_ROOT']."include/localdb");
+$TEST_SERVER = 
+    $_SERVER['SERVER_NAME'] == 'localhost' || 
+    file_exists($_SERVER['DOCUMENT_ROOT']."\include\localdb") || 
+    file_exists($_SERVER['DOCUMENT_ROOT']."include/localdb");
 
 if (!$TEST_SERVER)
 {
-    $db = mysql_pconnect("db1530.perfora.net", "dbo248802449", "Dr.Bundy");
+    $db = mysqli_connect("p:db1530.perfora.net", "dbo248802449", "Dr.Bundy", "db248802449");
 }
 else
 {
-    $db = mysql_connect("localhost", "ROC_USER", "Dr.Bundy");
+    $db = mysqli_connect("localhost", "ROC_USER", "Dr.Bundy", "db248802449");
 }
 
 if(!$db)
@@ -17,6 +20,22 @@ if(!$db)
     exit;
 }
 
-mysql_select_db("db248802449"); 
+function db_query ($db, $query)
+{
+    $result = $query->execute();
+    if (!$result)
+    {
+        $error = 'Error executing query: ' . $db->error;
+    }
+    else
+    {
+        $selectResult = $query->get_result();
+        if ($selectResult) {
+            $result = $selectResult;
+        } 
+    }
+
+    return $result;
+}
 
 ?>

@@ -17,18 +17,18 @@ if(!session_is_registered("TIMER")) {
 }
 
 if(!session_is_registered("RANDMAX")) {
-  $query = "SELECT * FROM Trivia";
-  $result = mysql_query($query);
-  $RANDMAX = mysql_num_rows($result);
-  $row = mysql_fetch_row($result);
+  $query = $db->prepare("SELECT * FROM Trivia");
+  $result = db_query($db, $query);
+  $RANDMAX = $result->num_rows;
+  $row = $result->fetch_row();
   session_register("RANDMAX");
 }
 
 if(!session_is_registered("RANDMAX_CLIP")) {
-  $query = "SELECT * FROM VideoClips";
-  $result = mysql_query($query);
-  $RANDMAX_CLIP = mysql_num_rows($result);
-  $row = mysql_fetch_row($result);
+  $query = $db->prepare("SELECT * FROM VideoClips");
+  $result = db_query($db, $query);
+  $RANDMAX_CLIP = $result->num_rows;
+  $row = $result->fetch_row();
   session_register("RANDMAX_CLIP");
 }
 
@@ -48,9 +48,9 @@ if(!session_is_registered("MODE")) {
 }
 
 if(!session_is_registered("NEXT_MOVIE")) {
-  $query = "SELECT * FROM NextMovie";
-  $result = mysql_query($query);
-  $row = mysql_fetch_row($result);
+  $query = $db->prepare("SELECT * FROM NextMovie");
+  $result = db_query($db, $query);
+  $row = $result->fetch_row();
   $NEXT_MOVIE = $row[0];
   session_register("NEXT_MOVIE");
 }
@@ -76,9 +76,10 @@ else if($addtime != "Set Time" && $addtime != "Set Movie" && $addtime > 0) {
 }
 
 if($MODE = 1) {
-  $query = "SELECT * FROM VideoClips WHERE VCID = ".$RAND_CLIP;
-  $result = mysql_query($query);
-  $row = mysql_fetch_row($result);
+  $query = $db->prepare("SELECT * FROM VideoClips WHERE VCID = ?");
+  $query->bind_param('i', $RAND_CLIP);
+  $result = db_query($db, $query);
+  $row = $result->fetch_row();
   $refresh = $row[2];
 }
 else {

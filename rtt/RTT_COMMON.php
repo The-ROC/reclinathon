@@ -69,6 +69,11 @@ abstract class RTT_COMMON
         return self::$Database;
     }
 
+    public function GetConnection()
+    {
+        return $this->GetDatabase()->GetConnection();
+    }
+
     public function Query($query)
     {
         return $this->GetDatabase()->Query($query);
@@ -76,12 +81,12 @@ abstract class RTT_COMMON
 
     public function GetCurrentSeason()
     {
-        $query = "SELECT * from CURRENT_SEASON";
-	$result = $this->Query($query);
+        $query = $this->GetConnection()->prepare("SELECT * from CURRENT_SEASON");
+        $result = $this->Query($query);
 
-	if ($result)
+	    if ($result)
         {
-            $row = mysql_fetch_assoc($result);
+            $row = $result->fetch_assoc();
 
             if ($row)
             {

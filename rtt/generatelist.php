@@ -21,9 +21,9 @@ if ($_GET["VotesPerAutoApprove"] != "")
     $VotesPerAutoApprove = $_GET["VotesPerAutoApprove"];
 }
 
-$query = "SELECT GenreID, Name FROM GENRE";
+$query = $MovieList->GetConnection()->prepare("SELECT GenreID, Name FROM GENRE");
 $result = $MovieList->Query($query);
-while($row = mysql_fetch_assoc($result))
+while($row = $result->fetch_assoc())
 {
     $GenreNames[$NumGenres] = $row["Name"];
     $GenreValues[$NumGenres] = $row["GenreID"];

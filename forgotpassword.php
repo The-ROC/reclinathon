@@ -10,9 +10,10 @@ $passwordHash = sha1($password);
 $message = "";
 $succeeded = true;
 
-$query = "SELECT * FROM RECLINEE WHERE Email='$email'";
-$result = mysql_query($query);
-if (!$result || mysql_num_rows($result) == 0)
+$query = $db->prepare("SELECT * FROM RECLINEE WHERE Email=?");
+$query->bind_param('s', $email);
+$result = db_query($db, $query);
+if (!$result || $result->num_rows == 0)
 {
     $message = "The provided email address was not registered with reclinathon.  Please try again.  If you do not know the email address you used to register for reclinathon.com, please contact roc@reclinathon.com to restore your access.";
     $succeeded = false;
@@ -20,12 +21,15 @@ if (!$result || mysql_num_rows($result) == 0)
 
 if ($succeeded)
 {
-    $row = mysql_fetch_assoc($result);
+    $row = $result->fetch_assoc();
     $username = $row["UserName"];
     $reclineeID = $row["ReclineeID"];
 
-    $query = "INSERT INTO TempPasswords (PasswordHash, ReclineeID) VALUES ('$passwordHash', '$reclineeID')";
-    $result = mysql_query($query);
+    $query = $db->prepare(
+        "INSERT INTO TempPasswords (PasswordHash, ReclineeID) VALUES (?, ?)"
+    );
+    $query->bind_param('si', $passwordHash, $reclineeID);
+    $result = db_query($db, $query);
     if (!$result)
     {
         $message = "Your request failed.  Please follow up with roc@reclinathon.com to restore your access.";
@@ -49,7 +53,9 @@ if ($succeeded)
     }
 }
 
-$URL = "http://" . $_SERVER['SERVER_NAME'] . "/login.php?message=" . $message;
+$currUrl = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
+$baseUrl = substr($currUrl, 0, strrpos($currUrl, '/')) . '/';
+$URL = $baseUrl . "login.php?message=" . $message;
 header ("Location: $URL");
 
 ?>

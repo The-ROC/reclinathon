@@ -27,7 +27,10 @@ $seasons = array("Winter 2008", "Winter 2009", "Winter 2010", "Winter2011");
 foreach($seasons as $SEASON) {
 //$SEASON = "Winter 2008";
 
-    $query = "SELECT * FROM RECLINATHON_CONTEXT WHERE Season = '" . $SEASON . "' ORDER BY TimeStamp ASC";
+    $query = $rcx->GetConnection()->prepare(
+		"SELECT * FROM RECLINATHON_CONTEXT WHERE Season =? ORDER BY TimeStamp ASC"
+	);
+	$query->bind_param('s', $SEASON);
     $result = $rcx->query($query);
     if (!$result)
     {
@@ -39,7 +42,7 @@ foreach($seasons as $SEASON) {
     //echo "Printing Rows:";
     	$rows = array();
 	$endTimes = array();
-    	while($row = mysql_fetch_assoc($result)) {
+    	while($row = $result->fetch_assoc()) {
 		$rows[] = $row;
 		$endTimes[] = $row['TimeStamp'] + $row['EstimatedDuration'];
 	}

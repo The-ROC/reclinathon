@@ -137,14 +137,17 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
 
     public function Load($ContextID)
     {
-        $query = "SELECT * FROM RECLINATHON_CONTEXT rc LEFT JOIN RECLINING_STATE rs ON rc.StateID = rs.StateID LEFT JOIN STATE_MODIFIER sm ON rc.ModifierID = sm.ModifierID LEFT JOIN LOGO lg ON rc.LogoID = lg.LogoID WHERE ContextID = " . $ContextID;
+        $query = $this->GetConnection()->prepare(
+            "SELECT * FROM RECLINATHON_CONTEXT rc LEFT JOIN RECLINING_STATE rs ON rc.StateID = rs.StateID LEFT JOIN STATE_MODIFIER sm ON rc.ModifierID = sm.ModifierID LEFT JOIN LOGO lg ON rc.LogoID = lg.LogoID WHERE ContextID = ?"
+        );
+        $query->bind_param('i', $ContextID);
         $result = $this->Query($query);
         if (!$result)
         {
             return FALSE;
         }
         
-        $row = mysql_fetch_assoc($result);
+        $row = $result->fetch_assoc();
         if (!$row)
         {
             return FALSE;
@@ -193,13 +196,16 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
 
     public function LoadCurrent($Season)
     {
-        $query = "SELECT ContextID FROM RECLINATHON_CONTEXT WHERE TimeStamp <= '" . date("U") . "' AND Season = '" . $Season . "' ORDER BY TimeStamp DESC";
+        $query = $this->GetConnection()->prepare(
+            "SELECT ContextID FROM RECLINATHON_CONTEXT WHERE TimeStamp <= ? AND Season = ? ORDER BY TimeStamp DESC"
+        );
+        $query->bind_param('is', date('U'), $Season);
         $result = $this->query($query);
         if (!$result)
         {
             return false;
         }
-        $row = mysql_fetch_assoc($result);
+        $row = $result->fetch_assoc();
         if (!$row)
         {
             return false;
@@ -260,7 +266,7 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
 
     public function DisplayStateSelectList()
     {
-        $query = "SELECT StateID, State FROM RECLINING_STATE ORDER BY State";
+        $query = $this->GetConnection()->prepare("SELECT StateID, State FROM RECLINING_STATE ORDER BY State");
         $result = $this->query($query);
         if (!$result)
         {
@@ -269,7 +275,7 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
 
         echo "<SELECT NAME='RecliningState'>";
 
-        while($row = mysql_fetch_assoc($result))
+        while($row = $result->fetch_assoc())
         {
             echo "<OPTION VALUE='" . $row["State"] . "'";
             if ($this->RecliningState == $row["State"])
@@ -286,7 +292,9 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
 
     public function DisplayStateModifierSelectList()
     {
-        $query = "SELECT ModifierID, Modifier FROM STATE_MODIFIER ORDER BY Modifier";
+        $query = $this->GetConnection()->prepare(
+            "SELECT ModifierID, Modifier FROM STATE_MODIFIER ORDER BY Modifier"
+        );
         $result = $this->query($query);
         if (!$result)
         {
@@ -296,7 +304,7 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
         echo "<SELECT NAME='RecliningStateModifier'>";
         echo "<OPTION VALUE=''> </OPTION>";
 
-        while($row = mysql_fetch_assoc($result))
+        while($row = $result->fetch_assoc())
         {
             echo "<OPTION VALUE='" . $row["Modifier"] . "'";
             if ($this->RecliningStateModifier == $row["Modifier"])
@@ -393,9 +401,12 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
         $query = "SELECT ContextID FROM RECLINATHON_CONTEXT WHERE TimeStamp <= '" . $MaxTimeStamp . "' AND Season = '" . $this->Season . "' ORDER BY TimeStamp DESC LIMIT 5"; 
         */
 
-        $query = "SELECT ContextID FROM RECLINATHON_CONTEXT WHERE TimeStamp <= UNIX_TIMESTAMP() AND Season = '" . $this->Season . "' ORDER BY TimeStamp DESC";
+        $query = $this->GetConnection()->prepare(
+            "SELECT ContextID FROM RECLINATHON_CONTEXT WHERE TimeStamp <= UNIX_TIMESTAMP() AND Season = ? ORDER BY TimeStamp DESC"
+        );
+        $query->bind_param('s', $this->Season);
         $result = $this->query($query);
-        while($row = mysql_fetch_assoc($result))
+        while($row = $result->fetch_assoc())
         {
             $rcx = new RECLINATHON_CONTEXT();
             $rcx->Load($row["ContextID"]);
@@ -431,10 +442,13 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
 		echo "<TABLE>";
         echo "<TR cellspacing='0'><TH colspan='2'>Downtime Entertainment Manager</TH></TR>";
 		
-		$query = "SELECT * FROM VideoClips WHERE Played = '" . $this->ContextID . "' ORDER BY Ordering";
+		$query = $this->GetConnection()->prepare(
+            "SELECT * FROM VideoClips WHERE Played = ? ORDER BY Ordering"
+        );
+        $query->bind_param('i', $this->ContextID);
         $result = $this->query($query);
 		
-		while ($row = mysql_fetch_assoc($result))
+		while ($row = $result->fetch_assoc())
         {
 			$clipId = $row["VCID"];
             $clipCaption = $row["Caption"];
@@ -443,10 +457,13 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
 		
 		echo "<TR><TD><SELECT id='videoClipToAdd' name='videoClipToAdd' style='width: 100%'>";
 		
-		$query = "SELECT * FROM VideoClips WHERE Played != '" . $this->ContextID . "' ORDER BY Caption";
+		$query = $this->GetConnection()->prepare(
+            "SELECT * FROM VideoClips WHERE Played != ? ORDER BY Caption"
+        );
+        $query->bind_param('i', $this->ContextID);
         $result = $this->query($query);
 		
-		while ($row = mysql_fetch_assoc($result))
+		while ($row = $result->fetch_assoc())
         {
 			$clipId = $row["VCID"];
 			$clipCaption = $row["Caption"];
@@ -462,14 +479,17 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
         echo "<TABLE>";
         echo "<TR cellspacing='0'><TH>Entertainment</TH></TR>";
 		
-        $query = "SELECT * FROM VideoClips WHERE Played = '" . $this->ContextID . "'";
+        $query = $this->GetConnection()->prepare(
+            "SELECT * FROM VideoClips WHERE Played = ?"
+        );
+        $query->bind_param('i', $this->ContextID);
         $result = $this->query($query);
-		$numClips = mysql_num_rows($result);
+		$numClips = $result->num_rows;
 		
 		echo "<INPUT type='hidden' name='numClips' id='numClips' value='$numClips' />";
 		
 		$i = 0;
-        while ($row = mysql_fetch_assoc($result))
+        while ($row = $result->fetch_assoc())
         {
 			$clipUrl = $row["URL"];
             $clipCaption = $row["Caption"];
@@ -490,13 +510,16 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
 
 	public function GetRandomTriviaItem()
 	{
-		$query = "SELECT MAX(TID) AS LargestID FROM Trivia";
+		$query = $this->GetConnection()->prepare("SELECT MAX(TID) AS LargestID FROM Trivia");
 		$result = $this->query($query);
-		$row = mysql_fetch_assoc($result);
+		$row = $result->fetch_assoc();
 		$RandID = mt_rand(1, $row["LargestID"]);
-		$query = "SELECT * FROM Trivia WHERE TID >= '" . $RandID . "' ORDER BY TID LIMIT 1";
+		$query = $this->GetConnection()->prepare(
+            "SELECT * FROM Trivia WHERE TID >= ? ORDER BY TID LIMIT 1"
+        );
+        $query->bind_param('i', $RandID);
 		$result = $this->query($query);
-		$row = mysql_fetch_assoc($result);
+		$row = $result->fetch_assoc();
 		$question = htmlspecialchars($row["Question"], ENT_QUOTES | ENT_XML1);
 		$answer = htmlspecialchars($row["Answer"], ENT_QUOTES | ENT_XML1);
 		
@@ -529,10 +552,10 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
 
     public function DisplayAll()
     {
-        $query = "SELECT * FROM RECLINATHON_CONTEXT ORDER BY TimeStamp DESC";
+        $query = $this->GetConnection()->prepare("SELECT * FROM RECLINATHON_CONTEXT ORDER BY TimeStamp DESC");
         $result = $this->query($query);
 
-        while($row = mysql_fetch_assoc($result))
+        while($row = $result->fetch_assoc())
         {
             $context = new RECLINATHON_CONTEXT();
             $context->Load($row["ContextID"]);
@@ -542,11 +565,14 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
 
     public function DumpSeason($season)
     {
-        $query = "SELECT * FROM RECLINATHON_CONTEXT WHERE Season = '" . $season . "' ORDER BY TimeStamp";
+        $query = $this->GetConnection()->prepare(
+            "SELECT * FROM RECLINATHON_CONTEXT WHERE Season = ? ORDER BY TimeStamp"
+        );
+        $query->bind_param('s', $season);
         $result = $this->query($query);
 
         print "<ContextList>";
-        while($row = mysql_fetch_assoc($result))
+        while($row = $result->fetch_assoc())
         {
             $context = new RECLINATHON_CONTEXT();
             $context->Load($row["ContextID"]);
@@ -557,11 +583,14 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
     
 	public function GetContextListBySeason($season)
     {
-        $query = "SELECT * FROM RECLINATHON_CONTEXT WHERE Season = '" . $season . "' ORDER BY TimeStamp";
+        $query = $this->GetConnection()->prepare(
+            "SELECT * FROM RECLINATHON_CONTEXT WHERE Season = ? ORDER BY TimeStamp"
+        );
+        $query->bind_param('s', $season);
         $result = $this->query($query);
 
 		$ContextList = array();
-        while($row = mysql_fetch_assoc($result))
+        while($row = $result->fetch_assoc())
         {
             $context = new RECLINATHON_CONTEXT();
             $context->Load($row["ContextID"]);
@@ -573,11 +602,14 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
 	
 	public function GetMovieListBySeason($season)
     {
-        $query = "SELECT * FROM RECLINATHON_CONTEXT WHERE Season = '" . $season . "' ORDER BY TimeStamp";
+        $query = $this->GetConnection()->prepare(
+            "SELECT * FROM RECLINATHON_CONTEXT WHERE Season = ? ORDER BY TimeStamp"
+        );
+        $query->bind_param('s', $season);
         $result = $this->query($query);
 
 		$MovieList = array();
-        while($row = mysql_fetch_assoc($result))
+        while($row = $result->fetch_assoc())
         {
             $context = new RECLINATHON_CONTEXT();
             $context->Load($row["ContextID"]);
@@ -647,10 +679,12 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
     {
         echo "<Seasons>";
         
-		$query = "SELECT DISTINCT Season FROM RECLINATHON_CONTEXT ORDER BY Season DESC";
+		$query = $this->GetConnection()->prepare(
+            "SELECT DISTINCT Season FROM RECLINATHON_CONTEXT ORDER BY Season DESC"
+        );
         $result = $this->query($query);
 
-        while($row = mysql_fetch_assoc($result))
+        while($row = $result->fetch_assoc())
         {
 		    $season = $row["Season"];
 		    echo "<Season name='$season' />";
@@ -662,30 +696,34 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
     public function Insert()
     {
         $StateID = 0;
-        $query = "SELECT StateID FROM RECLINING_STATE WHERE State = '" . $this->RecliningState . "'";
+        $query = $this->GetConnection()->prepare("SELECT StateID FROM RECLINING_STATE WHERE State = ?");
+        $query->bind_param('s', $this->RecliningState);
         $result = $this->query($query);
         if (!$result)
         {
             return false;
         }
-        if ($row = mysql_fetch_assoc($result))
+        if ($row = $result->fetch_assoc())
         {
             $StateID = $row["StateID"];
         }
         else
         {
-            $query = "INSERT INTO RECLINING_STATE (State) VALUES ('" . $this->RecliningState . "')";
-            echo $query . "<BR>";
+            $queryString = "INSERT INTO RECLINING_STATE (State) VALUES ('" . $this->RecliningState . "')";
+            $query = $this->GetConnection()->prepare("INSERT INTO RECLINING_STATE (State) VALUES (?)");
+            $query->bind_param('s', $this->RecliningState);
+            echo $queryString . "<BR>";
         }
 
         $ModifierID = 0;
-        $query = "SELECT ModifierID FROM STATE_MODIFIER WHERE Modifier = '" . $this->RecliningStateModifier . "'";
+        $query = $this->GetConnection()->prepare("SELECT ModifierID FROM STATE_MODIFIER WHERE Modifier = ?");
+        $query->bind_param('s', $this->RecliningStateModifier);
         $result = $this->query($query);
         if (!$result)
         {
             return false;
         }
-        if ($row = mysql_fetch_assoc($result))
+        if ($row = $result->fetch_assoc())
         {
             $ModifierID = $row["ModifierID"];
         }
@@ -693,11 +731,17 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
         {
             if ($this->RecliningStateModifier != "")
             {
-                $query = "INSERT INTO STATE_MODIFIER (Modifier) VALUES ('" . $this->RecliningStateModifier . "')";
-                echo $query . "<BR>";
+                $queryString = "INSERT INTO STATE_MODIFIER (Modifier) VALUES ('" . $this->RecliningStateModifier . "')";
+                $query = $this->GetConnection()->prepare(
+                    "INSERT INTO STATE_MODIFIER (Modifier) VALUES (?)"
+                );
+                $query->bind_param('s', $this->RecliningStateModifier);
+                echo $queryString . "<BR>";
             }
         }
         
+        // Building querystring purely for logging/debugging purposes
+        // See prepared statement below
         $query = "INSERT INTO RECLINATHON_CONTEXT (TimeStamp, EstimatedDuration, CaptainID, StateID, ModifierID, MovieID, Season, LogoID, Pending) VALUES (";
         $query = $query . "'" . $this->TimeStamp . "', ";
         $query = $query . "'" . $this->EstimatedDuration . "', ";
@@ -710,6 +754,14 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
 		$query = $query . "'" . $this->Pending . "')";
 
         echo $query . "<BR>";
+        $query = $this->GetConnection()->prepare(
+            "INSERT INTO RECLINATHON_CONTEXT (TimeStamp, EstimatedDuration, CaptainID, StateID, ModifierID, MovieID, Season, LogoID, Pending) VALUES (?, ?, ?, ?, ?, ?, ?, '0', ?)"
+        );
+        $query->bind_param(
+            'iiiiiisi', 
+            $this->TimeStamp, $this->EstimatedDuration, $this->Captain->GetID(), $StateID, 
+            $ModifierID, $this->Movie->GetID(), $this->Season, $this->Pending
+        );
         $result = $this->Query($query);
         if (!$result)
         {
@@ -722,45 +774,51 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
     public function Update()
     {
         $StateID = 0;
-        $query = "SELECT StateID FROM RECLINING_STATE WHERE State = '" . $this->RecliningState . "'";
+        $query = $this->GetConnection()->prepare("SELECT StateID FROM RECLINING_STATE WHERE State = ?");
+        $query->bind_param('s', $this->RecliningState);
         $result = $this->query($query);
         if (!$result)
         {
             return false;
         }
-        if ($row = mysql_fetch_assoc($result))
+        if ($row = $result->fetch_assoc())
         {
             $StateID = $row["StateID"];
         }
         else
         {
-            $query = "INSERT INTO RECLINING_STATE (State) VALUES ('" . $this->RecliningState . "')";
+            $query = $this->GetConnection()->prepare("INSERT INTO RECLINING_STATE (State) VALUES (?)");
+            $query->bind_param('s', $this->RecliningState);
             //echo $query . "<BR>";
         }
 
         $ModifierID = 0;
-        $query = "SELECT ModifierID FROM STATE_MODIFIER WHERE Modifier = '" . $this->RecliningStateModifier . "'";
+        $query = $this->GetConnection()->prepare("SELECT ModifierID FROM STATE_MODIFIER WHERE Modifier = ?");
+        $query->bind_param('s', $this->RecliningStateModifier);
         $result = $this->query($query);
         if (!$result)
         {
             return false;
         }
-        if ($row = mysql_fetch_assoc($result))
+        if ($row = $result->fetch_assoc())
         {
             $ModifierID = $row["ModifierID"];
         }
         else
         {
-            $query = "INSERT INTO STATE_MODIFIER (Modifier) VALUES ('" . $this->RecliningStateModifier . "')";
+            $query = $this->GetConnection()->prepare("INSERT INTO STATE_MODIFIER (Modifier) VALUES (?)");
+            $query->bind_param('s', $this->RecliningStateModifier);
             //echo $query . "<BR>";
         }
         
-        $query = "UPDATE RECLINATHON_CONTEXT SET ";
-        $query = $query . "CaptainID = '" . $this->Captain->GetID() . "'";
-        $query = $query . ", EstimatedDuration = '" . $this->EstimatedDuration . "'";
-        $query = $query . ", StateID = '" . $StateID . "'";
-        $query = $query . ", ModifierID = '" . $ModifierID . "'";
-        $query = $query . ", MovieID = '" . $this->Movie->GetID() . "' WHERE ContextID = '" . $this->ContextID . "'";
+        $query = $this->GetConnection()->prepare(
+            "UPDATE RECLINATHON_CONTEXT SET CaptainID = ?, EstimatedDuration = ?, StateID = ?, ModifierID = ?, MovieID = ? WHERE ContextID = ?"
+        );
+        $query->bind_param(
+            'iiiiii', 
+            $this->Captain->GetID(), $this->EstimatedDuration, $StateID, 
+            $ModifierID, $this->Movie->GetID(), $this->ContextID
+        );
 
         //echo $query . "<BR>";
         $result = $this->Query($query);
@@ -886,11 +944,11 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
                 $this->Movie->DumpMovies($Season);
                 break;
             case "SENSOR_GetData":
-                $query = "SELECT * FROM SENSOR";
+                $query = $this->GetConnection()->prepare("SELECT * FROM SENSOR");
                 $result = $this->query($query);
-                $NumRows = mysql_num_rows($result);
+                $NumRows = $result->num_rows;
                 echo "<SensorDataList><NumDataPoints>" . $NumRows . "</NumDataPoints>";
-                while ($row = mysql_fetch_row($result))
+                while ($row = $result->fetch_row())
                 {
                     echo "<SensorData><SensorName>" . $row[0] . "</SensorName><TimeStamp>" . $row[1] . "</TimeStamp><SensorValue>" . $row[2] . "</SensorValue></SensorData>";
                 }
@@ -913,14 +971,17 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
             exit();
         }
 
-        $query = "SELECT r.ReclineeID, r.FormalName FROM RECLINEE r JOIN RFID rf on rf.ReclineeID = r.ReclineeID WHERE rf.Tag = '" . $Tag . "'";
+        $query = $this->GetConnection()->prepare(
+            "SELECT r.ReclineeID, r.FormalName FROM RECLINEE r JOIN RFID rf on rf.ReclineeID = r.ReclineeID WHERE rf.Tag = ?"
+        );
+        $query->bind_param('s', $Tag);
         $result = $this->query($query);
         if (!$result)
         {
             echo "SQL Error";
             return false;
         }
-        $row = mysql_fetch_assoc($result);
+        $row = $result->fetch_assoc();
         if (!$row)
         {
             echo "Tag Not Found";
@@ -944,14 +1005,17 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
             exit();
         }
 
-        $query = "SELECT r.ReclineeID, r.FormalName FROM RECLINEE r JOIN RFID rf on rf.ReclineeID = r.ReclineeID WHERE rf.Tag = '" . $Tag . "'";
+        $query = $this->GetConnection()->prepare(
+            "SELECT r.ReclineeID, r.FormalName FROM RECLINEE r JOIN RFID rf on rf.ReclineeID = r.ReclineeID WHERE rf.Tag = ?"
+        );
+        $query->bind_param('s', $Tag);
         $result = $this->query($query);
         if (!$result)
         {
             echo "SQL Error";
             return false;
         }
-        $row = mysql_fetch_assoc($result);
+        $row = $result->fetch_assoc();
         if (!$row)
         {
             echo "Tag Not Found";
@@ -960,11 +1024,14 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
 
         echo $row["FormalName"];
 
-        $query = "INSERT INTO RFID_SWIPE (ReclineeID, TimeStamp, Season) VALUES ('" . $row["ReclineeID"] . "', '" . time() . "', '" . $Season . "')";
+        $query = $this->GetConnection()->prepare(
+            "INSERT INTO RFID_SWIPE (ReclineeID, TimeStamp, Season) VALUES (?, ?, ?)"
+        );
+        $query->bind_param('iis', $row["ReclineeID"], time(), $Season);
         $result = $this->query($query);
         if (!$result)
         {
-            echo $query;
+            //echo $query;
             echo "SQL Insert Error";
             return false;
         }
@@ -1037,13 +1104,16 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
 	
 	public function LoadCurrentNonPending($Season)
     {
-        $query = "SELECT ContextID FROM RECLINATHON_CONTEXT WHERE Season = '$Season' AND Pending='0' ORDER BY ContextID DESC";
+        $query = $this->GetConnection()->prepare(
+            "SELECT ContextID FROM RECLINATHON_CONTEXT WHERE Season = ? AND Pending='0' ORDER BY ContextID DESC"
+        );
+        $query->bind_param('s', $Season);
         $result = $this->query($query);
         if (!$result)
         {
             return false;
         }
-        $row = mysql_fetch_assoc($result);
+        $row = $result->fetch_assoc();
         if (!$row)
         {
             return false;
@@ -1056,7 +1126,10 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
     public function Advance()
 	{
 		// Find the next pending context for this Reclinathon.
-        $query = "SELECT ContextID, Pending FROM RECLINATHON_CONTEXT WHERE Season = '$this->Season' AND ContextId > '$this->ContextID' ORDER BY ContextID LIMIT 1";
+        $query = $this->GetConnection()->prepare(
+            "SELECT ContextID, Pending FROM RECLINATHON_CONTEXT WHERE Season = ? AND ContextId > ? ORDER BY ContextID LIMIT 1"
+        );
+        $query->bind_param('si', $this->Season, $this->ContextID);
         $result = $this->query($query);
 		if (!$result)
         {
@@ -1064,20 +1137,26 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
         }		
 		
 		// If there are no remaining pending contexts, the Reclinathon is over :-(
-		if (mysql_num_rows($result) == 0)
+		if ($result->num_rows == 0)
 		{
 			// Check to see if someone has already ended the Reclinathon.
-			$query = "SELECT * FROM current_remote_reclinathon WHERE RemoteReclinathonId = '$this->Season'";
+			$query = $this->GetConnection()->prepare(
+                "SELECT * FROM current_remote_reclinathon WHERE RemoteReclinathonId = ?"
+            );
+            $query->bind_param('s', $this->Season);
 			$result = $this->Query($query);
 			
-			if (mysql_num_rows($result) == 0)
+			if ($result->num_rows == 0)
 			{
 				return true;
 			}
 			
 			// We've won the race and are responsible for ending the Reclinathon.  Do so now.
 			
-			$query = "UPDATE current_remote_reclinathon SET RemoteReclinathonId = '' WHERE RemoteReclinathonId = '$this->Season'";
+			$query = $this->GetConnection()->prepare(
+                "UPDATE current_remote_reclinathon SET RemoteReclinathonId = '' WHERE RemoteReclinathonId = ?"
+            );
+            $query->bind_param('s', $this->Season);
             $result = $this->Query($query);
 			if (!$result)
 			{
@@ -1099,7 +1178,7 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
 		}
 		
 		// Fetch details about the next pending context.
-        $row = mysql_fetch_assoc($result);
+        $row = $result->fetch_assoc();
         if (!$row)
         {
             return false;
@@ -1114,7 +1193,10 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
 		}
 		
 		// We've won the race and are responsible for advancing the state.  Do so now.
-		$query = "UPDATE RECLINATHON_CONTEXT SET TimeStamp = UNIX_TIMESTAMP(), Pending = '0' WHERE ContextID = '$ContextID'";
+		$query = $this->GetConnection()->prepare(
+            "UPDATE RECLINATHON_CONTEXT SET TimeStamp = UNIX_TIMESTAMP(), Pending = '0' WHERE ContextID = ?"
+        );
+        $query->bind_param('i', $ContextID);
         $result = $this->query($query);
 		
 		// Post a system event for this advancement.

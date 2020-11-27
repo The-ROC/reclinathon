@@ -1,15 +1,18 @@
 <?php
 include "connect.php";
 
-$query = "SELECT * FROM ARENA_CONTROL ORDER BY QueueLevel";
-$result = mysql_query($query);
-$row = mysql_fetch_row($result);
+$query = $db->prepare("SELECT * FROM ARENA_CONTROL ORDER BY QueueLevel");
+$result = db_query($db, $query);
+$row = $result->fetch_row();
 
 if ($row)
 {
     echo $row[1] . " " . $row[2] . " " . $row[3];
-    $query = "DELETE FROM ARENA_CONTROL WHERE QueueLevel = '" . $row[0] ."' LIMIT 1";
-    $result = mysql_query($query);
+    $query = $db->prepare(
+        "DELETE FROM ARENA_CONTROL WHERE QueueLevel = ? LIMIT 1"
+    );
+    $query->bind_param('i', $row[0]);
+    $result = db_query($db, $query);
     if (!$result)
     {
         echo "-1 " . $row[0] . " 0";

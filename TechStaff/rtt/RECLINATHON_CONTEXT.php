@@ -88,14 +88,17 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
 
     public function Load($ContextID)
     {
-        $query = "SELECT * FROM RECLINATHON_CONTEXT rc LEFT JOIN RECLINING_STATE rs ON rc.StateID = rs.StateID LEFT JOIN STATE_MODIFIER sm ON rc.ModifierID = sm.ModifierID WHERE ContextID = " . $ContextID;
+        $query = $this->GetConnection()->prepare(
+            "SELECT * FROM RECLINATHON_CONTEXT rc LEFT JOIN RECLINING_STATE rs ON rc.StateID = rs.StateID LEFT JOIN STATE_MODIFIER sm ON rc.ModifierID = sm.ModifierID WHERE ContextID = ?"
+        );
+        $query->bind_param('i', $ContextID);
         $result = $this->Query($query);
         if (!$result)
         {
             return FALSE;
         }
         
-        $row = mysql_fetch_assoc($result);
+        $row = $result->fetch_assoc();
         if (!$row)
         {
             return FALSE;
@@ -171,10 +174,12 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
 
     public function DisplayAll()
     {
-        $query = "SELECT * FROM RECLINATHON_CONTEXT ORDER BY TimeStamp DESC";
+        $query = $this->GetConnection()->prepare(
+            "SELECT * FROM RECLINATHON_CONTEXT ORDER BY TimeStamp DESC"
+        );
         $result = $this->query($query);
 
-        while($row = mysql_fetch_assoc($result))
+        while($row = $result->fetch_assoc())
         {
             $context = new RECLINATHON_CONTEXT();
             $context->Load($row["ContextID"]);
@@ -184,28 +189,29 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
 
     public function Insert()
     {
-        $query = "INSERT INTO MOVIE (Title, RunTime, TrailerLink, IMDBLink, Freshness, Image) VALUES (";
-        $query = $query . "'" . $this->Title . "', ";
-        $query = $query . "'" . $this->RunTime . "', ";
-        $query = $query . "'" . $this->TrailerLink . "', ";
-        $query = $query . "'" . $this->IMDBLink . "', ";
-        $query = $query . "'" . $this->Freshness . "', ";
-        $query = $query . "'" . $this->Image . "')";
+        $query = $this->GetConnection()->prepare(
+            "INSERT INTO MOVIE (Title, RunTime, TrailerLink, IMDBLink, Freshness, Image) VALUES (?, ?, ?, ?, ?, ?)"
+        );
+        $query->bind_param(
+            'sissis',
+            $this->Title, $this->RunTime, $this->TrailerLink, $this->IMDBLink,
+            $this->Freshness, $this->Image
+        );
 
-        echo $query . "<BR>";
+        //echo $query . "<BR>";
         $result = $this->Query($query);
         if (!$result)
         {
             return FALSE;
         }
 
-        $query = "SELECT LAST_INSERT_ID() AS MovieID";
+        $query = $this->GetConnection()->prepare("SELECT LAST_INSERT_ID() AS MovieID");
         $result = $this->Query($query);
         if (!$result)
         {
             return FALSE;
         }
-        $row = mysql_fetch_assoc($result);
+        $row = $result->fetch_assoc();
         $this->MovieID = $row["MovieID"];  
         
         return $this->Update();
@@ -213,38 +219,45 @@ class RECLINATHON_CONTEXT extends RTT_COMMON
 
     public function Update()
     {
-        $query = "UPDATE MOVIE SET ";
-        $query = $query . "Title = '" . $this->Title . "'";
-        $query = $query . ", RunTime = '" . $this->RunTime . "'";
-        $query = $query . ", TrailerLink = '" . $this->TrailerLink . "'";
-        $query = $query . ", IMDBLink = '" . $this->IMDBLink . "'";
-        $query = $query . ", Freshness = '" . $this->Freshness . "'";
-        $query = $query . ", Image = '" . $this->Image . "' WHERE MovieID = '" . $this->MovieID . "'";
+        $query = $this->GetConnection()->prepare(
+            "UPDATE MOVIE SET Title = ?, RunTime = ?, TrailerLink = ?, IMDBLink = ?, Freshness = ?, Image = ? WHERE MovieID = ?"
+        );
+        $query->bind_param(
+            'sissisi',
+            $this->Title, $this->RunTime, $this->TrailerLink, $this->IMDBLink,
+            $this->Freshness, $this->Image, $this->MovieID
+        );
 
-        echo $query . "<BR>";
+        //echo $query . "<BR>";
         $result = $this->Query($query);
         if (!$result)
         {
             return FALSE;
         }
 
-        $query = "DELETE FROM MOVIE_GENRE WHERE MovieID = '" . $this->MovieID . "'";
+        $query = $this->GetConnection()->prepare(
+            "DELETE FROM MOVIE_GENRE WHERE MovieID = ?"
+        );
+        $query->bind_param('i', $this->MovieID);
         $result = $this->Query($query);
         if(!$result)
         {
             return FALSE;
         }
 
-        $query = "SELECT * FROM GENRE";
+        $query = $this->GetConnection()->prepare("SELECT * FROM GENRE");
         $result = $this->query($query);
-        while($row = mysql_fetch_assoc($result))
+        while($row = $result->fetch_assoc())
         {
             for ($i = 0; $i < $this->NumGenres; $i++)
             {
                 if ($this->Genres[$i]->GenreID == $row["GenreID"])
                 {
-                    $query2 = "INSERT INTO MOVIE_GENRE (MovieID, GenreID) VALUES ('" . $this->MovieID . "', '" . $this->Genres[$i]->GenreID . "')";
-                    echo $query2 . "<BR>";
+                    $query2 = $this->GetConnection()->prepare(
+                        "INSERT INTO MOVIE_GENRE (MovieID, GenreID) VALUES (?, ?)"
+                    );
+                    $query2->bind_param('ii', $this->MovieID, $this->Genres[$i]->GenreID);
+                    //echo $query2 . "<BR>";
                     $result2 = $this->Query($query2);
                     if (!$result2)
                     {

@@ -16,9 +16,12 @@ echo "You have been officially</FONT><BR><h1>!!!BLACKLISTED!!!</H1>";
   $Name = $FNAME." ".$LNAME;
   $IP = $REMOTE_ADDR;
 
-  $query = "insert into Blacklist (Name, Email, IP) values (\"".$Name."\", \"".$EMAIL."\", \"".$IP."\")"; 
+  $query = $db->prepare(
+    "insert into Blacklist (Name, Email, IP) values (?, ?, ?)"
+  );
+  $query->bind_param('sss', $Name, $EMAIL, $IP);
   
-  $result = mysql_query($query);
+  $result = db_query($db, $query);
 
   if ($result != TRUE){ 
       echo "We have a problem.";

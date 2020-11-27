@@ -68,28 +68,34 @@ if ($_POST["QuestionID"] != "")
 $LatestQuestionOrder = 0;
 $LastQuestionOrder = 0;
 
-$query = "SELECT MAX(q.Ordering) AS LatestQuestionOrder FROM QUIZ_ANSWERS a JOIN QUIZ_QUESTION q ON q.QuestionID = a.QuestionID WHERE q.Season = '" . $SEASON . "' AND a.ReclineeID = '" . $ReclineeID . "'";
+$query = $r->GetConnection()->prepare(
+    "SELECT MAX(q.Ordering) AS LatestQuestionOrder FROM QUIZ_ANSWERS a JOIN QUIZ_QUESTION q ON q.QuestionID = a.QuestionID WHERE q.Season = ? AND a.ReclineeID = ?"
+);
+$query->bind_param('si', $SEASON, $ReclineeID);
 $result = $r->query($query);
 if (!$result)
 {
     echo "Error fetching last answered question.";
     exit();
 }
-$row = mysql_fetch_assoc($result);
+$row = $result->fetch_assoc();
 if ($row["LatestQuestionOrder"] != "")
 {
     $LatestQuestionOrder = $row["LatestQuestionOrder"]; 
 }
 $CurrentQuestionOrder = $LatestQuestionOrder + 1;
 
-$query = "SELECT MAX(Ordering) AS LastQuestionOrder FROM QUIZ_QUESTION WHERE Season = '" . $SEASON . "'";
+$query = $r->GetConnection()->prepare(
+    "SELECT MAX(Ordering) AS LastQuestionOrder FROM QUIZ_QUESTION WHERE Season = ?"
+);
+$query->bind_param('s', $SEASON);
 $result = $r->query($query);
 if (!$result)
 {
     echo "Error fetching last question.";
     exit();
 }
-$row = mysql_fetch_assoc($result);
+$row = $result->fetch_assoc();
 if (!$row || $row["LastQuestionOrder"] == "")
 {
     echo "No questions found for this season.";
@@ -111,14 +117,17 @@ echo "Question $CurrentQuestionOrder of $LastQuestionOrder.<BR><BR>";
 //
 //Fetch the next question;
 //
-$query = "SELECT * FROM QUIZ_QUESTION WHERE Season = '" . $SEASON . "' AND Ordering > '" . $LatestQuestionOrder . "' ORDER BY Ordering LIMIT 1";
+$query = $r->GetConnection()->prepare(
+    "SELECT * FROM QUIZ_QUESTION WHERE Season = ? AND Ordering > ? ORDER BY Ordering LIMIT 1"
+);
+$query->bind_param('si', $SEASON, $LatestQuestionOrder);
 $result = $r->query($query);
 if (!$result)
 {
     echo "Error fetching next question.";
     exit();
 }
-$row = mysql_fetch_assoc($result);
+$row = $result->fetch_assoc();
 if (!$row)
 {
     echo "Next question not found.";
@@ -138,14 +147,17 @@ echo $row["Section"] . "<BR><BR>" . $row["Question"] . "<BR><BR>";
 //Fetch the choices for this question
 //
 $questionId = $row["QuestionID"];
-$query = "SELECT * FROM QUIZ_CHOICES WHERE QuestionID = '$questionId' ORDER BY Ordering";
+$query = $r->GetConnection()->prepare(
+    "SELECT * FROM QUIZ_CHOICES WHERE QuestionID = ? ORDER BY Ordering"
+);
+$query->bind_param('i', $questionId);
 $result = $r->query($query);
 if (!$result)
 {
     echo "Error fetching choices.";
     exit();
 }
-if (0 == mysql_num_rows($result))
+if (0 == $result->num_rows)
 {
     echo "$query <BR> No choices found.";
     exit();
@@ -154,7 +166,7 @@ if (0 == mysql_num_rows($result))
 echo "<FORM action='quiz.php' method='post'><INPUT TYPE='hidden' NAME='ReclineeID' VALUE='$ReclineeID' /><INPUT TYPE='hidden' NAME='QuestionID' VALUE='$questionId' />";
 $FillBox = false;
 $EssayBox = false;
-while ($row = mysql_fetch_assoc($result))
+while ($row = $result->fetch_assoc())
 {
     switch($row["Type"])
     {

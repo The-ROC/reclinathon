@@ -23,16 +23,10 @@ class DATABASE
             return TRUE;
         }
 
-        $this->connection = mysql_connect($this->server, $this->username, $this->password);
+        $this->connection = mysqli_connect($this->server, $this->username, $this->password, $this->db);
         if (!$this->connection)
         {
-            $error = 'Error connecting to database server: ' . mysql_error();
-            return FALSE;
-        }
-
-        if (!mysql_select_db($this->db, $this->connection))
-        {
-            $error = 'Error selecting database: ' . mysql_error();
+            $error = 'Error connecting to database server: ' . mysqli_connect_error();
             return FALSE;
         }
 
@@ -43,7 +37,7 @@ class DATABASE
     {
         if ($this->connection)
         {
-            mysql_close($this->connection);
+            mysqli_close($this->connection);
             $this->connection = FALSE;
         }
     }
@@ -55,10 +49,17 @@ class DATABASE
             return FALSE;
         }
         
-        $result = mysql_query($query, $this->connection);
+        $result = $query->execute();
         if (!result)
         {
-            $error = 'Error executing query: ' . mysql_error();
+            $error = 'Error executing query: ' . $this->connection->error;
+        }
+        else
+        {
+            $selectResult = $query->get_result();
+            if ($selectResult) {
+                $result = $selectResult;
+            } 
         }
 
         return $result;

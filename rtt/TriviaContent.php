@@ -75,7 +75,10 @@ if ($_POST["action"] == "delete")
 	}
 	else
 	{
-	    $query = "DELETE FROM Trivia WHERE TID = '$tid' LIMIT 1";
+	    $query = $MovieList->GetConnection()->prepare(
+			"DELETE FROM Trivia WHERE TID = ? LIMIT 1"
+		);
+		$query->bind_param('i', $tid);
 		$result = $MovieList->Query($query);
 		if ($result)
 		{
@@ -105,7 +108,10 @@ else if ($_POST["action"] == "edit")
 	{
 		$question = addslashes($question);
 		$answer = addslashes($answer);
-	    $query = "UPDATE Trivia SET Question = '$question', Answer = '$answer' WHERE TID = '$tid'";
+	    $query = $MovieList->GetConnection()->prepare(
+			"UPDATE Trivia SET Question = ?, Answer = ? WHERE TID = ?"
+		);
+		$query->bind_param('ssi', $question, $answer, $tid);
 		$result = $MovieList->Query($query);
 		if ($result)
 		{
@@ -128,7 +134,10 @@ else if ($_POST["action"] == "insert")
 	}
 	else
 	{
-		$query = "INSERT INTO Trivia (Question, Answer) VALUES ('$question', '$answer')";
+		$query = $MovieList->GetConnection()->prepare(
+			"INSERT INTO Trivia (Question, Answer) VALUES (?, ?)"
+		);
+		$query->bind_param('ss', $question, $answer);
 		$result = $MovieList->Query($query);
 		if ($result)
 		{
@@ -141,7 +150,7 @@ else if ($_POST["action"] == "insert")
 	}
 }
   
-$query = "SELECT * FROM Trivia";
+$query = $MovieList->GetConnection()->prepare("SELECT * FROM Trivia");
 $result = $MovieList->Query($query);
 
 echo "<body><table><tr><th></th><th></th><th>Question/Fact</th><th>Answer</th></tr>";
@@ -149,7 +158,7 @@ echo "<tr><td colspan='2'><button onclick='SubmitForm(this)' name='insert'>add</
 echo "<td><textarea id='newQuestion' name='newQuestion' rows='4' cols='100'></textarea></td>";
 echo "<td><input id='newAnswer' name='newAnswer' type='text' size='75' /></td></tr>";
 
-while ($row = mysql_fetch_assoc($result))
+while ($row = $result->fetch_assoc())
 
 {
 

@@ -25,14 +25,17 @@ class RECLINEE extends RTT_COMMON
 
     public function Load($ReclineeID)
     {
-        $query = "SELECT * FROM RECLINEE WHERE ReclineeID = " . $ReclineeID;
+        $query = $this->GetConnection()->prepare(
+            "SELECT * FROM RECLINEE WHERE ReclineeID = ?"
+        );
+        $query->bind_param('i', $ReclineeID);
         $result = $this->Query($query);
         if (!$result)
         {
             return FALSE;
         }
 
-        $row = mysql_fetch_assoc($result);
+        $row = $result->fetch_assoc();
         if (!$row)
         {
             return FALSE;
@@ -57,6 +60,7 @@ class RECLINEE extends RTT_COMMON
             $query .= " WHERE RocMember = 1";
         }
         $query .= " ORDER BY DisplayName";
+        $query = $this->GetConnection()->prepare($query);
         $result = $this->query($query);
         if (!$result)
         {
@@ -65,7 +69,7 @@ class RECLINEE extends RTT_COMMON
 
         echo "<SELECT NAME='ReclineeID'>";
 
-        while($row = mysql_fetch_assoc($result))
+        while($row = $result->fetch_assoc())
         {
             echo "<OPTION VALUE='" . $row["ReclineeID"] . "'";
             if ($this->ReclineeID == $row["ReclineeID"])

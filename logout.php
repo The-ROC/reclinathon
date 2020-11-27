@@ -11,7 +11,9 @@ if (ini_get("session.use_cookies"))
 
 session_destroy();
 
-$URL = "http://" . $_SERVER['SERVER_NAME'] . "/index.php";
+$currUrl = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
+$baseUrl = substr($currUrl, 0, strrpos($currUrl, '/'));
+$URL = $baseUrl . "/index.php";
 
 header ("Location: $URL");
 

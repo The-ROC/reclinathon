@@ -37,9 +37,9 @@ class MOVIE_IMDB extends MOVIE
         // TODO: Assign Genres
         // $imdbMovie->genres();
         $this->NumGenres = 0;
-        $query = "SELECT * FROM GENRE";
+        $query = $this->GetConnection()->prepare("SELECT * FROM GENRE");
         $result = $this->query($query);
-        while($row = mysql_fetch_assoc($result))
+        while($row = $result->fetch_assoc())
         {
             if ($_POST["genre" . $row[GenreID]] != "")
             {

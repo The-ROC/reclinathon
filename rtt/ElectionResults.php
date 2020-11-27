@@ -10,12 +10,15 @@ $ResultType = $_GET["ResultType"];
 
 if ($ResultType == "SummaryRoc")
 {
-    $query = "SELECT m.Title, COUNT(v.VoteID) AS TotalVotes, SUM(v.Golden) AS TotalGoldenVotes FROM VOTE v JOIN MOVIE m ON v.MovieID = m.MovieID JOIN RECLINEE r ON r.ReclineeID = v.ReclineeID WHERE v.Season = '$Season' AND r.RocMember = '1' GROUP BY v.MovieID ORDER BY TotalGoldenVotes DESC, TotalVotes DESC";
+    $query = $MovieList->GetConnection()->prepare(
+        "SELECT m.Title, COUNT(v.VoteID) AS TotalVotes, SUM(v.Golden) AS TotalGoldenVotes FROM VOTE v JOIN MOVIE m ON v.MovieID = m.MovieID JOIN RECLINEE r ON r.ReclineeID = v.ReclineeID WHERE v.Season = ? AND r.RocMember = '1' GROUP BY v.MovieID ORDER BY TotalGoldenVotes DESC, TotalVotes DESC"
+    );
+    $query->bind_param('s', $Season);
     $result = $MovieList->Query($query);
 
     echo "<h3>Reclinathon ROC Election Results for $Season</h3><table><tr><th>Movie</th><th>Total Votes</th><th>Total Golden Votes</th></tr>";
 
-    while ($row = mysql_fetch_assoc($result))
+    while ($row = $result->fetch_assoc())
     {
         $Movie = $row["Title"];
         $TotalVotes = $row["TotalVotes"];
@@ -27,12 +30,15 @@ if ($ResultType == "SummaryRoc")
 }
 else if ($ResultType == "SummaryAll")
 {
-    $query = "SELECT m.Title, COUNT(v.VoteID) AS TotalVotes, SUM(v.Golden) AS TotalGoldenVotes FROM VOTE v JOIN MOVIE m ON v.MovieID = m.MovieID JOIN RECLINEE r ON r.ReclineeID = v.ReclineeID WHERE v.Season = '$Season' GROUP BY v.MovieID ORDER BY TotalGoldenVotes DESC, TotalVotes DESC";
+    $query = $MovieList->GetConnection()->prepare(
+        "SELECT m.Title, COUNT(v.VoteID) AS TotalVotes, SUM(v.Golden) AS TotalGoldenVotes FROM VOTE v JOIN MOVIE m ON v.MovieID = m.MovieID JOIN RECLINEE r ON r.ReclineeID = v.ReclineeID WHERE v.Season = ? GROUP BY v.MovieID ORDER BY TotalGoldenVotes DESC, TotalVotes DESC"
+    );
+    $query->bind_param('s', $Season);
     $result = $MovieList->Query($query);
 
     echo "<h3>Reclinathon General Election Results for $Season</h3><table><tr><th>Movie</th><th>Total Votes</th><th>Total Golden Votes</th></tr>";
 
-    while ($row = mysql_fetch_assoc($result))
+    while ($row = $result->fetch_assoc())
     {
         $Movie = $row["Title"];
         $TotalVotes = $row["TotalVotes"];
@@ -44,12 +50,15 @@ else if ($ResultType == "SummaryAll")
 }
 else if ($ResultType == "full")
 {
-    $query = "select r.FirstName, r.LastName, r.RocMember, m.Title, v.Golden from VOTE v join MOVIE m on v.MovieID = m.MovieID join RECLINEE r on r.ReclineeID = v.ReclineeID where v.Season = '$Season'";
+    $query = $MovieList->GetConnection()->prepare(
+        "select r.FirstName, r.LastName, r.RocMember, m.Title, v.Golden from VOTE v join MOVIE m on v.MovieID = m.MovieID join RECLINEE r on r.ReclineeID = v.ReclineeID where v.Season = ?"
+    );
+    $query->bind_param('s', $Season);
     $result = $MovieList->Query($query);
 
     echo "<h3>Reclinathon Election Results for $Season</h3><table><tr><th>Reclinee</th><th>ROC Member</th><th>Movie</th><th>Golden</th></tr>";
 
-    while ($row = mysql_fetch_assoc($result))
+    while ($row = $result->fetch_assoc())
     {
         $Reclinee = $row["FirstName"] . " " . $row["LastName"];
         $RocMember = $row["RocMember"];

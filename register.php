@@ -63,9 +63,11 @@ else
 
 if ($FormValid)
 {
-    $query = "SELECT * FROM RECLINEE WHERE FirstName = '" . $FirstName . "' AND LastName = '" . $LastName . "'";
-    $result = mysql_query($query);
-    if (mysql_num_rows($result) > 0)
+    $query = $db->prepare("SELECT * FROM RECLINEE WHERE FirstName = ? AND LastName = ?");
+    $query->bind_param('ss', $FirstName, $LastName);
+    $query->execute();
+    $result = $query->get_result();
+    if ($query->num_rows > 0)
     {
         echo "You have already registered with the Reclinathon Association of America.  Please log in to your account.";
         $UserAvailable = FALSE;
@@ -73,9 +75,11 @@ if ($FormValid)
 
     if ($UserAvailable)
     {
-        $query = "SELECT * FROM RECLINEE WHERE UserName = '" . $UserName . "'";
-        $result = mysql_query($query);
-        if (mysql_num_rows($result) > 0)
+        $query = $db->prepare("SELECT * FROM RECLINEE WHERE UserName = ?");
+        $query->bind_param('s', $UserName);
+        $query->execute();
+        $result = $query->get_result();
+        if ($query->num_rows > 0)
         {
             echo "The UserName you specified has already been registered.  Please choose a new UserName and try again.";
             $UserAvailable = FALSE;
@@ -84,17 +88,11 @@ if ($FormValid)
     
     if ($UserAvailable)
     {
-    
-        $query = "INSERT INTO RECLINEE (FirstName, LastName, DisplayName, Bio, RocMember, Email, UserName, PasswordHash) VALUES ('" . $FirstName . "'";
-        $query = $query . ", '" . $LastName . "'";
-        $query = $query . ", '" . $FirstName . "'";
-        $query = $query . ", ' '";
-        $query = $query . ", '0'";
-        $query = $query . ", '" . $Email . "'";
-        $query = $query . ", '" . $UserName . "'";
-        $query = $query . ", '" . sha1($Password) . "')";
-
-        $result = mysql_query($query);
+        $queryString = "INSERT INTO RECLINEE (FirstName, LastName, DisplayName, Bio, RocMember, Email, UserName, PasswordHash) ";
+        $queryString .= "VALUES (?, ?, ?, ' ', '0', ?, ?, ?)";
+        $query = $db->prepare($queryString);
+        $query->bind_param('ssssss', $FirstName, $LastName, $FirstName, $Email, $UserName, sha1($Password));
+        $result = $query->execute();
 
         if ($result)
         {
@@ -105,7 +103,11 @@ if ($FormValid)
         }
         else
         {
-            echo "Registration failed.  Please try again later.";
+            echo "Registration failed. ";
+            if ($query->error) {
+                echo $query->error . ". ";
+            }
+            echo "Please try again later.";
         }
     }
 }
