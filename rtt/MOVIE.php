@@ -310,7 +310,15 @@ class MOVIE extends RTT_COMMON
 
     public function DisplayImage()
     {
-	return "<IMG BORDER='3' WIDTH='200' SRC = '" . str_replace("'", "%27", $this->Image) . "' alt = '$this->Title' >";
+        $result = "";
+        if ($this->Url) {
+            $result .= "<a href='" . $this->Url . "'>";
+        }
+        $result .= "<IMG BORDER='3' WIDTH='200' SRC = '" . str_replace("'", "%27", $this->Image) . "' alt = '$this->Title' >";
+        if ($this->Url) {
+            $result .= "</a>";
+        }
+	    return $result;
     }
 	
 	public function DisplayFeedImage()
