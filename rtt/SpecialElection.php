@@ -13,7 +13,9 @@ include "RECLINATHON_CONTEXT.php";
 
 function ToggleVoteButton()
 {
-    if (document.vote.MoviesSelected.value == "15" && parseInt(document.vote.ThemeMoviesSelected.value) >= 3 && document.vote.GoldenMovieID.value != "")
+    const requireThemeMovies = false;
+    const minThemeSelected = requireThemeMovies ? 3 : 0;
+    if (document.vote.MoviesSelected.value == "15" && parseInt(document.vote.ThemeMoviesSelected.value) >= minThemeSelected && document.vote.GoldenMovieID.value != "")
     {
         document.vote.VoteButton.disabled = false;
     }
