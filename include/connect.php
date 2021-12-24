@@ -7,7 +7,7 @@ $TEST_SERVER =
 
 if (!$TEST_SERVER)
 {
-    $db = mysqli_connect("p:db1530.perfora.net", "dbo248802449", "Dr.Bundy", "db248802449");
+    $db = mysqli_connect("db1530.perfora.net", "dbo248802449", "Dr.Bundy", "db248802449");
 }
 else
 {
