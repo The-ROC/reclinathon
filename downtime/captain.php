@@ -6,17 +6,17 @@ session_Start();
 
 include $_SERVER['DOCUMENT_ROOT']."\include\connect.php";
 
-if(!session_is_registered("GO")) {
+if(!isset($_SESSION["GO"])) {
   $GO = 1;
   session_register("GO");
 }
 
-if(!session_is_registered("TIMER")) {
+if(!isset($_SESSION["TIMER"])) {
   $TIMER = "315";
   session_register("TIMER");
 }
 
-if(!session_is_registered("RANDMAX")) {
+if(!isset($_SESSION["RANDMAX"])) {
   $query = $db->prepare("SELECT * FROM Trivia");
   $result = db_query($db, $query);
   $RANDMAX = $result->num_rows;
@@ -24,7 +24,7 @@ if(!session_is_registered("RANDMAX")) {
   session_register("RANDMAX");
 }
 
-if(!session_is_registered("RANDMAX_CLIP")) {
+if(!isset($_SESSION["RANDMAX_CLIP"])) {
   $query = $db->prepare("SELECT * FROM VideoClips");
   $result = db_query($db, $query);
   $RANDMAX_CLIP = $result->num_rows;
@@ -32,22 +32,22 @@ if(!session_is_registered("RANDMAX_CLIP")) {
   session_register("RANDMAX_CLIP");
 }
 
-if(!session_is_registered("RAND")) {
+if(!isset($_SESSION["RAND"])) {
   $RAND = rand(1, $RANDMAX);
   session_register("RAND");
 }
 
-if(!session_is_registered("RAND_CLIP")) {
+if(!isset($_SESSION["RAND_CLIP"])) {
   $RAND_CLIP = rand(1, $RANDMAX_CLIP);
   session_register("RAND_CLIP");
 }
 
-if(!session_is_registered("MODE")) {
+if(!isset($_SESSION["MODE"])) {
   $MODE = 1;
   session_register("MODE");
 }
 
-if(!session_is_registered("NEXT_MOVIE")) {
+if(!isset($_SESSION["NEXT_MOVIE"])) {
   $query = $db->prepare("SELECT * FROM NextMovie");
   $result = db_query($db, $query);
   $row = $result->fetch_row();
@@ -55,7 +55,7 @@ if(!session_is_registered("NEXT_MOVIE")) {
   session_register("NEXT_MOVIE");
 }
 
-if (!session_is_registered("MODE")) {
+if (!isset($_SESSION["MODE"])) {
   $MODE = 0;
   session_register("MODE");
 }
