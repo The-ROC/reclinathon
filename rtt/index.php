@@ -292,8 +292,9 @@ function DownRepeat() {
 //----------------
 $rcx->DisplayTitleLogo();
 
-
-echo "<CENTER><A HREF='http://www.reclinathon.com/watch.php'>Watch Live</A><BR><BR><TABLE CLASS='RttFrame'>";
+echo "<CENTER>";
+echo "<A HREF='http://www.reclinathon.com/watch.php' style='font-size:50px'>Watch Live</A>";
+echo "<BR><BR><TABLE CLASS='RttFrame'>";
 
 //----------------
 // OLD TITLE TR
