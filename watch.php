@@ -27,7 +27,7 @@ Messages you type into SyncPlay will appear on the movie like closed captions.<b
 Connecting your computer to a Reclinathon-quality TV & sound system is recommended.
 
 <h2 style="margin-bottom:5px;">Interact.</h2>
-Join our Zoom call to see arena and talk with other reclinees.
+Join our Zoom call to see the arena and talk with other reclinees.
 <br /> <br />
 <strong>
 	<a href="https://durhamuniversity.zoom.us/j/95974067841?pwd=Skg4Mml1ckNoWjNNRGs1VXVPMGJ1QT09
