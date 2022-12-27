@@ -292,11 +292,6 @@ function DownRepeat() {
 //----------------
 $rcx->DisplayTitleLogo();
 
-echo "<a href='https://docs.google.com/spreadsheets/d/1H3DyQqx9q8PWTe6ATQOQb8Qv7Rt3ITr546y_E8OO7CA/edit#gid=0' "
-	. " style='float: right; color: red'>"
-	. "2022 Tracker"
-	. "</a>";
-
 echo "<CENTER>";
 echo "<A HREF='http://www.reclinathon.com/watch.php' style='font-size:50px'>Watch Live</A>";
 echo "<BR><BR><TABLE CLASS='RttFrame'>";
@@ -313,6 +308,12 @@ echo "<BR><BR><TABLE CLASS='RttFrame'>";
 
 
 echo "<TR>";
+  echo "<td class='RttFrame'>";
+  echo "<a href='https://docs.google.com/spreadsheets/d/1H3DyQqx9q8PWTe6ATQOQb8Qv7Rt3ITr546y_E8OO7CA/edit#gid=0' "
+	. " style='float: right; color: red'>"
+	. "2022 Tracker"
+	. "</a>";
+  echo "</td>";
   echo "<TD CLASS='RttFrame'>";
     $rcx->DisplayModule();
   echo "</TD>";
