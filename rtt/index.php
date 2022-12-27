@@ -306,14 +306,15 @@ echo "<BR><BR><TABLE CLASS='RttFrame'>";
 //  echo "</TD>";
 //echo "</TR>";
 
-
-echo "<TR>";
-  echo "<td class='RttFrame'>";
-  echo "<a href='https://docs.google.com/spreadsheets/d/1H3DyQqx9q8PWTe6ATQOQb8Qv7Rt3ITr546y_E8OO7CA/edit#gid=0' "
+echo "<tr>";
+  echo "<td class='RttFrame'";
+	echo "<a href='https://docs.google.com/spreadsheets/d/1H3DyQqx9q8PWTe6ATQOQb8Qv7Rt3ITr546y_E8OO7CA/edit#gid=0' "
 	. " style='float: right; color: red'>"
 	. "2022 Tracker"
 	. "</a>";
   echo "</td>";
+echo "</tr>";
+echo "<TR>";
   echo "<TD CLASS='RttFrame'>";
     $rcx->DisplayModule();
   echo "</TD>";
